@@ -3,3 +3,14 @@
 ################################################################################
 
 /WF/BLL/bin/Debug
+/WF/BLL/obj/Debug
+/WF/Common/bin/Debug
+/WF/DAO/bin/Debug
+/WF/DAO/obj/Debug
+/WF/Document/bin/Debug
+/WF/Entity/bin/Debug
+/WF/Entity/obj/Debug
+/WF/WF/bin
+/WF/WF/obj/Debug
+/WF/Common/obj/Debug
+/WF/Document/obj/Debug

@@ -39,7 +39,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DepartmentDao.cs" />
+    <Compile Include="EmployeeDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WF_AgentDao.cs" />
+    <Compile Include="WF_DataDictionaryDao.cs" />
+    <Compile Include="WF_InstanceDao.cs" />
+    <Compile Include="WF_InstanceVariableDao.cs" />
+    <Compile Include="WF_MenuDao.cs" />
+    <Compile Include="WF_OperationHistoryDao.cs" />
+    <Compile Include="WF_RoleDao.cs" />
+    <Compile Include="WF_Role_UserDao.cs" />
+    <Compile Include="WF_RuleDao.cs" />
+    <Compile Include="WF_SignDao.cs" />
+    <Compile Include="WF_TemplateDao.cs" />
+    <Compile Include="WF_TemplateNodeDao.cs" />
+    <Compile Include="WF_TemplateNodeAuthorityDao.cs" />
+    <Compile Include="WF_TemplateVariableDao.cs" />
+    <Compile Include="WF_ToDoDao.cs" />
+    <Compile Include="WF_TransferDao.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
