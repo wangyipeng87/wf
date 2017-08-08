@@ -59,6 +59,7 @@
     <Content Include="参考文档\layer\skin\default\loading-0.gif" />
     <Content Include="参考文档\layer\skin\default\loading-1.gif" />
     <Content Include="参考文档\layer\skin\default\loading-2.gif" />
+    <Content Include="参考文档\Newtonsoft.Json.dll" />
     <Content Include="设计\数据库\菜单.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
