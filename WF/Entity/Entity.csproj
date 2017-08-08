@@ -39,7 +39,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Department..cs" />
+    <Compile Include="Employee..cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WF_Agent..cs" />
+    <Compile Include="WF_DataDictionary..cs" />
+    <Compile Include="WF_Instance..cs" />
+    <Compile Include="WF_InstanceVariable..cs" />
+    <Compile Include="WF_Menu..cs" />
+    <Compile Include="WF_OperationHistory..cs" />
+    <Compile Include="WF_Role..cs" />
+    <Compile Include="WF_Role_User..cs" />
+    <Compile Include="WF_Rule..cs" />
+    <Compile Include="WF_Sign..cs" />
+    <Compile Include="WF_Template..cs" />
+    <Compile Include="WF_TemplateNode..cs" />
+    <Compile Include="WF_TemplateNodeAuthority..cs" />
+    <Compile Include="WF_TemplateVariable..cs" />
+    <Compile Include="WF_ToDo..cs" />
+    <Compile Include="WF_Transfer..cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
