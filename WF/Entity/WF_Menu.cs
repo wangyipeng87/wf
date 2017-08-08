@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WF.Entity
 {
-    public class T_CMS_Menu
+    public class WF_Menu
     {
         public string ID {get; set;}
         public string Name {get; set;}

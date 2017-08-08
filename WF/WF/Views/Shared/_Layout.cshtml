@@ -4,8 +4,164 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title </title>
+    <script type="text/javascript">
+
+        try {
+            ace.settings.loadState('sidebar')
+        } catch (e) {
+        }
+        try {
+            ace.settings.loadState('main-container')
+        } catch (e) {
+        }
+        var curmenuurl='';
+        var obj =  "";
+        function initMenu(parentmenu, parentul, isroot) {
+            if (isroot) {
+                if (parentmenu != null && parentmenu != undefined && parentmenu.submenu != null && parentmenu.submenu != undefined && parentmenu.submenu.length > 0) {
+                    for (var j = 0; j < parentmenu.submenu.length; j++) {
+                        var x = parentmenu.submenu[j];
+                        var li = $('<li></li>');
+                        var a = $('<a></a>');
+                        a.attr('href',"<%=path%>"+ x.url);
+                        if(x.target && x.target.length>0)
+                        {
+                            a.attr('target',x.target);
+                        }
+                        if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
+                            a.addClass("dropdown-toggle");
+                            a.attr('href', "#");
+                        }
+                        li.append(a);
+                        var i = $('<i></i>');
+                        i.addClass("menu-icon");
+                        i.addClass("fa");
+                        i.addClass("fa-home");
+                        a.append(i);
+                        var span = $('<span></span>');
+                        span.addClass("menu-text");
+                        span.html(x.name);
+                        a.append(span);
+                        if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
+                            var bsub = $('<b></b>');
+                            bsub.addClass("arrow");
+                            bsub.addClass("fa");
+                            bsub.addClass("fa-angle-down");
+                            a.append(bsub);
+                        }
+
+                        var b = $('<b></b>');
+                        b.addClass("arrow");
+                        li.append(b);
+                        if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
+                            var ul = $('<ul></ul>');
+                            ul.addClass("submenu");
+                            initMenu(x, ul, false);
+                            li.append(ul);
+                        }
+                        $(parentul).append(li);
+                    }
+                }
+            } else {
+                if (parentmenu != null && parentmenu != undefined && parentmenu.submenu != null && parentmenu.submenu != undefined && parentmenu.submenu.length > 0) {
+                    for (var j = 0; j < parentmenu.submenu.length; j++) {
+                        var x = parentmenu.submenu[j];
+                        var li = $('<li></li>');
+                        var a = $('<a></a>');
+                        a.attr('href', "<%=path%>"+x.url);
+                        if(x.target && x.target.length>0)
+                        {
+                            a.attr('target',x.target);
+                        }
+                        if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
+                            a.addClass("dropdown-toggle");
+                            a.attr('href', "#");
+                        }
+                        li.append(a);
+                        var i = $('<i></i>');
+                        i.addClass("menu-icon");
+                        i.addClass("fa");
+                        i.addClass("fa-caret-right");
+                        a.append(i);
+                        a.append(x.name);
+                        if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
+                            var bsub = $('<b></b>');
+                            bsub.addClass("arrow");
+                            bsub.addClass("fa");
+                            bsub.addClass("fa-angle-down");
+                            a.append(bsub);
+                        }
+                        var b = $('<b></b>');
+                        b.addClass("arrow");
+                        li.append(b);
+                        if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
+                            var ul = $('<ul></ul>');
+                            ul.addClass("submenu");
+                            initMenu(x, ul, false);
+                            li.append(ul);
+                        }
+                        $(parentul).append(li);
+                    }
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            initMenu(obj, $(".nav-list"), true);
+            ShowMenu();
+        });
+        function ShowMenu() {
+            if(typeof(curmenuurl) == "undefined" || curmenuurl==null || $.trim(curmenuurl).length==0) {
+                curmenuurl = document.location.protocol + "//" + window.location.host;
+                var arr = window.location.href.split('?');
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i].indexOf("#") == arr[i].length - 1) {
+                        arr[i] = arr[i].substring(0, arr[i].length - 1);
+                    }
+                    if (arr[i].indexOf(curmenuurl) == 0) {
+                        arr[i] = arr[i].replace(curmenuurl, "");
+                    }
+                }
+                curmenuurl = arr.join('?');
+            }
+            var menu = $(".nav-list").find("a[href='" + curmenuurl + "']");
+            if (menu != null && menu != undefined) {
+                var parent = $(menu).parent("li");
+                parent.addClass("active");
+                var parent =  $(parent).parents("li");
+                if (parent != null && parent != undefined && parent.length > 0) {
+                    for(var j=0;j< parent.length ;j++) {
+                        if (!$(parent[j]).hasClass("nav-list")) {
+                            $(parent[j]).addClass("open");
+                        }
+                    }
+                }//nav-show
+                var parent =  $(menu).parents("ul");
+                if (parent != null && parent != undefined && parent.length > 0) {
+                    for(var j=0;j< parent.length ;j++) {
+                        if (!$(parent[j]).hasClass("nav-list")) {
+                            $(parent[j]).addClass("nav-show");
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
+
+    <div id="sidebar" class="sidebar    responsive    ace-save-state">
+       
+
+
+        <ul class="nav nav-list"></ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state"
+               data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+    </div>
+
         @RenderBody()
 </body>
 </html>
