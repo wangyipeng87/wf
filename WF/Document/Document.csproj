@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="参考文档\CMS.zip" />
     <None Include="参考文档\ace-master.zip" />
     <None Include="参考文档\Raphael-中文参考文档.pdf" />
     <None Include="设计\数据库\WF.pdm" />
