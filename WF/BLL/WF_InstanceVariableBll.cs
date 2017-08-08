@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WF
+namespace WF.BLL
 {
     public class WF_InstanceVariableBll
     {
