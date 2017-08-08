@@ -45,7 +45,7 @@
   <ItemGroup>
     <None Include="参考文档\CMS.zip" />
     <None Include="参考文档\Raphael-中文参考文档.pdf" />
-    <None Include="设计\数据库\WF.pdm" />
+    <None Include="设计\数据库\wf.pdm" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\Dapper.dll" />
