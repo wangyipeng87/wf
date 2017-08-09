@@ -8,6 +8,8 @@ namespace WF.Entity
     public class Employee
     {
         public string UserCode {get; set; }
+        public string Account { get; set; }
+        
         public string PassWord { get; set; }
         public string UserName {get; set;}
         public int Sex {get; set;}

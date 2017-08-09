@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using WF.BLL;
+@using WF.Common;
+@using WF.Entity; 
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -95,7 +98,7 @@
         } catch (e) {
         }
         var curmenuurl;
-        var menulist = @Html.Raw(WF.Common.JsonHelper.JsonSerializer<List<WF.Entity.WF_Menu>>( new WF.BLL.WF_MenuBll().getAll("00000000-0000-0000-0000-000000000000")));
+        var menulist = @Html.Raw(WF.Common.JsonHelper.JsonSerializer<List<WF.Entity.WF_Menu>>(new WF.BLL.WF_MenuBll().getAll("00000000-0000-0000-0000-000000000000")));
         var obj = @Html.Raw(new WF.BLL.WF_MenuBll().getMenu("00000000-0000-0000-0000-000000000000"));
         function initMenu(parentmenu, parentul, isroot) {
             if (isroot) {
@@ -316,7 +319,16 @@
                                  alt="" />
                             <span class="user-info">
                                 <small>Welcome</small>
-                                王翼鹏
+                                @{ 
+                                    Employee emp = new Employee();
+                                    if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                                    {
+                                        EmployeeBll bll = new EmployeeBll();
+                                        emp = bll.getbyAccount(System.Web.HttpContext.Current.User.Identity.Name);
+                                        <span>@emp.UserName</span>
+                                    }
+                                }
+                                
                             </span>
 
                             <i class="ace-icon fa fa-caret-down"></i>

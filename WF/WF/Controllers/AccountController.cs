@@ -4,22 +4,25 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using WF.BLL;
+using WF.Entity;
 using WF.Models;
 
 namespace WF.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
 
-      
+
         //
         // GET: /Account/
         public ActionResult Login(string username, string password)
         {
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
-                bool result = true;
-                if (result)
+                EmployeeBll bll = new EmployeeBll();
+                Employee emp = bll.getbyAccountAndPwd(username.Trim(), password.Trim());
+                if (emp != null)
                 {
                     FormsAuthentication.SetAuthCookie(username, false);
                     return Redirect(Url.Action("index", "Home"));
