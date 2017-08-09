@@ -16,16 +16,20 @@ namespace WF.Controllers
         // GET: /Account/
         public ActionResult Login(string username, string password)
         {
-            bool result = true;
-            if (result)
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
-                FormsAuthentication.SetAuthCookie(username, false);
-                return Redirect(Url.Action("index", "Home"));
+                bool result = true;
+                if (result)
+                {
+                    FormsAuthentication.SetAuthCookie(username, false);
+                    return Redirect(Url.Action("index", "Home"));
+                }
+                else
+                {
+                    return View();
+                }
             }
-            else
-            {
-                return View();
-            }
+            return View();
         }
         public ActionResult Logout()
         {
