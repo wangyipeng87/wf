@@ -82,6 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\img\ak47.png" />
     <Content Include="Content\js\jquery-3.2.1.min.js" />
     <Content Include="Content\js\raphael.min.js" />
     <Content Include="Content\js\wfframework.js" />
@@ -305,7 +306,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\css\" />
-    <Folder Include="Content\img\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
