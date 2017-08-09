@@ -52,7 +52,7 @@ namespace WF.DAO
                     WHERE wm.[State]=1
                     )
                     
-                    SELECT * FROM tmp AS t";
+                    SELECT * FROM tmp AS t ORDER BY t.[Order] asc";
 
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
             {
