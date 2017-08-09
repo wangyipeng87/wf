@@ -32,7 +32,7 @@ namespace WF.DAO
                     	wm.UpdateTime,
                     	wm.[Order]
                     FROM
-                    	WF_Menu AS wm WHERE wm.[State]=1 AND wm.ID=@id
+                    	WF_Menu AS wm WHERE wm.[State]=1 AND wm.ParenrID=@id
                     UNION ALL 
                     
                     SELECT 
