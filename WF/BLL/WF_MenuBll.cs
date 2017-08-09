@@ -37,6 +37,7 @@ namespace WF.BLL
                     sublist.Add(sub);
                     sub.name = menuitem.Name;
                     sub.url = menuitem.URL;
+                    sub.code = menuitem.ID;
 
                     if (menulist.Where(p => p.ParenrID == menuitem.ID).Count() > 0)
                     {

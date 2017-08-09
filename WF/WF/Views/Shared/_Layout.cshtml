@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="renderer" content="webkit">
     <meta name="description" content="overview &amp; stats" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <!-- bootstrap & fontawesome -->
     <link rel="stylesheet" href="~/Content/Plugins/ace/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/Content/Plugins/ace/assets/font-awesome/4.5.0/css/font-awesome.min.css" />
@@ -95,6 +95,7 @@
         } catch (e) {
         }
         var curmenuurl;
+        var menulist = @Html.Raw(WF.Common.JsonHelper.JsonSerializer<List<WF.Entity.WF_Menu>>( new WF.BLL.WF_MenuBll().getAll("00000000-0000-0000-0000-000000000000")));
         var obj = @Html.Raw(new WF.BLL.WF_MenuBll().getMenu("00000000-0000-0000-0000-000000000000"));
         function initMenu(parentmenu, parentul, isroot) {
             if (isroot) {
@@ -108,6 +109,7 @@
                         {
                             a.attr('target',x.target);
                         }
+                        li.attr('id',x.code);
                         if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
                             a.addClass("dropdown-toggle");
                             a.attr('href', "#");
@@ -153,6 +155,7 @@
                         {
                             a.attr('target',x.target);
                         }
+                        li.attr('id',x.code);
                         if (x.submenu != null && x.submenu != undefined && x.submenu.length > 0) {
                             a.addClass("dropdown-toggle");
                             a.attr('href', "#");
@@ -189,6 +192,7 @@
         $(document).ready(function () {
             initMenu(obj, $(".nav-list"), true);
             ShowMenu();
+            initnav();
         });
         function ShowMenu() {
             if(typeof(curmenuurl) == "undefined" || curmenuurl==null || $.trim(curmenuurl).length==0) {
@@ -223,6 +227,59 @@
                             $(parent[j]).addClass("nav-show");
                         }
                     }
+                }
+            }
+        }
+
+        var navlist;
+        function initnav()
+        {
+            var currmenu=$(".active");
+            navlist=new Array();
+            getnavl(currmenu.eq(0).attr("id"));
+            var ul=$(".breadcrumb");
+            ul.empty();
+            if(navlist.length>0){
+                for (var j = navlist.length-1; j >=0; j--) {
+                    if(j==navlist.length-1){
+                        var li=$("<li> </li>");
+                        var i=$("<i> </i>");
+                        var a=$("<a> </a>");
+                        i.addClass("ace-icon");
+                        i.addClass("fa");
+                        i.addClass("fa-home");
+                        i.addClass("home-icon");
+                        a.append(navlist[j]);
+                        a.attr("href","#");
+                        li.append(i);
+                        li.append(a);
+                        ul.append(li);
+                    }else if(j==0){
+                        var li=$("<li> </li>");
+                        li.addClass("active");
+                        li.append(navlist[j]);
+                        ul.append(li);
+                    }else
+                    {
+                        var li=$("<li> </li>");
+                        var a=$("<a> </a>");
+                        a.append(navlist[j]);
+                        a.attr("href","#");
+                        li.append(a);
+                        ul.append(li);
+
+                    }
+                }
+            }
+        }
+        function getnavl(code)
+        {
+            for(var i =0;i<menulist.length;i++)
+            {
+                if(menulist[i].ID==code)
+                {
+                    navlist.push(menulist[i].Name);
+                    getnavl(menulist[i].ParenrID);
                 }
             }
         }
@@ -291,14 +348,11 @@
             <div class="main-content-inner">
                 <div class="breadcrumbs ace-save-state" id="breadcrumbs">
                     <ul class="breadcrumb">
-                        <li>
-                            <i class="ace-icon fa fa-home home-icon"></i>
-                            <a href="#">模板管理</a>
-                        </li>
-                        <li class="active">模板列表</li>
+                  
+
                     </ul><!-- /.breadcrumb -->
                 </div>
-                <div class="page-content">                    
+                <div class="page-content">
                     @RenderBody()
                 </div>
             </div>
@@ -306,14 +360,11 @@
 
         <div class="footer">
             <div class="footer-inner">
-
+                版权所有 wangyipeng
 
             </div>
         </div>
 
-        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-        </a>
-   </div>
+    </div>
 </body>
 </html>

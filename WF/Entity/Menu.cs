@@ -10,6 +10,7 @@ namespace WF.Entity
     {
         public String name { get; set; }
         public String url { get; set; }
+        public String code { get; set; }
         public String target { get; set; }
         public String html { get; set; }
         public String classname { get; set; }
