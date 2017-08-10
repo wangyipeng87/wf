@@ -51,6 +51,7 @@
     <Content Include="lib\Dapper.dll" />
     <Content Include="lib\DapperExtensions.dll" />
     <Content Include="lib\Newtonsoft.Json.dll" />
+    <Content Include="设计\数据库\wf数据.sql" />
     <Content Include="设计\数据库\菜单.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
