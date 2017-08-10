@@ -21,7 +21,7 @@ namespace WF.BLL
             List<WF_Menu> menulist = dao.getAll(rootid);
             Menu menu = new Menu();
             initmenu(menu, menulist, rootid);
-            return JsonHelper.JsonSerializer<Menu>(menu);
+            return menu.ToJson();
         }
 
         private void initmenu(Menu menu, List<WF_Menu> menulist, string parentid)

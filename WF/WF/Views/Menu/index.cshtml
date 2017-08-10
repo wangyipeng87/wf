@@ -4,5 +4,244 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>菜单列表</h2>
+<script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.min.js"></script>
+<script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="header blue lighter smaller">
+            链接列表
+        </h3>
+        <div class="clearfix">
+            <div class="pull-left tableTools-container">
+                <div class="dt-buttons btn-overlap btn-group">
+                    <button type="button" class="btn btn-inverse btn-white"
+                            onclick="edit('','')">
+                        添加
+                    </button>
+                </div>
+            </div>
+        </div>
 
+        <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="center" style="max-width: 50px; min-width:50px; width: 50px;">
+                        序号
+                    </th>
+                    <th class="center col-sm-7">链接名称</th>
+                    <th class="center col-sm-1">是否启用</th>
+                    <th class="center col-sm-1">排序</th>
+                    <th class="center col-sm-3">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var dynamictable;
+    function loadPageInit() {
+        dynamictable = $("#dynamic-table").dataTable({
+            language: lang,  //提示信息
+            "fnInitComplete": function (oSettings, json) {
+            },
+            ajax: function (data, callback, settings) {
+                //ajax请求数据
+                $.ajax({
+                    url: "/menu/GetAllTreeList",
+                    type: 'POST',
+                    cache: false,  //禁用缓存
+                    data: {},  //传入组装的参数
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == "200") {
+                            setTimeout(function () {
+                                //封装返回数据
+                                var returnData = {};
+                                returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                                returnData.recordsTotal = result.total;//返回数据全部记录
+                                returnData.recordsFiltered = result.total;//后台不实现过滤功能，每次查询均视作全部结果
+                                returnData.data = result.data;//返回的数据列表
+                                callback(returnData);
+                            }, 200);
+                        }
+                        else {
+                            layer.alert(result.message);
+                        }
+                    }
+                });
+            },
+            "paging": false,
+//            "pageLength": 10,
+//            "processing": true,//显示加载进度条
+//            "serverSide": true,//开启服务器端模式
+            "ordering": false,
+            columns: [
+                {
+                    "data": "index", 'sClass': "text-center"
+                },
+                {
+                    "data": "Name", 'sClass': "",
+                    render: function (innerData, sSpecific, oData) {
+                        return oData.Name + ($.trim(oData.URL).length > 0 ? '(链接：' + oData.URL + ')' : '');
+                    }
+                },
+                {
+                    "data": "State",
+                    'sClass': "text-center hidden-480",
+                    render: function (innerData, sSpecific, oData) {
+                        if (oData.state == 1) {
+                            return '<span class="label label-sm label-success">启用</span>';
+                        }
+                        return '<span class="label label-sm label-warning">禁用</span>';
+                    }
+                },
+                {
+                    "data": "Order", 'sClass': "text-center",
+                    render: function (innerData, sSpecific, oData) {
+                        return '<input type="text" name="txtordernum" id="txtordernum' + oData.ID + '" data-id="' + oData.id + '"  data-value="' + oData.Order + '" value="' + oData.Order + '" onkeyup="this.value=this.value.replace(/[^\\d]/g,\'\');" onafterpaste="this.value=this.value.replace(/[^\\d]/g,\'\');"  onblur="updateorder(this)" class="form-control input-sm" style="width:50px;" />';
+                    }
+                },
+                {
+                    "data": "State", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                    var html = '<div class="hidden-sm hidden-xs action-buttons">';
+
+                    html += '<a class="blue" href="#" onclick="edit(\'' + oData.ID + '\',\'\')">';
+                    html += '编辑';
+                    html += '  </a> ';
+
+                    html += ' <a class="blue" href="#"  onclick="update(\'' + oData.ID + '\',' + oData.State + ',0)">';
+                    if (oData.state == 1) {
+                        html += '禁用';
+                    } else {
+                        html += '启用';
+                    }
+                    html += ' </a> ';
+
+
+                    html += ' <a class="blue" href="#" onclick="edit(\'\',\'' + oData.ID + '\')">';
+                    html += '添加子级';
+                    html += ' </a> ';
+
+                    html += '    <a class="blue" href="#" onclick="del(\'' + oData.ID + '\')">';
+                    html += '删除';
+                    html += '  </a> ';
+
+                    html += '    </div> ';
+                    return html;
+                }
+                }
+            ]
+        });
+    }
+    $(document).ready(function () {
+        loadPageInit();
+    });
+    function edit(id, parentid) {
+        window.location.href = "/menu/add?id=" + id ;
+    }
+    function ChangeDateFormat(cellval) {
+        var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear() + "-" + month + "-" + currentDate;
+    }
+
+    function updateorder(obj) {
+        if (isemp($(obj).val()) || !isnum($.trim($(obj).val())) || $.trim($(obj).attr("data-value"))==$.trim($(obj).val())) {
+            return;
+        }
+        $.ajax({
+            url: "/menu/updateorder",
+            type: 'POST',
+            data: {
+                id: $(obj).attr("data-id"),
+                ordernum:$.trim($(obj).val())
+            },
+            beforeSend:function(){
+                startloading();
+            },
+            complete:function(){
+                closeloading();
+            },
+            success: function (data) {
+                msgg(data.msg);
+                if (data.state ==1) {
+                    refreshDataTable();
+                }
+            },
+            dataType: "json"
+        });
+    }
+
+    function refreshDataTable() {
+        $("#dynamic-table").DataTable().ajax.reload();
+    }
+
+    function update(id, state, field) {
+        var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该链接吗？";
+        confirmm(message, function () {
+            $.ajax({
+                url: "/menu/updatestate",
+                type: 'POST',
+                data: {
+                    id: id,
+                    state: state == 1 ? 0 : 1,
+                    field: field
+                },
+                beforeSend:function(){
+                    startloading();
+                },
+                complete:function(){
+                    closeloading();
+                },
+                success: function (data) {
+                    msgg(data.msg);
+                    if (data.state == 1) {
+                        refreshDataTable();
+                    }
+                },
+                dataType: "json"
+            });
+        });
+    }
+
+    function del(id) {
+        var message = "你确认要删除该链接吗？";
+        confirmm(message, function () {
+            $.ajax({
+                url: "/menu/del",
+                type: 'POST',
+                data: {
+                    id: id,
+                },
+                beforeSend:function(){
+                    startloading();
+                },
+                complete:function(){
+                    closeloading();
+                },
+                success: function (data) {
+                    msgg(data.msg);
+                    if (data.state == 1) {
+                        refreshDataTable();
+                    }
+                },
+                dataType: "json"
+            });
+        });
+    }
+    function isemp(obj) {
+        if (obj == null || obj == undefined || obj == "" || $.trim(obj) == "") {
+            return true;
+        }
+        return false;
+    }
+    function isnum(obj) {
+        var re=/[^\d]/g;
+        if (obj && $.trim(obj).length>0) {
+            return !re.test($.trim(obj));
+        }
+        return false;
+    }
+</script>

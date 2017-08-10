@@ -15,44 +15,42 @@ namespace WF.DAO
     {
         public List<WF_Menu> getAll(string rootid)
         {
-            string sql = @";WITH tmp
-                    AS
-                    (
-                    SELECT
-                    	wm.ID,
-                    	wm.Name,
-                    	wm.Code,
-                    	wm.[URL],
-                    	wm.ParenrID,
-                    	wm.SiteCode,
-                    	wm.[State],
-                    	wm.CreateUserCode,
-                    	wm.CreateTime,
-                    	wm.UpdateUserCode,
-                    	wm.UpdateTime,
-                    	wm.[Order]
-                    FROM
-                    	WF_Menu AS wm WHERE wm.[State]=1 AND wm.ParenrID=@id
-                    UNION ALL 
-                    
-                    SELECT 
-                    	wm.ID,
-                    	wm.Name,
-                    	wm.Code,
-                    	wm.[URL],
-                    	wm.ParenrID,
-                    	wm.SiteCode,
-                    	wm.[State],
-                    	wm.CreateUserCode,
-                    	wm.CreateTime,
-                    	wm.UpdateUserCode,
-                    	wm.UpdateTime,
-                    	wm.[Order] FROM WF_Menu AS wm 
-                    INNER JOIN tmp AS t ON t.id=wm.ParenrID
-                    WHERE wm.[State]=1
-                    )
-                    
-                    SELECT * FROM tmp AS t ORDER BY t.[Order] asc";
+            string sql = @"  ;WITH tmp 
+                                AS (
+                                SELECT wm.ID,
+                                       wm.Name,
+                                       wm.Code,
+                                       wm.[URL],
+                                       wm.ParenrID,
+                                       wm.SiteCode,
+                                       wm.[State],
+                                       wm.CreateUserCode,
+                                       wm.CreateTime,
+                                       wm.UpdateUserCode,
+                                       wm.UpdateTime,
+                                       wm.[Order], 
+                                     CONVERT(NVARCHAR(4000),wm.[Order])   AS [myindex]
+                                FROM   WF_Menu AS wm
+                                WHERE  wm.ParenrID = @id
+                                		AND wm.[State]=1
+                                 UNION ALL
+                                       SELECT wm.ID,
+                                       wm.Name,
+                                       wm.Code,
+                                       wm.[URL],
+                                       wm.ParenrID,
+                                       wm.SiteCode,
+                                       wm.[State],
+                                       wm.CreateUserCode,
+                                       wm.CreateTime,
+                                       wm.UpdateUserCode,
+                                       wm.UpdateTime,
+                                       wm.[Order], 
+                                      t.[myindex]+''+CONVERT(NVARCHAR(4000),wm.[Order])  AS [myindex] FROM WF_Menu AS wm
+                                       INNER JOIN tmp AS t ON (t.ID=wm.ParenrID AND wm.[State]=1)
+                                )
+                                
+                                SELECT *, ROW_NUMBER() OVER ( ORDER BY  t.[myindex] ASC ) AS [index] FROM tmp AS t ORDER BY t.[myindex]";
 
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
             {

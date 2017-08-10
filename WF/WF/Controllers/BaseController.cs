@@ -23,5 +23,34 @@ namespace WF.Controllers
             }
             return emp;
         }
+
+        public void GetOrderInfoFormURL(out string orderdata, out string orderdir)
+        {
+            if (!string.IsNullOrWhiteSpace(Request.QueryString["order[0][column]"]))
+            {
+                string ind = Request.QueryString["order[0][column]"];
+                orderdir = Request.QueryString["order[0][dir]"];
+                orderdata = Request.QueryString[string.Format("columns[{0}][data]", ind)];
+            }
+            else
+            {
+                orderdir = "";
+                orderdata = "";
+            }
+        }
+        public void GetOrderInfoFormBody(out string orderdata, out string orderdir)
+        {
+            if (!string.IsNullOrWhiteSpace(Request.Form["order[0][column]"]))
+            {
+                string ind = Request.Form["order[0][column]"];
+                orderdir = Request.Form["order[0][dir]"];
+                orderdata = Request.Form[string.Format("columns[{0}][data]", ind)];
+            }
+            else
+            {
+                orderdir = "";
+                orderdata = "";
+            }
+        }
     }
 }

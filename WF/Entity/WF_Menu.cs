@@ -18,7 +18,11 @@ namespace WF.Entity
         public DateTime CreateTime {get; set;}
         public string UpdateUserCode {get; set;}
         public DateTime UpdateTime {get; set;}
-        public int Order {get; set;}
+        public int Order {get; set; }
+        public string myindex { get; set; }
+        public int index { get; set; }
+        
+
     }
 }
 
