@@ -95,7 +95,7 @@
                     "data": "State",
                     'sClass': "text-center hidden-480",
                     render: function (innerData, sSpecific, oData) {
-                        if (oData.state == 1) {
+                        if (oData.State == 1) {
                             return '<span class="label label-sm label-success">启用</span>';
                         }
                         return '<span class="label label-sm label-warning">禁用</span>';
@@ -116,7 +116,7 @@
                     html += '  </a> ';
 
                     html += ' <a class="blue" href="#"  onclick="update(\'' + oData.ID + '\',' + oData.State + ',0)">';
-                    if (oData.state == 1) {
+                    if (oData.State == 1) {
                         html += '禁用';
                     } else {
                         html += '启用';
