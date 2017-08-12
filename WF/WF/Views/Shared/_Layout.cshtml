@@ -100,6 +100,7 @@
         } catch (e) {
         }
         var curmenuurl;
+        var applicationPath='@(Request.ApplicationPath=="/"?"": Request.ApplicationPath)';
         var menuname="";
         var menulist = @Html.Raw(new WF.BLL.WF_MenuBll().getAll("00000000-0000-0000-0000-000000000000").ToJson());
         var obj = @Html.Raw(new WF.BLL.WF_MenuBll().getMenu("00000000-0000-0000-0000-000000000000"));
@@ -110,7 +111,7 @@
                         var x = parentmenu.submenu[j];
                         var li = $('<li></li>');
                         var a = $('<a></a>');
-                        a.attr('href', x.url);
+                        a.attr('href', applicationPath.toLowerCase()+x.url.toLowerCase());
                         if(x.target && x.target.length>0)
                         {
                             a.attr('target',x.target);
@@ -156,7 +157,7 @@
                         var x = parentmenu.submenu[j];
                         var li = $('<li></li>');
                         var a = $('<a></a>');
-                        a.attr('href', x.url);
+                        a.attr('href', applicationPath.toLowerCase()+x.url.toLowerCase());
                         if(x.target && x.target.length>0)
                         {
                             a.attr('target',x.target);
@@ -214,7 +215,8 @@
                 }
                 curmenuurl = arr.join('?');
             }
-            var menu = $(".nav-list").find("a[href='" + curmenuurl + "']");
+            curmenuurl=curmenuurl;
+            var menu = $(".nav-list").find("a[href='" + curmenuurl.toLowerCase() + "']");
             if (menu != null && menu != undefined) {
                 var parent = $(menu).parent("li");
                 parent.addClass("active");

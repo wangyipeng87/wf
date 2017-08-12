@@ -7,11 +7,11 @@
 <link href="~/Content/Plugins/ace/assets/css/bootstrap-duallistbox.min.css" rel="stylesheet" />
 <script src="~/Content/Plugins/ace/assets/js/jquery.bootstrap-duallistbox.min.js"></script>
 <script type="text/javascript">
-    curmenuurl = "/menu/index";
+    curmenuurl = applicationPath+"/menu/index";
     menuname = "菜单编辑";
     function LoadParent() {
         $.ajax({
-            url: "/menu/getMenuByParentidAndState",
+            url: "../menu/getMenuByParentidAndState",
             type: 'GET',
             async: false,
             data: {
@@ -52,7 +52,7 @@
             State: $('#chkState').bootstrapSwitch('state') ? 1 : 0
         };
         $.ajax({
-            url: "/menu/save",
+            url: "../menu/save",
             type: 'POST',
             async: false,
             data: {
@@ -73,7 +73,7 @@
     }
     function load() {
         $.ajax({
-            url: "/menu/getByID",
+            url: "../menu/getByID",
             type: 'GET',
             async: false,
             data: {
@@ -104,7 +104,7 @@
         }
     }
     function goBack() {
-        window.location.href = "/menu/index";
+        window.location.href = "../menu/index";
     }
 </script>
 <div class="page-header">
