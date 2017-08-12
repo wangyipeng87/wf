@@ -96,12 +96,13 @@
                             html = html + "|-";
 
                         }
-                        return html+oData.Name + ($.trim(oData.URL).length > 0 ? '(链接：' + oData.URL + ')' : '');
+                        html = html + '<input type="hidden" name="level" value="' + oData.level + '"/>';
+                        return html + oData.Name + ($.trim(oData.URL).length > 0 ? '(链接：' + oData.URL + ')' : '');
                     }
                 },
                 {
                     "data": "State",
-                    'sClass': "text-center hidden-480",
+                    'sClass': "text-center ",
                     render: function (innerData, sSpecific, oData) {
                         if (oData.State == 1) {
                             return '<span class="label label-sm label-success">启用</span>';
@@ -144,6 +145,14 @@
     }
     $(document).ready(function () {
         loadPageInit();
+        $('#dynamic-table').on('draw.dt', function () {
+            $("input[name='level']").each(function (index, item) {
+                if ($(item).val() == "1") {
+                    $(item).parent().parent().css("background-color", "#FFBBFF")
+                }
+            });
+
+        });
     });
     function edit(id, parentid) {
         window.location.href = "/menu/add?id=" + id;
