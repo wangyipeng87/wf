@@ -214,6 +214,8 @@
     <Content Include="Content\Plugins\ace\assets\js\tree.min.js" />
     <Content Include="Content\Plugins\ace\assets\js\wizard.min.js" />
     <Content Include="Content\Plugins\ace\assets\swf\flashExport.swf" />
+    <Content Include="Content\Plugins\bootstrapswitch\bootstrap-switch.css" />
+    <Content Include="Content\Plugins\bootstrapswitch\bootstrap-switch.js" />
     <Content Include="Content\Plugins\layer\layer.js" />
     <Content Include="Content\Plugins\layer\mobile\layer.js" />
     <Content Include="Content\Plugins\layer\mobile\need\layer.css" />
@@ -258,6 +260,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Menu\index.cshtml" />
+    <Content Include="Views\Menu\Add.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

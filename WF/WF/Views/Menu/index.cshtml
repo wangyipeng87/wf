@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "菜单列表";    
+    ViewBag.Title = "菜单列表";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -49,7 +49,7 @@
                 var param = {};
                 param.limit = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
                 param.start = data.start;//开始的记录序号
-                param.page = (data.start / data.length)+1;//当前页码
+                param.page = (data.start / data.length) + 1;//当前页码
 
                 //ajax请求数据
                 $.ajax({
@@ -77,9 +77,9 @@
                 });
             },
             "paging": false,
-//            "pageLength": 10,
-//            "processing": true,//显示加载进度条
-//            "serverSide": true,//开启服务器端模式
+            //            "pageLength": 10,
+            //            "processing": true,//显示加载进度条
+            //            "serverSide": true,//开启服务器端模式
             "ordering": false,
             columns: [
                 {
@@ -88,7 +88,15 @@
                 {
                     "data": "Name", 'sClass': "",
                     render: function (innerData, sSpecific, oData) {
-                        return oData.Name + ($.trim(oData.URL).length > 0 ? '(链接：' + oData.URL + ')' : '');
+                        var html = "";
+                        for (var i = 1; i < oData.level; i++) {
+                            html = html + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                        }
+                        if (oData.level > 1) {
+                            html = html + "|-";
+
+                        }
+                        return html+oData.Name + ($.trim(oData.URL).length > 0 ? '(链接：' + oData.URL + ')' : '');
                     }
                 },
                 {
@@ -104,37 +112,32 @@
                 {
                     "data": "Order", 'sClass': "text-center",
                     render: function (innerData, sSpecific, oData) {
-                        return '<input type="text" name="txtordernum" id="txtordernum' + oData.ID + '" data-id="' + oData.id + '"  data-value="' + oData.Order + '" value="' + oData.Order + '" onkeyup="this.value=this.value.replace(/[^\\d]/g,\'\');" onafterpaste="this.value=this.value.replace(/[^\\d]/g,\'\');"  onblur="updateorder(this)" class="form-control input-sm" style="width:50px;" />';
+                        return '<input type="text" name="txtordernum" id="txtordernum' + oData.ID + '" data-id="' + oData.ID + '"  data-value="' + oData.Order + '" value="' + oData.Order + '" onkeyup="this.value=this.value.replace(/[^\\d]/g,\'\');" onafterpaste="this.value=this.value.replace(/[^\\d]/g,\'\');"  onblur="updateorder(this)" class="form-control input-sm" style="width:50px;" />';
                     }
                 },
                 {
                     "data": "State", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
-                    var html = '<div class="hidden-sm hidden-xs action-buttons">';
+                        var html = '<div class="hidden-sm hidden-xs action-buttons">';
 
-                    html += '<a class="blue" href="#" onclick="edit(\'' + oData.ID + '\',\'\')">';
-                    html += '编辑';
-                    html += '  </a> ';
+                        html += '<a class="blue" href="#" onclick="edit(\'' + oData.ID + '\',\'\')">';
+                        html += '编辑';
+                        html += '  </a> ';
 
-                    html += ' <a class="blue" href="#"  onclick="update(\'' + oData.ID + '\',' + oData.State + ',0)">';
-                    if (oData.State == 1) {
-                        html += '禁用';
-                    } else {
-                        html += '启用';
+                        html += ' <a class="blue" href="#"  onclick="update(\'' + oData.ID + '\',' + oData.State + ',0)">';
+                        if (oData.State == 1) {
+                            html += '禁用';
+                        } else {
+                            html += '启用';
+                        }
+                        html += ' </a> ';
+
+                        html += '    <a class="blue" href="#" onclick="del(\'' + oData.ID + '\')">';
+                        html += '删除';
+                        html += '  </a> ';
+
+                        html += '    </div> ';
+                        return html;
                     }
-                    html += ' </a> ';
-
-
-                    html += ' <a class="blue" href="#" onclick="edit(\'\',\'' + oData.ID + '\')">';
-                    html += '添加子级';
-                    html += ' </a> ';
-
-                    html += '    <a class="blue" href="#" onclick="del(\'' + oData.ID + '\')">';
-                    html += '删除';
-                    html += '  </a> ';
-
-                    html += '    </div> ';
-                    return html;
-                }
                 }
             ]
         });
@@ -143,7 +146,7 @@
         loadPageInit();
     });
     function edit(id, parentid) {
-        window.location.href = "/menu/add?id=" + id ;
+        window.location.href = "/menu/add?id=" + id;
     }
     function ChangeDateFormat(cellval) {
         var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
@@ -153,7 +156,7 @@
     }
 
     function updateorder(obj) {
-        if (isemp($(obj).val()) || !isnum($.trim($(obj).val())) || $.trim($(obj).attr("data-value"))==$.trim($(obj).val())) {
+        if (isemp($(obj).val()) || !isnum($.trim($(obj).val())) || $.trim($(obj).attr("data-value")) == $.trim($(obj).val())) {
             return;
         }
         $.ajax({
@@ -161,18 +164,20 @@
             type: 'POST',
             data: {
                 id: $(obj).attr("data-id"),
-                ordernum:$.trim($(obj).val())
+                ordernum: $.trim($(obj).val())
             },
-            beforeSend:function(){
+            beforeSend: function () {
                 startloading();
             },
-            complete:function(){
+            complete: function () {
                 closeloading();
             },
             success: function (data) {
-                msgg(data.msg);
-                if (data.state ==1) {
+                if (data.code == "200") {
+                    layer.alert(data.message);
                     refreshDataTable();
+                } else {
+                    layer.alert(data.message);
                 }
             },
             dataType: "json"
@@ -185,25 +190,26 @@
 
     function update(id, state, field) {
         var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该链接吗？";
-        confirmm(message, function () {
+        layer.confirm(message, function () {
             $.ajax({
                 url: "/menu/updatestate",
                 type: 'POST',
                 data: {
                     id: id,
-                    state: state == 1 ? 0 : 1,
-                    field: field
+                    state: state == 1 ? 0 : 1
                 },
-                beforeSend:function(){
+                beforeSend: function () {
                     startloading();
                 },
-                complete:function(){
+                complete: function () {
                     closeloading();
                 },
                 success: function (data) {
-                    msgg(data.msg);
-                    if (data.state == 1) {
+                    if (data.code == "200") {
+                        layer.alert(data.message);
                         refreshDataTable();
+                    } else {
+                        layer.alert(data.message);
                     }
                 },
                 dataType: "json"
@@ -213,23 +219,25 @@
 
     function del(id) {
         var message = "你确认要删除该链接吗？";
-        confirmm(message, function () {
+        layer.confirm(message, function () {
             $.ajax({
                 url: "/menu/del",
                 type: 'POST',
                 data: {
                     id: id,
                 },
-                beforeSend:function(){
+                beforeSend: function () {
                     startloading();
                 },
-                complete:function(){
+                complete: function () {
                     closeloading();
                 },
                 success: function (data) {
-                    msgg(data.msg);
-                    if (data.state == 1) {
+                    if (data.code == "200") {
+                        layer.alert(data.message);
                         refreshDataTable();
+                    } else {
+                        layer.alert(data.message);
                     }
                 },
                 dataType: "json"
@@ -243,8 +251,8 @@
         return false;
     }
     function isnum(obj) {
-        var re=/[^\d]/g;
-        if (obj && $.trim(obj).length>0) {
+        var re = /[^\d]/g;
+        if (obj && $.trim(obj).length > 0) {
             return !re.test($.trim(obj));
         }
         return false;

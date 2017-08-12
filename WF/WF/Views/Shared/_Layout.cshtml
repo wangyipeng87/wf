@@ -65,6 +65,8 @@
     <!-- ace scripts -->
     <script src="~/Content/Plugins/ace/assets/js/ace-elements.min.js"></script>
     <script src="~/Content/Plugins/ace/assets/js/ace.min.js"></script>
+    <link href="~/Content/Plugins/bootstrapswitch/bootstrap-switch.css" rel="stylesheet" />
+    <script src="~/Content/Plugins/bootstrapswitch/bootstrap-switch.js"></script>
     <style>
         .dataTables_wrapper .row:first-child {
             display: none;
@@ -98,6 +100,7 @@
         } catch (e) {
         }
         var curmenuurl;
+        var menuname="";
         var menulist = @Html.Raw(new WF.BLL.WF_MenuBll().getAll("00000000-0000-0000-0000-000000000000").ToJson());
         var obj = @Html.Raw(new WF.BLL.WF_MenuBll().getMenu("00000000-0000-0000-0000-000000000000"));
         function initMenu(parentmenu, parentul, isroot) {
@@ -239,6 +242,10 @@
         {
             var currmenu=$(".active");
             navlist=new Array();
+            if(!$.isempty(menuname))
+            {
+                navlist.push(menuname);
+            }
             getnavl(currmenu.eq(0).attr("id"));
             var ul=$(".breadcrumb");
             ul.empty();
@@ -286,6 +293,22 @@
                 }
             }
         }
+        
+        (function ($) {
+            if ($ != null && $ != undefined) {
+                //备份jquery的ajax方法
+                var _ajax = $.ajax;
+                //重写jquery的ajax方法
+                $.ajax = function (opt) {
+                    var data = {
+                        rand: Math.random()
+                    };
+                    var newdata = $.extend(data, opt.data);
+                    opt.data = newdata;
+                    _ajax(opt);
+                };
+            }
+        })(jQuery);
     </script>
 </head>
 <body class="no-skin">
