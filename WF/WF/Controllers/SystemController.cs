@@ -3,24 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WF.DAO;
-using WF.Entity;
-using WF.BLL;
 
 namespace WF.Controllers
 {
-    public class HomeController : BaseController
+    public class SystemController : Controller
     {
-        // GET: Home
-        public ActionResult Index()
+        // GET: System
+        public ActionResult EmployeeList()
         {
             return View();
         }
-
-        // GET: Personal
-        public ActionResult FlowApply()
+        // GET: System
+        public ActionResult DepartmentList()
         {
             return View();
         }
+        
     }
 }

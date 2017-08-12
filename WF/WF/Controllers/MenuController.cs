@@ -22,7 +22,12 @@ namespace WF.Controllers
             ViewBag.ID = id;
             return View();
         }
-
+        // GET: Menu
+        public ActionResult authority()
+        {
+            return View();
+        }
+        
         public ActionResult Index()
         {
             return View();

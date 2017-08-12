@@ -233,8 +233,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\FlowController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Controllers\PersonalController.cs" />
+    <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -261,6 +264,18 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Menu\index.cshtml" />
     <Content Include="Views\Menu\Add.cshtml" />
+    <Content Include="Views\Flow\TmpList.cshtml" />
+    <Content Include="Views\Flow\Instance.cshtml" />
+    <Content Include="Views\Flow\ToDoList.cshtml" />
+    <Content Include="Views\System\EmployeeList.cshtml" />
+    <Content Include="Views\System\DepartmentList.cshtml" />
+    <Content Include="Views\Flow\FlowRole.cshtml" />
+    <Content Include="Views\Home\FlowApply.cshtml" />
+    <Content Include="Views\Personal\MyApply.cshtml" />
+    <Content Include="Views\Personal\MyToDo.cshtml" />
+    <Content Include="Views\Personal\MyDone.cshtml" />
+    <Content Include="Views\Personal\Agent.cshtml" />
+    <Content Include="Views\Menu\authority.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
