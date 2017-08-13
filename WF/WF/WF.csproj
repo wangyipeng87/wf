@@ -276,6 +276,7 @@
     <Content Include="Views\Personal\MyDone.cshtml" />
     <Content Include="Views\Personal\Agent.cshtml" />
     <Content Include="Views\Menu\authority.cshtml" />
+    <Content Include="Views\Flow\Applyauthority.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

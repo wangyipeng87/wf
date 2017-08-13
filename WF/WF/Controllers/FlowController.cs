@@ -28,6 +28,11 @@ namespace WF.Controllers
         {
             return View();
         }
+        // GET: Flow
+        public ActionResult Applyauthority()
+        {
+            return View();
+        }
         
     }
 }
