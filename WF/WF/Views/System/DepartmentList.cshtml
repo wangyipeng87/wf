@@ -3,6 +3,52 @@
     ViewBag.Title = "部门信息";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script src="~/Content/Plugins/jquery-easyui-1.5.2/jquery.easyui.min.js"></script>
+<script src="~/Content/Plugins/jquery-easyui-1.5.2/locale/easyui-lang-zh_CN.js"></script>
+<link href="~/Content/Plugins/jquery-easyui-1.5.2/themes/gray/tree.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="header blue lighter smaller">
+            部门树
+        </h3>
+        <div class="col-sm-6">
+            <ul id="ddlDepartment" class="easyui-tree"></ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var DeptInfo= @Html.Raw(ViewBag.DeptInfo);
+    function child(ret, flag) {
+        if (ret.children.length > 0) {
+            if (parseInt(ret.attributes) <= flag) {
+                var ch = ret.children;
+                for (var j = 0; j < ch.length; j++) {
+                    child(ch[j], flag);
+                }
+            }
+            else {
+                var nodes = $('#ddlDepartment').tree('find', ret.id);
+                $('#ddlDepartment').tree('collapse', nodes.target);
+            }
+        }
+    }
+    $(document).ready(function () {
+        $('#ddlDepartment').tree({
+            data: DeptInfo,
+            animate: true,
+            checkbox: true,
+            lines: true,
+            onLoadSuccess: function (node, data) {
+                var falg = 0;
+                if (data != null && data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        child(data[i], 0);
+                    }
+                }
+            }
+        }); 
+    });
+    //var nodes = $("#ddlDepartment").tree("getChecked");
+</script>
 
-<h2>DepartmentList</h2>
 

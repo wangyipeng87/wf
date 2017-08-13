@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,6 +13,7 @@ namespace WF.Controllers
     public class SystemController : BaseController
     {
         private EmployeeBll empbll = new EmployeeBll();
+        private DepartmentBLL deptbll = new DepartmentBLL();
         // GET: System
         public ActionResult EmployeeList()
         {
@@ -20,6 +22,7 @@ namespace WF.Controllers
         // GET: System
         public ActionResult DepartmentList()
         {
+            ViewBag.DeptInfo = deptbll.getDepart(ConfigurationManager.AppSettings["RootDeptCode"].ToString());
             return View();
         }
         [HttpPost]
