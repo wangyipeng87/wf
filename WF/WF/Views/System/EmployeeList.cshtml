@@ -70,7 +70,7 @@
                     <th class="center" style="max-width: 50px; min-width:50px; width: 50px;">
                         序号
                     </th>
-                    <th class="center col-sm-1">姓名</th>
+                    <th class="center col-sm-2">姓名</th>
                     <th class="center col-sm-1">性别</th>
                     <th class="center col-sm-2">邮箱</th>
                     <th class="center col-sm-1">职位</th>
@@ -79,7 +79,6 @@
                     <th class="center col-sm-1">账号</th>
                     <th class="center col-sm-2">直线上级</th>
                     <th class="center col-sm-1">状态</th>
-                    <th class="center col-sm-1">操作</th>
                 </tr>
             </thead>
         </table>
@@ -103,7 +102,7 @@
             "order": [[1, "desc"]],
             columnDefs: [{
                 orderable: false,//禁用排序
-                targets: [0, 10]   //指定的列
+                targets: [0, 9]   //指定的列
             }],
             "fnInitComplete": function (oSettings, json) {
             },
@@ -199,17 +198,6 @@
                             return '<span class="label label-sm label-warning">离职</span>';
                         }
                     }
-                },
-                {
-                    "data": "State", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
-                        var html = '<div class="hidden-sm hidden-xs action-buttons">';
-                        html += '<a class="blue" href="#" onclick="edit(\'' + oData.ID + '\',\'\')">';
-                        html += '查看';
-                        html += '  </a> '; 
-
-                        html += '    </div> ';
-                        return html;
-                    }
                 }
             ]
         });
@@ -217,9 +205,6 @@
     $(document).ready(function () {
         loadPageInit();
     });
-    function edit(id, parentid) {
-        window.location.href = "../menu/add?id=" + id;
-    }
     function ChangeDateFormat(cellval) {
         var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
         var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
