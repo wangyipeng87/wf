@@ -734,6 +734,9 @@
     <Content Include="Views\Flow\Applyauthority.cshtml" />
     <Content Include="Content\Plugins\jquery-easyui-1.5.2\themes\material\images\Thumbs.db" />
     <Content Include="Views\Flow\AddRole.cshtml" />
+    <Content Include="Views\Flow\FlowRoleUserList.cshtml" />
+    <Content Include="Views\Shared\PopLayout.cshtml" />
+    <Content Include="Views\Flow\AddRoleUser.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

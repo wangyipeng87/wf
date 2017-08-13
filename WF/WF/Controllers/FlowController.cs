@@ -12,6 +12,7 @@ namespace WF.Controllers
     public class FlowController : BaseController
     {
         WF_RoleBll rolebll = new WF_RoleBll();
+        WF_Role_UserBll roleuserbll = new WF_Role_UserBll();
 
         // GET: Flow
         public ActionResult TmpList()
@@ -43,6 +44,27 @@ namespace WF.Controllers
         {
             return View();
         }
+        // GET: Flow
+        public ActionResult FlowRoleUserList(string rolecode, string rolename)
+        {
+            ViewBag.rolecode = rolecode;
+            ViewBag.rolename = rolename;
+            return View();
+        }
+        // GET: Flow
+        public ActionResult AddRoleUser(int? id, string rolecode, string rolename)
+        {
+            ViewBag.rolecode = rolecode;
+            if(id==null)
+            {
+                id = -1;
+            }
+            ViewBag.id = id;
+            ViewBag.rolename = rolename;
+            return View();
+        }
+        
+
         // GET: Flow
         public ActionResult Applyauthority()
         {
@@ -172,6 +194,49 @@ namespace WF.Controllers
             {
                 res.code = ResultCode.ERROR;
                 res.message = "删除失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        [HttpPost]
+        public ContentResult GetFlowRoleUserList(string key, string rolecode, int state, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                key = Server.UrlDecode(key);
+                int count = 0;
+                List<WF_Role_User> emplist = roleuserbll.getAll(key, rolecode, state,start + 1, start + length,  out count);
+                res.code = ResultCode.OK;
+                res.data = emplist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+        public ContentResult getRoleUserByID(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_Role role = rolebll.getByID(id);
+                if (role == null)
+                {
+                    role = new WF_Role();
+                    role.ID = id;
+                    role.State = 1;
+                }
+                res.code = ResultCode.OK;
+                res.data = role;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "获取流程角色信息失败";
             }
             return Content(res.ToJson());
         }

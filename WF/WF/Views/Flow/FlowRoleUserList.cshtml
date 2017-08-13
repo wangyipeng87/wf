@@ -1,15 +1,17 @@
 ﻿
 @{
-    ViewBag.Title = "流程角色";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "流程角色人员列表";
+    Layout = "~/Views/Shared/PopLayout.cshtml";
 }
 
 <script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.min.js"></script>
 <script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+<input type="hidden" id="hidrolecode" value="@ViewBag.rolecode" />
+<input type="hidden" id="hidrolename" value="@ViewBag.rolename" />
 <div class="row">
     <div class="col-sm-12">
         <h3 class="header blue lighter smaller">
-            流程角色列表
+            流程角色人员列表
         </h3>
         <div class="row">
             <div class="col-xs-12">
@@ -21,7 +23,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input onkeyup="refreshDataTable();" type="text" id="txtkey"
-                                       placeholder="角色编号/角色名称 "
+                                       placeholder="姓名/工号 "
                                        class="col-xs-10 col-sm-10">
                             </div>
                         </div>
@@ -57,7 +59,7 @@
                 <div class="dt-buttons btn-overlap btn-group">
                     <button type="button" class="btn btn-inverse btn-white"
                             onclick="edit('')">
-                        添加角色
+                        添加人员
                     </button>
                 </div>
             </div>
@@ -69,11 +71,10 @@
                     <th class="center" style="max-width: 50px; min-width:50px; width: 50px;">
                         序号
                     </th>
-                    <th class="center col-sm-3">角色编号</th>
-                    <th class="center col-sm-3">角色名称 </th>
-                    <th class="center col-sm-2">创建时间 </th>
-                    <th class="center col-sm-1">状态</th>
-                    <th class="center col-sm-3">操作</th>
+                    <th class="center col-sm-4">角色</th>
+                    <th class="center col-sm-4">员工 </th>
+                    <th class="center col-sm-2">状态</th>
+                    <th class="center col-sm-2">操作</th>
                 </tr>
             </thead>
         </table>
@@ -97,22 +98,21 @@
             "order": [[3, "desc"]],
             columnDefs: [{
                 orderable: false,//禁用排序
-                targets: [0, 5]   //指定的列
+                targets: [0, 4]   //指定的列
             }],
             "fnInitComplete": function (oSettings, json) {
             },
             ajax: function (data, callback, settings) {
                 //ajax请求数据
                 $.ajax({
-                    url: "../Flow/GetFlowRoleList",
+                    url: "../Flow/GetFlowRoleUserList",
                     type: 'POST',
                     cache: false,  //禁用缓存
                     data: {
                         key: escape($.trim($("#txtkey").val())),
+                        rolecode: $.trim($("#hidrolecode").val()),
                         state: $.trim($("#selstate").val()),
                         start: data.start,
-                        orderfiled: data.columns[data.order[0].column].data,
-                        dir: data.order[0].dir,
                         length: data.length
                     },  //传入组装的参数
                     dataType: "json",
@@ -139,17 +139,13 @@
                     "data": "index", 'sClass': "text-center"
                 },
                 {
-                    "data": "RoleCode", 'sClass': "text-center"
+                    "data": "RoleCode", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        return oData.RoleName + "（" + oData.RoleCode + "）";
+                    }
                 },
                 {
-                    "data": "RoleName", 'sClass': "text-center"
-                },
-                {
-                    "data": "CreateTime", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
-                        if (!$.isempty(oData.CreateTime)) {
-                            return ChangeDateFormat(oData.CreateTime);
-                        }
-                        return "";
+                    "data": "UserName", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        return oData.UserName + "（" + oData.UserCode + "）";
                     }
                 },
                 {
@@ -166,10 +162,7 @@
                 },
                 {
                     "data": "State", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
-                        var html = '<div class="hidden-sm hidden-xs action-buttons">';
-                        html += '<a class="blue" href="#" onclick="edit(\'' + oData.ID + '\')">';
-                        html += '编辑';
-                        html += '  </a> ';
+                        var html = '<div class="hidden-sm hidden-xs action-buttons">';;
 
                         html += ' <a class="blue" href="#"  onclick="update(\'' + oData.ID + '\',' + oData.State + ',0)">';
                         if (oData.State == 1) {
@@ -178,10 +171,7 @@
                             html += '启用';
                         }
                         html += ' </a> ';
-                        
-                        html += '    <a class="blue" href="#" onclick="openuserlist(\'' + oData.RoleCode + '\',\'' + oData.RoleName + '\')">';
-                        html += '人员设置';
-                        html += '  </a> ';
+
                         html += '    <a class="blue" href="#" onclick="del(\'' + oData.ID + '\')">';
                         html += '删除';
                         html += '  </a> ';
@@ -197,17 +187,13 @@
         loadPageInit();
     });
     function edit(id) {
-        window.location.href = "../Flow/AddRole?id=" + id;
-    }
-    //FlowRoleUserList
-    function openuserlist(rolecode,rolename) {
         layer.open({
             type: 2,
-            title: '流程角色员工列表 ',
+            title: '添加员工 ',
             shadeClose: true,
             shade: 0.8,
             area: ['95%', '90%'],
-            content: '../Flow/FlowRoleUserList?rolecode=' + rolecode + "&rolename=" + rolename//iframe的url
+            content: "../Flow/AddRoleUser?rolecode=" + $("#hidrolecode").val() + "&rolename=" + $("#hidrolename").val() + "&id=" + id //iframe的url
         });
     }
     function ChangeDateFormat(cellval) {
@@ -277,3 +263,4 @@
         $("#dynamic-table").DataTable().ajax.reload();
     }
 </script>
+

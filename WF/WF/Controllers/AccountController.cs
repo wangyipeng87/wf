@@ -7,13 +7,14 @@ using System.Web.Security;
 using WF.BLL;
 using WF.Entity;
 using WF.Models;
+using WF.Common;
 
 namespace WF.Controllers
 {
     public class AccountController : BaseController
     {
 
-
+        EmployeeBll empbll = new EmployeeBll();
         //
         // GET: /Account/
         public ActionResult Login(string username, string password)
@@ -38,6 +39,11 @@ namespace WF.Controllers
         {
             FormsAuthentication.SignOut();
             return Redirect(FormsAuthentication.LoginUrl);
+        }
+        [HttpPost]
+        public ContentResult getEmpForAutocomplete(string key)
+        {
+            return Content( empbll.getEmpForAutocomplete(key).ToJson());
         }
     }
 }
