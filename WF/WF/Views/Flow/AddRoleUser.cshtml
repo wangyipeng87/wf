@@ -31,7 +31,7 @@
                         success: function (data) {
                             response($.map(data, function (item) {
                                 return {
-                                    label: item.UserName,
+                                    label: item.UserName + "（" + item.UserCode+")",
                                     value: item.UserCode
                                 }
                             }));
