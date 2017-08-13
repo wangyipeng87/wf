@@ -76,6 +76,59 @@ namespace WF.DAO
                 return conn.Query<Employee>(sql, new { Account = account, pwd=pwd }).FirstOrDefault();
             }
         }
+        public List<Employee> getAll(string key, string linemanage, int state,int  begin,int end,string order,out int count)
+        {
+            string sql = @"     ;WITH tmp 
+                                     AS (
+                                     
+                                     SELECT
+                                     	e.ID,
+                                     	e.UserCode,
+                                     	e.UserName,
+                                     	e.Sex,
+                                     	e.Email,
+                                     	e.PostCode,
+                                     	e.PostName,
+                                     	e.DepCode,
+                                     	e.DeptName,
+                                     	e.Phone,
+                                     	e.LineManageCode,
+                                     	e.CreateUserCode,
+                                     	e.CreateTime,
+                                     	e.UpdateUserCode,
+                                     	e.UpdateTime,
+                                     	e.[State],
+                                     	e.IsDelete,
+                                     	e.[PassWord],
+                                     	e.Account,
+ 	                                    e2.UserName+'('+e2.UserCode+')' AS LineManage,
+                                     	ROW_NUMBER() OVER ( ORDER BY " + order + @" ) AS [index]
+                                     	
+                                     FROM
+                                     	Employee AS e 
+                                     LEFT JOIN Employee AS e2 ON e.LineManageCode=e2.UserCode
+                                     WHERE (@state =-1 OR  e.[State]=@state )
+                                     AND (e.UserName LIKE  '%'+@key+'%' OR  e.UserCode LIKE  '%'+@key+'%' OR  e.Account LIKE  '%'+@key+'%')
+                                        AND ( @linemanage  is null or  @linemanage  ='' or e2.UserName   like  '%'+@linemanage+'%' OR  e2.UserCode like  '%'+@linemanage+'%'   OR  e2.Account  like  '%'+@linemanage+'%'   )
+               
+                                   ) 
+                                     SELECT * FROM tmp AS t WHERE t.[index] BETWEEN @begin AND @end";
+            string sqlcount = @"     select count(1)
+                                     FROM
+                                     	Employee AS e 
+                                     LEFT JOIN Employee AS e2 ON e.LineManageCode=e2.UserCode
+                                     WHERE (@state =-1 OR  e.[State]=@state )
+                                     AND (e.UserName LIKE  '%'+@key+'%' OR  e.UserCode LIKE  '%'+@key+'%' OR  e.Account LIKE  '%'+@key+'%')  
+                                     AND ( @linemanage  is null or  @linemanage  ='' or e2.UserName   like  '%'+@linemanage+'%'  OR  e2.UserCode like  '%'+@linemanage+'%'   OR  e2.Account  like  '%'+@linemanage+'%'   )
+               
+                                     ";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                count = conn.Query<int>(sqlcount, new { state = state, key = key, linemanage = linemanage }).FirstOrDefault();
+                return conn.Query<Employee>(sql,new { state=state, key= key, begin= begin, end= end,linemanage=linemanage }).ToList();
+            }
+        }
     }
 }
 
