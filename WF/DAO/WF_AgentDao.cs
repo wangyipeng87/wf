@@ -37,7 +37,9 @@ namespace WF.DAO
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
             {
                 conn.Open();
-                return conn.Delete<WF_Agent>(conn.Get<WF_Agent>(id));
+                WF_Agent agent = conn.Get<WF_Agent>(id);
+                agent.IsDelete = 1;
+                return conn.Update<WF_Agent>(agent);
             }
         }
         public WF_Agent getByID(int id)

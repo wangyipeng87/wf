@@ -36,7 +36,9 @@ namespace WF.DAO
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
             {
                 conn.Open();
-                return conn.Delete<WF_Role_User>(conn.Get<WF_Role_User>(id));
+                WF_Role_User Role_User = conn.Get<WF_Role_User>(id);
+                Role_User.IsDelete = 1;
+                return conn.Update<WF_Role_User>(Role_User);
             }
         }
         public WF_Role_User getByID(int id)
