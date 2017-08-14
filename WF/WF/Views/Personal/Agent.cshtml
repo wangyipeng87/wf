@@ -168,9 +168,9 @@
                     "data": "BeginTime", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
                         var html = "";
                         if (!$.isempty(oData.BeginTime)) {
-                            html = html + ChangeDateFormat(oData.CreateTime);
+                            html = html + ChangeDateFormat(oData.BeginTime);
 
-                            html = html + "-";
+                            html = html + "至";
                         }
                         if (!$.isempty(oData.EndTime)) {
                             html = html + ChangeDateFormat(oData.EndTime);
@@ -230,18 +230,12 @@
     function edit(id) {
         window.location.href = "../Personal/AddAgent?id=" + id;
     }
-    function ChangeDateFormat(cellval) {
-        var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
-        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-        return date.getFullYear() + "-" + month + "-" + currentDate;
-    }
 
     function update(id, state, field) {
         var message = "你确认要" +(state == 1 ? "禁用" : "启用")  + "该代理人吗？";
         layer.confirm(message, function () {
             $.ajax({
-                url: "../Personal/UpdateAgentState",
+                url: "../Personal/updateAgentstate",
                 type: 'POST',
                 data: {
                     id: id,
@@ -270,7 +264,7 @@
         var message = "你确认要删除该该代理人吗？";
         layer.confirm(message, function () {
             $.ajax({
-                url: "../Personal/AgentDel",
+                url: "../Personal/delAgent",
                 type: 'POST',
                 data: {
                     id: id,

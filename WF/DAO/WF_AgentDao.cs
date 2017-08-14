@@ -14,6 +14,41 @@ namespace WF.DAO
 {
     public class WF_AgentDao
     {
+
+        public bool save(WF_Agent entity)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                conn.Insert<WF_Agent>(entity);
+                return true;
+            }
+        }
+        public bool update(WF_Agent entity)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Update<WF_Agent>(entity);
+            }
+        }
+        public bool del(int id)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Delete<WF_Agent>(conn.Get<WF_Agent>(id));
+            }
+        }
+        public WF_Agent getByID(int id)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Get<WF_Agent>(id);
+            }
+        }
+
         public List<WF_Agent> getAll(string origina, string user, int state, int begin, int end, out int count)
         {
             string sql = @"  ;WITH tmp 

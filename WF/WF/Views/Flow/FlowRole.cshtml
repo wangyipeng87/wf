@@ -210,12 +210,6 @@
             content: '../Flow/FlowRoleUserList?rolecode=' + rolecode + "&rolename=" + rolename//iframe的url
         });
     }
-    function ChangeDateFormat(cellval) {
-        var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
-        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-        return date.getFullYear() + "-" + month + "-" + currentDate;
-    }
 
     function update(id, state, field) {
         var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该角色吗？";

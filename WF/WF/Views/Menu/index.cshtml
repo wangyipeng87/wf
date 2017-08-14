@@ -157,12 +157,6 @@
     function edit(id, parentid) {
         window.location.href = "../menu/add?id=" + id;
     }
-    function ChangeDateFormat(cellval) {
-        var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
-        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-        return date.getFullYear() + "-" + month + "-" + currentDate;
-    }
 
     function updateorder(obj) {
         if (isemp($(obj).val()) || !isnum($.trim($(obj).val())) || $.trim($(obj).attr("data-value")) == $.trim($(obj).val())) {

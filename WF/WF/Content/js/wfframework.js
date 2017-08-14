@@ -56,6 +56,10 @@ $.htmlDecode = function (str) {
 //        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
 //    return fmt;
 //}
+
+function ChangeDateFormat(cellval) {
+    return cellval.substring(0, 10);;
+}
 $.isempty = function (str) {
     if (str == null || str == undefined || str == "" || $.trim(str) == "") {
         return true;

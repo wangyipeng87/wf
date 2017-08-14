@@ -737,6 +737,7 @@
     <Content Include="Views\Flow\FlowRoleUserList.cshtml" />
     <Content Include="Views\Shared\PopLayout.cshtml" />
     <Content Include="Views\Flow\AddRoleUser.cshtml" />
+    <Content Include="Views\Personal\AddAgent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
