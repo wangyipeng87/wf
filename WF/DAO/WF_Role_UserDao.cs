@@ -47,6 +47,26 @@ namespace WF.DAO
                 return conn.Get<WF_Role_User>(id);
             }
         }
+        public WF_Role_User getRoleUserByID(int id)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                string sql = @"  SELECT
+                                     	wru.ID,
+                                     	wr.RoleName,
+                                     	wru.RoleCode,
+                                     	e.UserName,
+                                     	e.UserCode,
+                                     	wru.[State]
+                                     FROM
+                                     	WF_Role_User AS wru
+                                     	INNER JOIN WF_Role AS wr ON wru.RoleCode=wr.RoleCode
+                                     	INNER JOIN Employee AS e ON wru.UserCode=e.UserCode
+                        WHERE wru.ID=@id";
+                return conn.Query<WF_Role_User>(sql, new { id = id }).FirstOrDefault(); ;
+            }
+        }
         public List<WF_Role_User> getAll(string key, string rolecode, int state, int begin, int end,  out int count)
         {
             string sql = @"    ;WITH tmp

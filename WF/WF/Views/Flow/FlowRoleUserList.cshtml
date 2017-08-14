@@ -204,10 +204,10 @@
     }
 
     function update(id, state, field) {
-        var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该角色吗？";
+        var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该员工吗？";
         layer.confirm(message, function () {
             $.ajax({
-                url: "../flow/UpdateRoleState",
+                url: "../flow/UpdateRoleUserState",
                 type: 'POST',
                 data: {
                     id: id,
@@ -233,10 +233,10 @@
     }
 
     function del(id) {
-        var message = "你确认要删除该角色吗？";
+        var message = "你确认要删除该员工吗？";
         layer.confirm(message, function () {
             $.ajax({
-                url: "../flow/RoleDel",
+                url: "../flow/RoleUserDel",
                 type: 'POST',
                 data: {
                     id: id,

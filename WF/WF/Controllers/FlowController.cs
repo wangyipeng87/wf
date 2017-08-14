@@ -223,10 +223,10 @@ namespace WF.Controllers
             AjaxResult res = new AjaxResult();
             try
             {
-                WF_Role role = rolebll.getByID(id);
+                WF_Role_User role = roleuserbll.getByID(id);
                 if (role == null)
                 {
-                    role = new WF_Role();
+                    role = new WF_Role_User();
                     role.ID = id;
                     role.State = 1;
                 }
@@ -237,6 +237,80 @@ namespace WF.Controllers
             {
                 res.code = ResultCode.ERROR;
                 res.message = "获取流程角色信息失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult SaveRoleUser(string jsonString)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_Role_User role = jsonString.ToObject<WF_Role_User>();
+                WF_Role_User entity = roleuserbll.getByID(role.ID);
+                if (entity != null)
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = entity.CreateTime;
+                    role.CreateUserCode = entity.CreateUserCode;
+                    role.IsDelete = entity.IsDelete;
+                    roleuserbll.update(role);
+                }
+                else
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = DateTime.Now;
+                    role.CreateUserCode = getCurrent().UserCode;
+                    role.IsDelete = 0;
+                    roleuserbll.save(role);
+                }
+                res.code = ResultCode.OK;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "保存失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult UpdateRoleUserState(int id, int state)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_Role_User entity = roleuserbll.getByID(id);
+                if (entity != null)
+                {
+                    entity.State = state;
+                    roleuserbll.update(entity);
+                }
+                res.code = ResultCode.OK;
+                res.message = "更新状态成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "更新状态失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult RoleUserDel(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                roleuserbll.del(id);
+                res.code = ResultCode.OK;
+                res.message = "删除成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "删除失败";
             }
             return Content(res.ToJson());
         }

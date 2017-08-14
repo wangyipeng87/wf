@@ -54,7 +54,7 @@
             State: $('#chkState').bootstrapSwitch('state') ? 1 : 0
         };
         $.ajax({
-            url: "../flow/SaveRole",
+            url: "../flow/SaveRoleUser",
             type: 'POST',
             async: false,
             data: {
@@ -63,7 +63,8 @@
             success: function (result) {
                 if (result.code == "200") {
                     layer.alert("保存成功", function (index) {
-                        goBack();
+                        parent.refreshDataTable();
+                        parent.layer.closeAll();
                     });
                 }
                 else {
@@ -75,7 +76,7 @@
     }
     function load() {
         $.ajax({
-            url: "../flow/getRoleByID",
+            url: "../flow/getRoleUserByID",
             type: 'GET',
             async: false,
             data: {
@@ -93,9 +94,8 @@
         });
     }
     function init(obj) {
-        $("#hidid").val(obj.ID);
-        $("#txtName").val(obj.RoleName);
-        $("#txtCode").val(obj.RoleCode);
+        $("#txtName").val(obj.UserName);
+        $("#hidUserCode").val(obj.UserCode);
         if (obj.State == 1) {
             $('#chkState').bootstrapSwitch('state', true);
         } else {
@@ -103,7 +103,8 @@
         }
     }
     function goBack() {
-        window.location.href = "../flow/flowrole";
+        parent.refreshDataTable();
+        parent.layer.closeAll();
     }
 </script>
 <div class="page-header">
