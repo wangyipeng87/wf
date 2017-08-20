@@ -13,6 +13,7 @@ namespace WF.Controllers
     {
         WF_RoleBll rolebll = new WF_RoleBll();
         WF_Role_UserBll roleuserbll = new WF_Role_UserBll();
+        WF_TemplateBll tmpbll = new WF_TemplateBll();
 
         // GET: Flow
         public ActionResult TmpList()
@@ -38,7 +39,16 @@ namespace WF.Controllers
             ViewBag.ID = id;
             return View();
         }
-        
+        public ActionResult AddTmp(int? id)
+        {
+            if (id == null)
+            {
+                id = -1;
+            }
+            ViewBag.ID = id;
+            return View();
+        }
+
         // GET: Flow
         public ActionResult FlowRole()
         {
@@ -304,6 +314,135 @@ namespace WF.Controllers
             try
             {
                 roleuserbll.del(id);
+                res.code = ResultCode.OK;
+                res.message = "删除成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "删除失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        [HttpPost]
+        public ContentResult GetTmpList(string key, int state, string orderfiled, string dir, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                key = Server.UrlDecode(key);
+                #region 获取排序字段
+                string orderstr = "wt.CreateTime desc";
+                Dictionary<string, string> ordermap = new Dictionary<string, string>();
+                ordermap.Add("key", "wt.key ");
+                ordermap.Add("TmpName", "wt.TmpName ");
+                ordermap.Add("State", "wt.State");
+                ordermap.Add("CreateTime", "wt.CreateTime");
+                ordermap.Add("createuser", "wt.CreateUserCode"); 
+                if (!string.IsNullOrWhiteSpace(orderfiled))
+                {
+                    orderstr = ordermap[orderfiled] + " " + dir;
+                }
+                #endregion
+                int count = 0;
+                List<WF_Template> emplist = tmpbll.getAll(key, state, start + 1, start + length, orderstr, out count);
+                res.code = ResultCode.OK;
+                res.data = emplist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        [HttpPost]
+        public ContentResult SaveTmp(string jsonString)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_Template role = jsonString.ToObject<WF_Template>();
+                WF_Template entity = tmpbll.getByID(role.ID);
+                if (entity != null)
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = entity.CreateTime;
+                    role.CreateUserCode = entity.CreateUserCode;
+                    tmpbll.update(role);
+                }
+                else
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = DateTime.Now;
+                    role.CreateUserCode = getCurrent().UserCode;
+                    tmpbll.save(role);
+                }
+                res.code = ResultCode.OK;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "保存失败";
+            }
+            return Content(res.ToJson());
+        }
+        public ContentResult getTmpByID(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_Template role = tmpbll.getByID(id);
+                if (role == null)
+                {
+                    role = new WF_Template();
+                    role.ID = id;
+                    role.State = 1;
+                }
+                res.code = ResultCode.OK;
+                res.data = role;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "获取流程模板信息失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult UpdateTmpState(int id, int state)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_Template entity = tmpbll.getByID(id);
+                if (entity != null)
+                {
+                    entity.State = state;
+                    tmpbll.update(entity);
+                }
+                res.code = ResultCode.OK;
+                res.message = "更新状态成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "更新状态失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult TmpDel(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                tmpbll.del(id);
                 res.code = ResultCode.OK;
                 res.message = "删除成功";
             }

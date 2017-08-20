@@ -738,6 +738,7 @@
     <Content Include="Views\Shared\PopLayout.cshtml" />
     <Content Include="Views\Flow\AddRoleUser.cshtml" />
     <Content Include="Views\Personal\AddAgent.cshtml" />
+    <Content Include="Views\Flow\AddTmp.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

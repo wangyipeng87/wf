@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewBag.Title = "添加流程模板";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    curmenuurl = applicationPath + "/flow/TmpList";
+    menuname = "流程模板编辑";
+   $(document).ready(function () {
+        $('#chkState').bootstrapSwitch();
+        //$('#chkState').on('switchChange.bootstrapSwitch', function (event, state) {
+        //    console.log(this); // DOM element
+        //    console.log(event); // jQuery event
+        //    console.log(state); // true | false
+        //});
+        //$('#chkState').bootstrapSwitch('state', false);
+        load();
+    });
+    function save() {
+        var menu = {
+            ID: $("#hidid").val(),
+            TmpName: $("#txtName").val(),
+            key: $("#txtCode").val(),
+            Description: $("#txtDes").val(),
+            State: $('#chkState').bootstrapSwitch('state') ? 1 : 0
+        };
+        $.ajax({
+            url: "../flow/SaveTmp",
+            type: 'POST',
+            async: false,
+            data: {
+                jsonString: JSON.stringify(menu)
+            },
+            success: function (result) {
+                if (result.code == "200") {
+                    layer.alert("保存成功", function (index) {
+                        goBack();
+                    });
+                }
+                else {
+                    layer.alert(result.message);
+                }
+            },
+            dataType: "json"
+        });
+    }
+    function load() {
+        $.ajax({
+            url: "../flow/getTmpByID",
+            type: 'GET',
+            async: false,
+            data: {
+                id: $("#hidid").val()
+            },
+            success: function (result) {
+                if (result.code == "200") {
+                    init(result.data);
+                }
+                else {
+                    layer.alert(result.message);
+                }
+            },
+            dataType: "json"
+        });
+    }
+    function init(obj) {
+        $("#hidid").val(obj.ID);
+        $("#txtName").val(obj.TmpName);
+        $("#txtCode").val(obj.key); 
+        $("#txtDes").val(obj.Description);
+        if (obj.State == 1) {
+            $('#chkState').bootstrapSwitch('state', true);
+        } else {
+            $('#chkState').bootstrapSwitch('state', false);
+        }
+    }
+    function goBack() {
+        window.location.href = "../flow/TmpList";
+    }
+</script>
+<div class="page-header">
+    <h1>
+        流程模板明细
+    </h1>
+</div>
+<input type="hidden" id="hidid" value="@ViewBag.ID" />
+<div class="row">
+    <div class="col-xs-12">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtCode"> <i style="color: red; vertical-align: middle;">*</i> key </label>
+                <div class="col-sm-9">
+                    <input type="text" id="txtCode" maxlength="30" placeholder="key"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtName"> <i style="color: red; vertical-align: middle;">*</i> 模板名称 </label>
+                <div class="col-sm-9">
+                    <input type="text" id="txtName" maxlength="30" placeholder="模板名称"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtDes"> <i style="color: red; vertical-align: middle;">*</i> 描述 </label>
+                <div class="col-sm-9">
+                    <textarea  id="txtDes" maxlength="4000"     class="col-xs-10 col-sm-5" >
+                    </textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="chkState"> 是否启用 </label>
+                <div class="col-sm-9">
+                    <div class="switch" />
+                    <input id="chkState" type="checkbox" checked="checked" data-on-text="启用" data-off-text="禁用" />
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button id="btnOk" class="btn btn-info" type="button" onclick="save()">
+                <i class="ace-icon fa fa-check bigger-110"></i>
+                确认
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button id="btnBack" class="btn" type="button" onclick="goBack()">
+                <i class="ace-icon fa fa-undo bigger-110"></i>
+                返回
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE CONTENT END -->
+</div>
