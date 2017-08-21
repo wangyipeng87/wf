@@ -15,6 +15,7 @@ namespace WF.Controllers
         // GET: Home
         public ActionResult Index()
         {
+            LogHelper.WriteLog("测试哈测试");
             return View();
         }
 
