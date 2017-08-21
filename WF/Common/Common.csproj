@@ -7,7 +7,7 @@
     <ProjectGuid>{4999D11F-67B9-4206-BDE0-F720124EC36F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
+    <RootNamespace>WF.Common</RootNamespace>
     <AssemblyName>Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

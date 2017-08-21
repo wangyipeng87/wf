@@ -7,7 +7,7 @@
     <ProjectGuid>{62CD8418-4066-4BE6-80AD-A490C9D3AF2A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BLL</RootNamespace>
+    <RootNamespace>WF.BLL</RootNamespace>
     <AssemblyName>BLL</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

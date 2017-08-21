@@ -7,7 +7,7 @@
     <ProjectGuid>{BC28613E-3924-42BD-B123-596B4C7A916D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Entity</RootNamespace>
+    <RootNamespace>WF.Entity</RootNamespace>
     <AssemblyName>Entity</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
