@@ -30,6 +30,16 @@ namespace WF.Controllers
         {
             return View();
         }
+        // GET: FlowDesign
+        public ActionResult FlowDesign(int? id)
+        {
+            if (id == null)
+            {
+                id = -1;
+            }
+            ViewBag.ID = id;
+            return View();
+        }
         public ActionResult AddRole(int? id)
         {
             if (id==null)

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using WF.DAO;
 using WF.Entity;
 using WF.BLL;
+using WF.Common;
 
 namespace WF.Controllers
 {

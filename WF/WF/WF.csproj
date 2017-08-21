@@ -90,6 +90,8 @@
     <Content Include="Content\js\jquery-3.2.1.min.js" />
     <Content Include="Content\js\raphael.min.js" />
     <Content Include="Content\js\wfframework.js" />
+    <Content Include="Content\js\workflow-show.js" />
+    <Content Include="Content\js\workflow.js" />
     <Content Include="Content\Plugins\ace\assets\css\ace-ie.min.css" />
     <Content Include="Content\Plugins\ace\assets\css\ace-part2.min.css" />
     <Content Include="Content\Plugins\ace\assets\css\ace-rtl.min.css" />
@@ -744,6 +746,7 @@
     <Content Include="Views\Personal\AddAgent.cshtml" />
     <Content Include="Views\Flow\AddTmp.cshtml" />
     <Content Include="log4net.config" />
+    <Content Include="Views\Flow\FlowDesign.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

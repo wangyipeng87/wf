@@ -183,10 +183,10 @@
                         }
                         html += ' </a> ';
 
-                        html += '    <a class="blue" href="#" onclick="openuserlist(\'' + oData.RoleCode + '\',\'' + oData.RoleName + '\')">';
+                        html += '    <a class="blue" href="#" onclick="openDesign(\'' + oData.key + '\',\'' + oData.TmpName + '\')">';
                         html += '流程设计';
                         html += '  </a> ';
-                        html += '    <a class="blue" href="#" onclick="openuserlist(\'' + oData.RoleCode + '\',\'' + oData.RoleName + '\')">';
+                        html += '    <a class="blue" href="#" onclick="openVarlist(\'' + oData.key + '\',\'' + oData.TmpName + '\')">';
                         html += '变量设置';
                         html += '  </a> ';
                         html += '    <a class="blue" href="#" onclick="del(\'' + oData.ID + '\')">';
@@ -207,10 +207,15 @@
         window.location.href = "../Flow/AddTmp?id=" + id;
     }
     //FlowRoleUserList
-    function openuserlist(rolecode,rolename) {
+    function openDesign(key, tmpname) {
+            window.location.href = "../Flow/FlowDesign?key=" + key;
+    }
+
+    //FlowRoleUserList
+    function openVarlist(key, tmpname) {
         layer.open({
             type: 2,
-            title: '流程角色员工列表 ',
+            title: tmpname + '变量列表 ',
             shadeClose: true,
             shade: 0.8,
             area: ['95%', '90%'],
