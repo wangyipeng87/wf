@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\Document\lib\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Document\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -44,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Json.cs" />
+    <Compile Include="LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
