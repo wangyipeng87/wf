@@ -23,6 +23,10 @@ namespace WF.BLL
         {
             return dao.del(id);
         }
+        public WF_Template getByKey(string key)
+        {
+            return dao.getByKey(key);
+        }
         public WF_Template getByID(int id)
         {
             return dao.getByID(id);

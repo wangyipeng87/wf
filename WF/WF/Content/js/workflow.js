@@ -23,7 +23,7 @@ var links_tables_fields = [];//当前流程的所有连接所有表和字段
 
 $(function ()
 {
-    wf_r = Raphael("flowdiv", $(window).width(), $(window).height() - 28);
+    wf_r = Raphael("divdesign", $(window).width(), $(window).height() - 28);
     wf_r.customAttributes.type1 = function () { };
     wf_r.customAttributes.fromid = function () { };
     wf_r.customAttributes.toid = function () { };
@@ -511,7 +511,7 @@ Raphael.fn.drawArr = function (obj)
         }
         tempArrPath = [];
         obj.arrPath = this.path(path2);
-        obj.arrPath.attr({ "stroke-width": 2, "stroke": wf_connColor });
+        obj.arrPath.attr({ "stroke-width": 4, "stroke": wf_connColor });
         tempArrPath.push(obj);
         return;
     }
@@ -527,7 +527,7 @@ Raphael.fn.drawArr = function (obj)
         else
         {
             obj.arrPath = this.path(path1);
-            obj.arrPath.attr({ "stroke-width": 2, "stroke": wf_connColor });
+            obj.arrPath.attr({ "stroke-width": 4, "stroke": wf_connColor });
             if (wf_designer)
             {
                 obj.arrPath.click(connClick);

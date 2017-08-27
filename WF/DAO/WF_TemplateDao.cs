@@ -50,6 +50,28 @@ namespace WF.DAO
                 return conn.Get<WF_Template>(id);
             }
         }
+        public WF_Template getByKey(string key)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                string sql = @"SELECT
+                                	wt.ID,
+                                	wt.[key],
+                                	wt.TmpName,
+                                	wt.[Description],
+                                	wt.CreateUserCode,
+                                	wt.CreateTime,
+                                	wt.UpdateUserCode,
+                                	wt.UpdateTime,
+                                	wt.[State],
+                                	wt.IsDelete
+                                FROM
+                                	WF_Template AS wt
+                                WHERE wt.[key]=@key";
+                return conn.Query<WF_Template>(sql, new { key = key }).FirstOrDefault();
+            }
+        }
         public List<WF_Template> getAll(string key, int state, int begin, int end, string order, out int count)
         {
             string sql = @"   ;WITH tmp 

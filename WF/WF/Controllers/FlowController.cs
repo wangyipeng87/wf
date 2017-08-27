@@ -31,13 +31,13 @@ namespace WF.Controllers
             return View();
         }
         // GET: FlowDesign
-        public ActionResult FlowDesign(int? id)
+        public ActionResult FlowDesign(string key)
         {
-            if (id == null)
+            if (!string.IsNullOrEmpty(key))
             {
-                id = -1;
+                ViewBag.key = key;
+                ViewBag.tmp = tmpbll.getByKey(key);
             }
-            ViewBag.ID = id;
             return View();
         }
         public ActionResult AddRole(int? id)

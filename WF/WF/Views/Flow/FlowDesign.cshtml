@@ -3,6 +3,36 @@
     ViewBag.Title = "FlowDesign";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script src="~/Content/js/draw-min.js"></script>
+<script src="~/Content/js/workflow.js"></script>
+<script type="text/javascript">
+    curmenuurl = applicationPath + "/flow/TmpList";
+    menuname = "流程设计";
+    $(document).ready(function () {
+        addStep(undefined, undefined, "开始节点", 1, false);
+        addStep(undefined, undefined, "结束节点", 2, false);
+    });
+</script>
+<input type="hidden" id="hidkey" value="@ViewBag.key" />
+<div class="page-header">
+    <h1>
+        <small>
+            流程模板名称：@ViewBag.tmp.TmpName
+        </small>
+    </h1>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <button class="btn btn-sm btn-primary" onclick="addStep();">添加节点</button>
+        <button class="btn btn-sm btn-primary" onclick="addConn();">添加规则</button>
+        <button class="btn btn-sm btn-primary" onclick="removeObj();">删除</button>
+        <button class="btn btn-sm btn-primary">保存</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div id="divdesign" style="margin:0; padding:0; border:1px solid red"></div>
+    </div>
+</div>
 
-<h2>FlowDesign</h2>
 

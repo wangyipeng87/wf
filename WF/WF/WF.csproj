@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\img\ak47.png" />
+    <Content Include="Content\js\draw-min.js" />
     <Content Include="Content\js\jquery-3.2.1.min.js" />
     <Content Include="Content\js\raphael.min.js" />
     <Content Include="Content\js\wfframework.js" />
