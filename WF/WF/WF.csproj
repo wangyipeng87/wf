@@ -90,6 +90,7 @@
     <Content Include="Content\js\draw-min.js" />
     <Content Include="Content\js\jquery-3.2.1.min.js" />
     <Content Include="Content\js\raphael.min.js" />
+    <Content Include="Content\js\wfdesign.js" />
     <Content Include="Content\js\wfframework.js" />
     <Content Include="Content\js\workflow-show.js" />
     <Content Include="Content\js\workflow.js" />
@@ -746,7 +747,9 @@
     <Content Include="Views\Flow\AddRoleUser.cshtml" />
     <Content Include="Views\Personal\AddAgent.cshtml" />
     <Content Include="Views\Flow\AddTmp.cshtml" />
-    <Content Include="log4net.config" />
+    <Content Include="log4net.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Flow\FlowDesign.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
