@@ -222,6 +222,8 @@
     <Content Include="Content\Plugins\ace\assets\js\tree.min.js" />
     <Content Include="Content\Plugins\ace\assets\js\wizard.min.js" />
     <Content Include="Content\Plugins\ace\assets\swf\flashExport.swf" />
+    <Content Include="Content\Plugins\bootstrapcontentmenu\bootstrap-contextmenu.js" />
+    <Content Include="Content\Plugins\bootstrapcontentmenu\prettify.js" />
     <Content Include="Content\Plugins\bootstrapswitch\bootstrap-switch.css" />
     <Content Include="Content\Plugins\bootstrapswitch\bootstrap-switch.js" />
     <Content Include="Content\Plugins\jquery-easyui-1.5.2\easyloader.js" />

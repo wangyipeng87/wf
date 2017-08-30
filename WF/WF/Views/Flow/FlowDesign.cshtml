@@ -3,14 +3,47 @@
     ViewBag.Title = "FlowDesign";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script src="~/Content/Plugins/bootstrapcontentmenu/bootstrap-contextmenu.js"></script>
+<script src="~/Content/Plugins/bootstrapcontentmenu/prettify.js"></script>
 <script src="~/Content/js/draw-min.js"></script>
-<script src="~/Content/js/workflow.js"></script>
+@*<script src="~/Content/js/workflow.js"></script>*@
+<script src="~/Content/js/wfdesign.js"></script>
 <script type="text/javascript">
     curmenuurl = applicationPath + "/flow/TmpList";
     menuname = "流程设计";
     $(document).ready(function () {
-        addStep(undefined, undefined, "开始节点", 1, false);
-        addStep(undefined, undefined, "结束节点", 2, false);
+        var node = new wfnode({
+            key: "1",
+            text: "傻逼傻逼",
+            nodeType: 2,
+            x: 0,
+            y: 0,
+            nodeWidth: 108,
+            nodeHeight: 50,
+            nodeRect: 7,
+            noteColor: "#efeff0",
+            noteBorderColor: "#23508e",
+            opacity: 1,
+            strokeWidth: 1,
+            cursor: "default",
+        });
+        var node = new wfnode({
+            key: "1asd",
+            text: "傻逼傻逼",
+            nodeType: 2,
+            x: 200,
+            y: 20,
+            nodeWidth: 108,
+            nodeHeight: 50,
+            nodeRect: 7,
+            noteColor: "#efeff0",
+            noteBorderColor: "#23508e",
+            opacity: 1,
+            strokeWidth: 1,
+            cursor: "default",
+        });
+        //addStep(undefined, undefined, "开始节点", 1, false);
+        //addStep(undefined, undefined, "结束节点", 2, false);
     });
 </script>
 <input type="hidden" id="hidkey" value="@ViewBag.key" />
@@ -33,6 +66,12 @@
     <div class="col-xs-12">
         <div id="divdesign" style="margin:0; padding:0; border:1px solid red"></div>
     </div>
+</div>
+<div id="context-menu">
+    <ul class="dropdown-menu" role="menu">
+        <li><a tabindex="-1" href="#">属性</a></li>
+        <li><a tabindex="-1" href="#">删除</a></li>
+    </ul>
 </div>
 
 
