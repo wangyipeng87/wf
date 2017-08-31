@@ -116,5 +116,3 @@ function getArr(x1, y1, x2, y2, size) {
     var result = ["M", x1, y1, "L", x2, y2, "L", x2a, y2a, "M", x2, y2, "L", x2b, y2b];
     return result;
 }
-var pathth = this.path(getArr(1,1,200,200,10));
-pathth.attr({ "stroke-width": 4, "stroke": "#5DA95E" });
