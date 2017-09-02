@@ -11,6 +11,7 @@
 <script type="text/javascript">
     curmenuurl = applicationPath + "/flow/TmpList";
     menuname = "流程设计";
+    var rule1;
     $(document).ready(function () {
         var node = new wfnode({
             key: "1",
@@ -23,9 +24,9 @@
             nodeRect: 7,
             noteColor: "#efeff0",
             noteBorderColor: "#5DA95E",
-            opacity: 1,
+            opacity: 0.8,
             strokeWidth: 1.5,
-            cursor: "default",
+            cursor: "pointer",
         });
         var node = new wfnode({
             key: "1asd",
@@ -38,19 +39,34 @@
             nodeRect: 7,
             noteColor: "#efeff0",
             noteBorderColor: "#5DA95E",
-            opacity: 1,
+            opacity: 0.8,
             strokeWidth: 1.5,
-            cursor: "default",
+            cursor: "pointer",
         });
         //addStep(undefined, undefined, "开始节点", 1, false);
         //addStep(undefined, undefined, "结束节点", 2, false);
-
-        var pathth = wf_view.path(getArr(1, 1, 200, 200, 15));
-        pathth.attr({ "stroke-width": 2, "stroke": "#5DA95E" });
+         rule1 = new wfrule({
+            key: "r1",
+            text: "21212121",
+            beginNodeKey: "",
+            endNodeKey: "",
+            expression: "212",
+            beginx: 20,
+            beginy: 20,
+            endx: 60,
+            endy: 70,
+            arrWidth: 15,
+            pathWidth: 3,
+            circleWidth: 4,
+            ruleColor: "#5DA95E",
+            opacity: 0.8,
+            cursor: "pointer",
+            fontSize: "12px"
+        });
     });
 </script>
 <input type="hidden" id="hidkey" value="@ViewBag.key" />
-<div class="page-header">
+<div class="page-header"  >
     <h1>
         <small>
             流程模板名称：@ViewBag.tmp.TmpName
@@ -67,7 +83,7 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <div id="divdesign" style="margin:0; padding:0; border:1px solid red"></div>
+        <div id="divdesign" style="margin:0;  padding:0; border:1px solid red"></div>
     </div>
 </div>
 <div id="context-menu">
