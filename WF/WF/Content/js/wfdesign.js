@@ -297,6 +297,10 @@ function wfrule(options) {
             ey = 0;
         }
         this.rule.updatexy(bx, by, ex, ey);
+        if (this.rule.endNode != null && this.rule.endNode != undefined) {
+            var endpoint = getnodeline(this.rule.endNode, this.rule);
+            this.rule.updatexy(this.rule.beginx, this.rule.beginy, endpoint.x, endpoint.y);
+        }
         wf_view.safari();
     };
     this.begindragger = function () {
@@ -326,6 +330,10 @@ function wfrule(options) {
         if (!isbegin) {
             this.rule.beginNodeKey = "";
             this.rule.beginNode = undefined;
+            if (this.rule.endNode != null && this.rule.endNode != undefined) {
+                var endpoint = getnodeline(this.rule.endNode, this.rule);
+                this.rule.updatexy(this.rule.beginx, this.rule.beginy, endpoint.x, endpoint.y);
+            }
         }
         wf_view.safari();
     };
@@ -355,6 +363,10 @@ function wfrule(options) {
             ey = 0;
         }
         this.rule.updatexy(bx, by, ex, ey);
+        if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+            var beginpoint = getnodeline(this.rule.beginNode, this.rule);
+            this.rule.updatexy(beginpoint.x, beginpoint.y, this.rule.endx, this.rule.endy);
+        }
         wf_view.safari();
     };
     this.enddragger = function () {
@@ -381,9 +393,14 @@ function wfrule(options) {
                 }
             }
         }
+    
         if (!isend) {
             this.rule.endNodeKey = "";
             this.rule.endNode = undefined;
+            if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+                var beginpoint = getnodeline(this.rule.beginNode, this.rule);
+                this.rule.updatexy(beginpoint.x, beginpoint.y, this.rule.endx, this.rule.endy);
+            }
         }
         wf_view.safari();
     };
