@@ -1,4 +1,6 @@
 ﻿var wf_view;
+var nodelist = new Array();
+var rulelist = new Array();
 function wfnode(options) {
     this.key = "";
     this.text = "";
@@ -31,6 +33,30 @@ function wfnode(options) {
             this.wfnode.nodeText.attr("x", x + 52);
             this.wfnode.nodeText.attr("y", y + 25);
         }
+        this.wfnode.x = x;
+        this.wfnode.y = y;
+
+        if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+            for (var i = 0; i < rulelist.length; i++) {
+                if (rulelist[i].beginNodeKey == this.wfnode.key) {
+                    var beginpoint = getnodeline(this.wfnode, rulelist[i]);
+                    rulelist[i].updatexy(beginpoint.x, beginpoint.y, rulelist[i].endx, rulelist[i].endy);
+                    if (rulelist[i].endNode != null && rulelist[i].endNode != undefined) {
+                        var endpoint = getnodeline(rulelist[i].endNode, rulelist[i]);
+                        rulelist[i].updatexy(rulelist[i].beginx, rulelist[i].beginy, endpoint.x, endpoint.y);
+                    }
+                }
+
+                if (rulelist[i].endNodeKey == this.wfnode.key) {
+                    var endpoint = getnodeline(this.wfnode, rulelist[i]);
+                    rulelist[i].updatexy(rulelist[i].beginx, rulelist[i].beginy, endpoint.x, endpoint.y);
+                    if (rulelist[i].beginNode != null && rulelist[i].beginNode != undefined) {
+                        var beginpoint = getnodeline(rulelist[i].beginNode, rulelist[i]);
+                        rulelist[i].updatexy(beginpoint.x, beginpoint.y, rulelist[i].endx, rulelist[i].endy);
+                    }
+                }
+            }
+        }
         wf_view.safari();
     };
     this.dragger = function () {
@@ -39,14 +65,14 @@ function wfnode(options) {
         this.wfnode.changeStyle();
     };
     this.up = function () {
-        this.wfnode.changeStyle();
-        //记录移动后的位置 
-        var bbox = this.wfnode.node.getBBox();
-        if (bbox) {
-            this.wfnode.node.position = { "x": bbox.x, "y": bbox.y, "width": bbox.width, "height": bbox.height };
-            this.wfnode.x = bbox.x;
-            this.wfnode.y = bbox.y;
-        }
+        //this.wfnode.changeStyle();
+        ////记录移动后的位置 
+        //var bbox = this.wfnode.node.getBBox();
+        //if (bbox) {
+        //    this.wfnode.node.position = { "x": bbox.x, "y": bbox.y, "width": bbox.width, "height": bbox.height };
+        //    this.wfnode.x = bbox.x;
+        //    this.wfnode.y = bbox.y;
+        //}
     };
     this.click = function () { };
     this.rightclick = function (e) {
@@ -99,8 +125,16 @@ function wfnode(options) {
     $(this.node.node).contextmenu({
         target: '#context-menu',
         onItem: function (context, e) {
-            //layer.alert($(e.target).text());
-            layer.alert($(context).attr("key"));
+            if ($(e.target).text() == "删除") {
+                layer.confirm('您确定要删除该节点吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    removeNode($(context).attr("key"));
+                    layer.closeAll();
+                }, function () {
+                    layer.closeAll();
+                });
+            }
         }
     });
     this.node.wfnode = this;
@@ -162,6 +196,12 @@ function wfrule(options) {
         this.endy = ey;
     },
     this.pathmove = function (dx, dy) {
+        if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+            return;
+        }
+        if (this.rule.endNode != null && this.rule.endNode != undefined) {
+            return;
+        }
         var bx = this.obeginx + dx;
         var by = this.obeginy + dy;
         var ex = this.oendx + dx;
@@ -182,12 +222,55 @@ function wfrule(options) {
         wf_view.safari();
     };
     this.pathdragger = function () {
+        if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+            return;
+        }
+        if (this.rule.endNode != null && this.rule.endNode != undefined) {
+            return;
+        }
         this.obeginx = this.rule.beginx;
         this.obeginy = this.rule.beginy;
         this.oendx = this.rule.endx;
         this.oendy = this.rule.endy;
     };
     this.pathup = function () {
+        if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+            return;
+        }
+        if (this.rule.endNode != null && this.rule.endNode != undefined) {
+            return;
+        }
+        if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+            for (var i = 0; i < nodelist.length; i++) {
+                if (nodeIncludePoint(nodelist[i], { x: this.rule.beginx, y: this.rule.beginy })) {
+                    this.rule.beginNodeKey = nodelist[i].key;
+                    this.rule.beginNode = nodelist[i];
+                    var beginpoint = getnodeline(nodelist[i], this.rule);
+                    this.rule.updatexy(beginpoint.x, beginpoint.y, this.rule.endx, this.rule.endy);
+                    if (this.rule.endNode != null && this.rule.endNode != undefined) {
+                        var endpoint = getnodeline(this.rule.endNode, this.rule);
+                        this.rule.updatexy(this.rule.beginx, this.rule.beginy, endpoint.x, endpoint.y);
+                    }
+                    break;
+                }
+            }
+        }
+        if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+            for (var i = 0; i < nodelist.length; i++) {
+                if (nodeIncludePoint(nodelist[i], { x: this.rule.endx, y: this.rule.endy })) {
+                    this.rule.endNodeKey = nodelist[i].key;
+                    this.rule.endNode = nodelist[i];
+                    var endpoint = getnodeline(nodelist[i], this.rule);
+                    this.rule.updatexy(this.rule.beginx, this.rule.beginy, endpoint.x, endpoint.y);
+                    if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+                        var beginpoint = getnodeline(this.rule.beginNode, this.rule);
+                        this.rule.updatexy(beginpoint.x, beginpoint.y, this.rule.endx, this.rule.endy);
+                    }
+                    break;
+                }
+            }
+        }
+        wf_view.safari();
     };
     this.pathclick = function () { };
     this.pathrightclick = function (e) {
@@ -200,7 +283,7 @@ function wfrule(options) {
         var bx = this.obeginx + dx;
         var by = this.obeginy + dy;
         var ex = this.oendx;
-        var ey = this.oendy ;
+        var ey = this.oendy;
         if (bx < 0) {
             bx = 0;
         }
@@ -223,6 +306,28 @@ function wfrule(options) {
         this.oendy = this.rule.endy;
     };
     this.beginup = function () {
+        var isbegin = false;
+        if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+            for (var i = 0; i < nodelist.length; i++) {
+                if (nodeIncludePoint(nodelist[i], { x: this.rule.beginx, y: this.rule.beginy })) {
+                    isbegin = true;
+                    this.rule.beginNodeKey = nodelist[i].key;
+                    this.rule.beginNode = nodelist[i];
+                    var beginpoint = getnodeline(nodelist[i], this.rule);
+                    this.rule.updatexy(beginpoint.x, beginpoint.y, this.rule.endx, this.rule.endy);
+                    if (this.rule.endNode != null && this.rule.endNode != undefined) {
+                        var endpoint = getnodeline(this.rule.endNode, this.rule);
+                        this.rule.updatexy(this.rule.beginx, this.rule.beginy, endpoint.x, endpoint.y);
+                    }
+                    break;
+                }
+            }
+        }
+        if (!isbegin) {
+            this.rule.beginNodeKey = "";
+            this.rule.beginNode = undefined;
+        }
+        wf_view.safari();
     };
     this.beginclick = function () { };
     this.beginrightclick = function (e) {
@@ -233,8 +338,8 @@ function wfrule(options) {
 
 
     this.endmove = function (dx, dy) {
-        var bx = this.obeginx ;
-        var by = this.obeginy ;
+        var bx = this.obeginx;
+        var by = this.obeginy;
         var ex = this.oendx + dx;
         var ey = this.oendy + dy;
         if (bx < 0) {
@@ -259,7 +364,28 @@ function wfrule(options) {
         this.oendy = this.rule.endy;
     };
     this.endup = function () {
-
+        var isend = false;
+        if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+            for (var i = 0; i < nodelist.length; i++) {
+                if (nodeIncludePoint(nodelist[i], { x: this.rule.endx, y: this.rule.endy })) {
+                    isend = true;
+                    this.rule.endNodeKey = nodelist[i].key;
+                    this.rule.endNode = nodelist[i];
+                    var endpoint = getnodeline(nodelist[i], this.rule);
+                    this.rule.updatexy(this.rule.beginx, this.rule.beginy, endpoint.x, endpoint.y);
+                    if (this.rule.beginNode != null && this.rule.beginNode != undefined) {
+                        var beginpoint = getnodeline(this.rule.beginNode, this.rule);
+                        this.rule.updatexy(beginpoint.x, beginpoint.y, this.rule.endx, this.rule.endy);
+                    }
+                    break;
+                }
+            }
+        }
+        if (!isend) {
+            this.rule.endNodeKey = "";
+            this.rule.endNode = undefined;
+        }
+        wf_view.safari();
     };
     this.endclick = function () { };
     this.endrightclick = function (e) {
@@ -287,8 +413,16 @@ function wfrule(options) {
     $(this.rulePath.node).contextmenu({
         target: '#context-menu',
         onItem: function (context, e) {
-            //layer.alert($(e.target).text());
-            layer.alert($(context).attr("key")+"线");
+            if ($(e.target).text() == "删除") {
+                layer.confirm('您确定要删除该规则吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    removeRule($(context).attr("key"));
+                    layer.closeAll();
+                }, function () {
+                    layer.closeAll();
+                });
+            }
         }
     });
     this.rulePath.drag(this.pathmove, this.pathdragger, this.pathup);
@@ -301,8 +435,16 @@ function wfrule(options) {
     $(this.beginCircle.node).contextmenu({
         target: '#context-menu',
         onItem: function (context, e) {
-            //layer.alert($(e.target).text());
-            layer.alert($(context).attr("key") + "起点");
+            if ($(e.target).text() == "删除") {
+                layer.confirm('您确定要删除该规则吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    removeRule($(context).attr("key"));
+                    layer.closeAll();
+                }, function () {
+                    layer.closeAll();
+                });
+            }
         }
     });
     this.beginCircle.drag(this.beginmove, this.begindragger, this.beginup);
@@ -315,8 +457,16 @@ function wfrule(options) {
     $(this.endCircle.node).contextmenu({
         target: '#context-menu',
         onItem: function (context, e) {
-            //layer.alert($(e.target).text());
-            layer.alert($(context).attr("key")+"终点");
+            if ($(e.target).text() == "删除") {
+                layer.confirm('您确定要删除该规则吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    removeRule($(context).attr("key"));
+                    layer.closeAll();
+                }, function () {
+                    layer.closeAll();
+                });
+            }
         }
     });
     this.endCircle.drag(this.endmove, this.enddragger, this.endup);
@@ -347,6 +497,190 @@ function getArrForString(x1, y1, x2, y2, size) {
     var y2a = y2 + Math.sin(a45) * size;
     var x2b = x2 + Math.cos(a45m) * size;
     var y2b = y2 + Math.sin(a45m) * size;
-    var result = "M"+x1+" "+y1+" L"+x2+" "+y2+" L"+ x2a+" "+ y2a+ " M"+ x2+" "+ y2+ " L"+ x2b+" "+ y2b;
+    var result = "M" + x1 + " " + y1 + " L" + x2 + " " + y2 + " L" + x2a + " " + y2a + " M" + x2 + " " + y2 + " L" + x2b + " " + y2b;
     return result;
 }
+//求规则和节点的交点
+function getnodeline(wnode, wrule) {
+    var x = wnode.x;
+    var y = wnode.y;
+    var height = wnode.settings.nodeHeight;
+    var width = wnode.settings.nodeWidth;
+    var beginx = wrule.beginx;
+    var beginy = wrule.beginy;
+    if (wrule.beginNode != null && wrule.beginNode != undefined) {
+        beginx = wrule.beginNode.x + wrule.beginNode.settings.nodeWidth / 2;
+        beginy = wrule.beginNode.y + wrule.beginNode.settings.nodeHeight / 2;
+    }
+    var endx = wrule.endx
+    var endy = wrule.endy
+    if (wrule.endNode != null && wrule.endNode != undefined) {
+        endx = wrule.endNode.x + wrule.endNode.settings.nodeWidth / 2;
+        endy = wrule.endNode.y + wrule.endNode.settings.nodeHeight / 2;
+    }
+    var point = undefined;
+    //左
+    if (segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x, y: y }, { x: x, y: y + height })) {
+        point = segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x, y: y }, { x: x, y: y + height });
+        return point;
+    }
+    //下
+    if (segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x, y: y + height }, { x: x + width, y: y + height })) {
+        point = segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x, y: y + height }, { x: x + width, y: y + height });
+        return point;
+    }
+    //右
+    if (segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x + width, y: y + height }, { x: x + width, y: y })) {
+        point = segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x + width, y: y + height }, { x: x + width, y: y });
+        return point;
+    }
+    //上
+    if (segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x + width, y: y }, { x: x, y: y })) {
+        point = segmentsIntr({ x: beginx, y: beginy }, { x: endx, y: endy }, { x: x + width, y: y }, { x: x, y: y });
+        return point;
+    }
+    if (!point) {
+        if (wrule.beginNode != null && wrule.beginNode != undefined && wrule.beginNode.key == wnode.key) {
+            point = { x: beginx, y: beginy };
+        }
+        if (wrule.endNode != null && wrule.endNode != undefined && wrule.endNode.key == wnode.key) {
+            point = { x: endx, y: endy };
+        }
+    }
+    return point;
+}
+//求规则和节点的交点
+function nodeIncludePoint(wnode, point) {
+    var x = wnode.x;
+    var y = wnode.y;
+    var height = wnode.settings.nodeHeight;
+    var width = wnode.settings.nodeWidth;
+    var px = point.x;
+    var py = point.y;
+    if (px >= x && px <= x + width && py >= y && py <= y + height) {
+        return true;
+    }
+    return false;;
+}
+/*求两条线段的交点
+用法：segmentsIntr({x:0,y:0},{x:100,y:100},{x:20,y:20},{x:150,y:50})
+返回值 ：flase 为没有交点 {x,y}为有交点
+*/
+function segmentsIntr(a, b, c, d) {
+    /** 1 解线性方程组, 求线段交点. **/
+    // 如果分母为0 则平行或共线, 不相交  
+    var denominator = (b.y - a.y) * (d.x - c.x) - (a.x - b.x) * (c.y - d.y);
+    if (denominator == 0) {
+        return false;
+    }
+
+    // 线段所在直线的交点坐标 (x , y)      
+    var x = ((b.x - a.x) * (d.x - c.x) * (c.y - a.y)
+                + (b.y - a.y) * (d.x - c.x) * a.x
+                - (d.y - c.y) * (b.x - a.x) * c.x) / denominator;
+    var y = -((b.y - a.y) * (d.y - c.y) * (c.x - a.x)
+                + (b.x - a.x) * (d.y - c.y) * a.y
+                - (d.x - c.x) * (b.y - a.y) * c.y) / denominator;
+
+    /** 2 判断交点是否在两条线段上 **/
+    if (
+        // 交点在线段1上  
+        (x - a.x) * (x - b.x) <= 0 && (y - a.y) * (y - b.y) <= 0
+        // 且交点也在线段2上  
+         && (x - c.x) * (x - d.x) <= 0 && (y - c.y) * (y - d.y) <= 0
+        ) {
+
+        // 返回交点p  
+        return {
+            x: x,
+            y: y
+        }
+    }
+    //否则不相交  
+    return false
+
+}
+function removeNode(key) {
+    if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+        for (var i = 0; i < rulelist.length; i++) {
+            if (rulelist[i].beginNodeKey == key) {
+                rulelist[i].beginNodeKey = "";
+                rulelist[i].beginNode = undefined;
+            }
+            if (rulelist[i].endNodeKey == key) {
+                rulelist[i].endNodeKey = "";
+                rulelist[i].endNode = undefined;
+            }
+        }
+    }
+    if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+        var j = -1;
+        for (var i = 0; i < nodelist.length; i++) {
+            if (nodelist[i].key == key) {
+                j = i;
+                nodelist[i].node.remove();
+                nodelist[i].nodeText.remove();
+                break;
+            }
+        }
+        nodelist.splice(j, 1);
+    }
+}
+
+function removeRule(key) {
+    if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+        var j = -1;
+        for (var i = 0; i < rulelist.length; i++) {
+            if (rulelist[i].key == key) {
+                j = i;
+                rulelist[i].beginCircle.remove();
+                rulelist[i].endCircle.remove();
+                rulelist[i].ruleText.remove();
+                rulelist[i].rulePath.remove();
+                break;
+            }
+        }
+        rulelist.splice(j, 1);
+    }
+}
+
+function addNode() {
+    nodelist.push(new wfnode({
+        key: Raphael.createUUID(),
+        text: "流程" + nodelist.length,
+        nodeType: 2,
+        x: 200,
+        y: 20,
+        nodeWidth: 108,
+        nodeHeight: 50,
+        nodeRect: 7,
+        noteColor: "#efeff0",
+        noteBorderColor: "#5DA95E",
+        opacity: 0.8,
+        strokeWidth: 1.5,
+        cursor: "pointer"
+    }));
+}
+function addRule() {
+    rulelist.push(new wfrule({
+        key: Raphael.createUUID(),
+        text: "",
+        beginNodeKey: "",
+        endNodeKey: "",
+        expression: "",
+        beginx: 20,
+        beginy: 20,
+        endx: 60,
+        endy: 70,
+        arrWidth: 15,
+        pathWidth: 3,
+        circleWidth: 4,
+        ruleColor: "#5DA95E",
+        opacity: 0.8,
+        cursor: "pointer",
+        fontSize: "12px"
+    }));
+}
+$(document).ready(function () {
+    wf_view = Raphael("divdesign", $(window).width(), $(window).height() - 28);
+});

@@ -11,59 +11,6 @@
 <script type="text/javascript">
     curmenuurl = applicationPath + "/flow/TmpList";
     menuname = "流程设计";
-    var rule1;
-    $(document).ready(function () {
-        var node = new wfnode({
-            key: "1",
-            text: "傻逼傻逼",
-            nodeType: 2,
-            x: 0,
-            y: 0,
-            nodeWidth: 108,
-            nodeHeight: 50,
-            nodeRect: 7,
-            noteColor: "#efeff0",
-            noteBorderColor: "#5DA95E",
-            opacity: 0.8,
-            strokeWidth: 1.5,
-            cursor: "pointer",
-        });
-        var node = new wfnode({
-            key: "1asd",
-            text: "傻逼傻逼",
-            nodeType: 2,
-            x: 200,
-            y: 20,
-            nodeWidth: 108,
-            nodeHeight: 50,
-            nodeRect: 7,
-            noteColor: "#efeff0",
-            noteBorderColor: "#5DA95E",
-            opacity: 0.8,
-            strokeWidth: 1.5,
-            cursor: "pointer",
-        });
-        //addStep(undefined, undefined, "开始节点", 1, false);
-        //addStep(undefined, undefined, "结束节点", 2, false);
-         rule1 = new wfrule({
-            key: "r1",
-            text: "21212121",
-            beginNodeKey: "",
-            endNodeKey: "",
-            expression: "212",
-            beginx: 20,
-            beginy: 20,
-            endx: 60,
-            endy: 70,
-            arrWidth: 15,
-            pathWidth: 3,
-            circleWidth: 4,
-            ruleColor: "#5DA95E",
-            opacity: 0.8,
-            cursor: "pointer",
-            fontSize: "12px"
-        });
-    });
 </script>
 <input type="hidden" id="hidkey" value="@ViewBag.key" />
 <div class="page-header"  >
@@ -75,9 +22,8 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <button class="btn btn-sm btn-primary" onclick="addStep();">添加节点</button>
-        <button class="btn btn-sm btn-primary" onclick="addConn();">添加规则</button>
-        <button class="btn btn-sm btn-primary" onclick="removeObj();">删除</button>
+        <button class="btn btn-sm btn-primary" onclick="addNode();">添加节点</button>
+        <button class="btn btn-sm btn-primary" onclick="addRule();">添加规则</button>
         <button class="btn btn-sm btn-primary">保存</button>
     </div>
 </div>
