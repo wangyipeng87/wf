@@ -183,13 +183,20 @@ function wfrule(options) {
 
     this.updatexy = function (bx, by, ex, ey) {
         var npath = getArrForString(bx, by, ex, ey, this.settings.arrWidth);
-        $(this.rulePath.node).attr("d", npath);
-        $(this.beginCircle.node).attr("cx", bx);
-        $(this.beginCircle.node).attr("cy", by);
-        $(this.endCircle.node).attr("cx", ex);
-        $(this.endCircle.node).attr("cy", ey);
-        $(this.ruleText.node).attr("x", (bx + ex) / 2);
-        $(this.ruleText.node).attr("y", (by + ey) / 2);
+        //$(this.rulePath.node).attr("d", npath);
+        //$(this.beginCircle.node).attr("cx", bx);
+        //$(this.beginCircle.node).attr("cy", by);
+        //$(this.endCircle.node).attr("cx", ex);
+        //$(this.endCircle.node).attr("cy", ey);
+        //$(this.ruleText.node).attr("x", (bx + ex) / 2);
+        //$(this.ruleText.node).attr("y", (by + ey) / 2);
+        this.rulePath.attr("path", npath);
+        this.beginCircle.attr("cx", bx);
+        this.beginCircle.attr("cy", by);
+        this.endCircle.attr("cx", ex);
+        this.endCircle.attr("cy", ey);
+        this.ruleText.attr("x", (bx + ex) / 2);
+        this.ruleText.attr("y", (by + ey) / 2);
         this.beginx = bx;
         this.beginy = by;
         this.endx = ex;
