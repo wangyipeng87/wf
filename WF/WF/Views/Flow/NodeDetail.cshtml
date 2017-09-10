@@ -1,11 +1,40 @@
 ﻿@using WF.Entity;
-    @{
-        ViewBag.Title = "NodeDetail";
-        Layout = "~/Views/Shared/PopLayout.cshtml";
-        List<Employee> listemp = ViewBag.emplist as List<Employee>;
-    }
+@{
+    ViewBag.Title = "NodeDetail";
+    Layout = "~/Views/Shared/PopLayout.cshtml";
+    List<WF_ApplyType> applylist = ViewBag.applytypelist as List<WF_ApplyType>;
+    List<WF_Role> rolelist = ViewBag.rolelist as List<WF_Role>;
+
+}
 <script type="text/javascript">
+    var userlist = new Array();
+    var node;
+    function remove(usercode) {
+        if (userlist != null && userlist != undefined && userlist.length > 0) {
+            var j = -1;
+            for (var i = 0; i < userlist.length; i++) {
+                if (userlist[i].usercode == usercode) {
+                    j = i;
+                }
+            }
+            if (j != -1) {
+                userlist.splice(j, 1);
+                $("#" + usercode).remove();
+            }
+        }
+    }
     $(document).ready(function () {
+        $('#chkIsBack').bootstrapSwitch({
+            onText: "允许",
+            offText: "禁止",
+            onSwitchChange: function (event, state) {
+                if (state == true) {
+                    $("#divback").show();
+                } else {
+                    $("#divback").hide();
+                }
+            }
+        });
         $("#ddlProcessTypeValue").keydown(function () {
             $("#ddlProcessTypeValue").autocomplete({
                 minLength: 0,
@@ -26,129 +55,290 @@
                     });
                 },
                 select: function (event, ui) {
-                    $("#hidUserCode").val(ui.item.value);
-                    $("#ddlProcessTypeValue").val(ui.item.label);
+                    adduser(ui.item.value, ui.item.label);
                     return false;
                 }
             });
         });
+        node = parent.getNodeByKey($("#hidkey").val());
+        initBack();
+        initNode();
     });
+    function adduser(usercode, username) {
+        if (userlist != null && userlist != undefined && userlist.length > 0) {
+            for (var i = 0; i < userlist.length; i++) {
+                if (userlist[i].usercode == usercode) {
+                    return false;
+                }
+            }
+        }
+        userlist.push({
+            usercode: usercode,
+            username: username
+        });
+        var sp = $("<span onclick='remove(\"" + usercode + "\")'></span>");
+        sp.attr("id", usercode);
+        sp.append(' <i class="ace-icon fa fa-times"></i>');
+        sp.append(username);
+        $("#divUser").append(sp);
+    }
+    function initBack() {
+        if (parent.nodelist != null && parent.nodelist != undefined && parent.nodelist.length > 0) {
+            for (var i = 0; i < parent.nodelist.length; i++) {
+                if (parent.nodelist[i].nodeType != 2 && node.key != parent.nodelist[i].key) {
+                    $("#ddlBackType").append('<option value="' + parent.nodelist[i].key + '">' + parent.nodelist[i].text + '</option>');
+                }
+            }
+        }
 
+    }
+    function initNode() {
+        if (node != null && node != undefined) {
+            $("#txtKey").val(node.key);
+            $("#txtName").val(node.text);
+            $("#txtDescription").val(node.nodeDescription);
+            $("#txtProcessType").val(node.ProcessType);
+            changeProcessType();
+            if (node.ProcessType == 1) {
+                if (node.userlist != null && node.userlist != undefined && node.userlist.length > 0) {
+                    for (var i = 0; i < node.userlist.length; i++) {
+                        adduser(node.userlist[i].usercode, node.userlist[i].username);
+                    }
+                }
+            }
+            if (node.ProcessType == 2) {
+                $("#ddlRole").val(node.ProcessTypeValue);
+            }
+            if (node.ProcessType == 3) {
+                $("#ddlCustu").val(node.ProcessTypeValue);
+            }
+            $("#ddlExecType").val(node.ExecType);
+            $("#txtTimeLimit").val(node.TimeLimit);
+            $("#txtUrl").val(node.URL);
+            if (node.IsGoBack == 1) {
+                $('#chkIsBack').bootstrapSwitch('state', true);
+                $("#divback").show();
+            } else {
+                $('#chkIsBack').bootstrapSwitch('state', false);
+                $("#divback").hide();
+            }
+            $("#ddlBackType").val(node.GoBackType);
+        }
+    }
+    function save() {
+        if (node != null && node != undefined) { 
+            node.nodeDescription = $.trim($("#txtDescription").val());
+            node.ProcessType = parseInt($("#txtProcessType").val());
+            if (node.ProcessType == 1) {
+                node.userlist = userlist;
+                node.ProcessTypeValue = "";
+            }
+            if (node.ProcessType == 2) {
+                node.userlist = undefined;
+                node.ProcessTypeValue = $("#ddlRole").val();
+            }
+            if (node.ProcessType == 3) {
+                node.userlist = undefined;
+                node.ProcessTypeValue = $("#ddlCustu").val();
+            }
+            node.ExecType = parseInt($("#ddlExecType").val());
+            node.TimeLimit = parseInt($("#txtTimeLimit").val());
+            node.URL = $.trim($("#txtUrl").val());
+            node.IsGoBack = $('#chkIsBack').bootstrapSwitch('state') ? 1 : 0
+            node.GoBackType = $("#ddlBackType").val();
+            node.updateState({
+                key: $.trim($("#txtKey").val()),
+                text: $.trim($("#txtName").val()),
+                nodeDescription: node.nodeDescription,
+                ProcessType: node.ProcessType,
+                ProcessTypeValue: node.ProcessTypeValue,
+                ExecType: node.ExecType,
+                TimeLimit: node.TimeLimit,
+                URL: node.URL,
+                IsGoBack: node.IsGoBack,
+                GoBackType: node.GoBackType,
+                userlist: node.userlist
+            });
+            parent.layer.closeAll();
+        }
+    }
+    function changeProcessType() {
+        var val = $("#txtProcessType").val();
+        if (val == 1) {
+            $("#divuser").show();
+            $("#divrole").hide();
+            $("#divdealType").hide();
+        }
+        if (val == 2) {
+            $("#divuser").hide();
+            $("#divrole").show();
+            $("#divdealType").hide();
+        }
+        if (val == 3) {
+            $("#divuser").hide();
+            $("#divrole").hide();
+            $("#divdealType").show();
+        }
+    }
+    function changeisbackType() {
+        var val = $("#txtProcessType").val();
+        if (val == 1) {
+            $("#divuser").show();
+            $("#divrole").hide();
+            $("#divdealType").hide();
+        }
+        if (val == 2) {
+            $("#divuser").hide();
+            $("#divrole").show();
+            $("#divdealType").hide();
+        }
+        if (val == 3) {
+            $("#divuser").hide();
+            $("#divrole").hide();
+            $("#divdealType").show();
+        }
+    }
+    function closewin() {
+        parent.layer.closeAll();
+    }
 </script>
-    <input type="hidden" id="hidkey" value="@ViewBag.key" />
+<input type="hidden" id="hidkey" value="@ViewBag.key" />
 <input type="hidden" id="hidUserCode" />
-    <div class="page-header">
-        <h1>
-            添加流程角色人员
-        </h1>
+<div class="page-header">
+    <h1>
+        流程节点明细
+    </h1>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtKey"> <i style="color: red; vertical-align: middle;">*</i> 节点key </label>
+                <div class="col-sm-9">
+                    <input type="text" id="txtKey" maxlength="30" placeholder="流程节点key"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtName"> <i style="color: red; vertical-align: middle;">*</i> 节点名称 </label>
+                <div class="col-sm-9">
+                    <input type="text" id="txtName" maxlength="30" placeholder="节点名称"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtDescription"> <i style="color: red; vertical-align: middle;">*</i> 节点描述 </label>
+                <div class="col-sm-9">
+                    <textarea id="txtDescription" maxlength="300" placeholder="节点描述" class="col-xs-10 col-sm-5"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtProcessType"> <i style="color: red; vertical-align: middle;">*</i> 处理类型 </label>
+                <div class="col-sm-9">
+                    <select class="col-xs-10 col-sm-5" id="txtProcessType" onchange="changeProcessType()">
+                        <option value="">--请选择--</option>
+                        <option value="1">人员审批</option>
+                        <option value="2">角色审批</option>
+                        <option value="3">自定义审批</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="display:none" id="divdealType">
+                <label class="col-sm-3 control-label no-padding-right" for="ddlCustu"> <i style="color: red; vertical-align: middle;">*</i> 自定义类型 </label>
+                <div class="col-sm-9">
+                    <select class="col-xs-10 col-sm-5" id="ddlCustu">
+                        <option value="">--请选择--</option>
+                        @foreach (WF_ApplyType item in applylist)
+                        {
+                            <option value="@item.Code">@item.ApplyName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="display:none" id="divrole">
+                <label class="col-sm-3 control-label no-padding-right" for="ddlRole"> <i style="color: red; vertical-align: middle;">*</i> 审批角色 </label>
+                <div class="col-sm-9">
+                    <select class="col-xs-10 col-sm-5" id="ddlRole">
+                        <option value="">--请选择--</option>
+                        @foreach (WF_Role item in rolelist)
+                        {
+                            <option value="@item.RoleCode">@item.RoleName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="display:none" id="divuser">
+                <label class="col-sm-3 control-label no-padding-right" for="ddlProcessTypeValue"> <i style="color: red; vertical-align: middle;">*</i> 审批人 </label>
+                <div class="col-sm-9">
+                    <div id="divUser"></div>
+                    <input type="text" id="ddlProcessTypeValue" maxlength="30" placeholder="处理人"
+                           class="col-xs-10 col-sm-5" />
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="ddlExecType"> <i style="color: red; vertical-align: middle;">*</i> 执行模式 </label>
+                <div class="col-sm-9">
+                    <select class="col-xs-10 col-sm-5" id="ddlExecType">
+                        <option selected="selected" value="">--请选择--</option>
+                        <option value="1">并行模式</option>
+                        <option value="2">抢占模式</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtTimeLimit"> <i style="color: red; vertical-align: middle;">*</i> 超期时限(分钟) </label>
+                <div class="col-sm-9">
+                    <input type="number" id="txtTimeLimit" maxlength="30" placeholder="超期时限"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtUrl"> <i style="color: red; vertical-align: middle;">*</i> 执行URL </label>
+                <div class="col-sm-9">
+                    <input type="text" id="txtUrl" maxlength="30" placeholder="执行URL"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="chkIsBack"><i style="color: red; vertical-align: middle;">*</i> 是否允许回退   </label>
+                <div class="col-sm-9">
+                    <div class="switch">
+                        <input id="chkIsBack" type="checkbox" checked="checked" data-on-text="允许" data-off-text="禁止" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="divback">
+                <label class="col-sm-3 control-label no-padding-right" for="ddlBackType"> <i style="color: red; vertical-align: middle;">*</i> 回退策略 </label>
+                <div class="col-sm-9">
+                    <select class="col-xs-10 col-sm-5" id="ddlBackType">
+                        <option selected="selected" value="">--请选择--</option>
+                        <option value="every">任意节点</option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <form class="form-horizontal" role="form">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="txtKey"> <i style="color: red; vertical-align: middle;">*</i> 节点key </label>
-                    <div class="col-sm-9">
-                        <input type="text" id="txtKey" maxlength="30" placeholder="流程节点key"
-                               class="col-xs-10 col-sm-5" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="txtName"> <i style="color: red; vertical-align: middle;">*</i> 节点名称 </label>
-                    <div class="col-sm-9">
-                        <input type="text" id="txtName" maxlength="30" placeholder="节点名称"
-                               class="col-xs-10 col-sm-5" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="txtDescription"> <i style="color: red; vertical-align: middle;">*</i> 节点描述 </label>
-                    <div class="col-sm-9">
-                        <textarea id="txtDescription" maxlength="300" placeholder="节点描述" class="col-xs-10 col-sm-5"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="txtProcessType"> <i style="color: red; vertical-align: middle;">*</i> 处理类型 </label>
-                    <div class="col-sm-9">
-                        <select class="col-xs-10 col-sm-5" id="txtProcessType">
-                            <option value="">--请选择--</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="ddlRole"> <i style="color: red; vertical-align: middle;">*</i> 处理人 </label>
-                    <div class="col-sm-9">
-                        <select class="col-xs-10 col-sm-5" id="ddlRole">
-                            <option value="">--请选择--</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="ddlProcessTypeValue"> <i style="color: red; vertical-align: middle;">*</i> 处理人 </label>
-                    <div class="col-sm-9">
-                        <input type="text" id="ddlProcessTypeValue" maxlength="30" placeholder="处理人"
-                               class="col-xs-10 col-sm-5" />
-                       
-                    </div>
-                </div>
+    <!-- PAGE CONTENT END -->
+</div>
 
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="ddlExecType"> <i style="color: red; vertical-align: middle;">*</i> 执行模式 </label>
-                    <div class="col-sm-9">
-                        <select class="col-xs-10 col-sm-5" id="ddlExecType">
-                            <option value="">--请选择--</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="txtTimeLimit"> <i style="color: red; vertical-align: middle;">*</i> 超期时限(分钟) </label>
-                    <div class="col-sm-9">
-                        <input type="number" id="txtTimeLimit" maxlength="30" placeholder="超期时限"
-                               class="col-xs-10 col-sm-5" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="txtUrl"> <i style="color: red; vertical-align: middle;">*</i> 执行URL </label>
-                    <div class="col-sm-9">
-                        <input type="text" id="txtUrl" maxlength="30" placeholder="执行URL"
-                               class="col-xs-10 col-sm-5" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="chkIsBack"><i style="color: red; vertical-align: middle;">*</i> 是否允许回退   </label>
-                    <div class="col-sm-9">
-                        <div class="switch">
-                            <input id="chkIsBack" type="checkbox" checked="checked" data-on-text="允许" data-off-text="禁止" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label no-padding-right" for="ddlBackType"> <i style="color: red; vertical-align: middle;">*</i> 回退策略 </label>
-                    <div class="col-sm-9">
-                        <select class="col-xs-10 col-sm-5" id="ddlBackType">
-                            <option value="">--请选择--</option>
-                        </select>
-                    </div>
-                </div>
-
-            </form>
-        </div>
-        <!-- PAGE CONTENT END -->
+<div class="clearfix form-actions">
+    <div class="col-md-offset-3 col-md-9">
+        <button id="btnOk" class="btn btn-info" type="button" onclick="save()">
+            <i class="ace-icon fa fa-check bigger-110"></i>
+            确认
+        </button>
+        &nbsp; &nbsp; &nbsp;
+        <button id="btnBack" class="btn" type="button" onclick="closewin()">
+            <i class="ace-icon fa bigger-110"></i>
+            关闭
+        </button>
     </div>
-
-    <div class="clearfix form-actions">
-        <div class="col-md-offset-3 col-md-9">
-            <button id="btnOk" class="btn btn-info" type="button" onclick="save()">
-                <i class="ace-icon fa fa-check bigger-110"></i>
-                确认
-            </button>
-            &nbsp; &nbsp; &nbsp;
-            <button id="btnBack" class="btn" type="button" onclick="goBack()">
-                <i class="ace-icon fa fa-undo bigger-110"></i>
-                返回
-            </button>
-        </div>
-    </div>
+</div>
 
 
 

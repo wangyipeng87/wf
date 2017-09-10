@@ -93,7 +93,8 @@ namespace WF.Controllers
         // GET: Flow
         public ActionResult NodeDetail(string key)
         {
-            ViewBag.emplist = empbll.getAll();
+            ViewBag.applytypelist = applytypebll.getAll();
+            ViewBag.rolelist = rolebll.getAll();
             ViewBag.key = key;
             return View();
         }
@@ -759,6 +760,54 @@ namespace WF.Controllers
             {
                 res.code = ResultCode.ERROR;
                 res.message = "删除失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        [HttpPost]
+        public ContentResult SaveWFDesign(string jsonString)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WFTmp tmp = jsonString.ToObject<WFTmp>();
+                if (tmp.nodelist != null && tmp.nodelist.Count > 0)
+                {
+                    foreach (WF_TemplateNode item in tmp.nodelist)
+                    {
+                        item.IsDelete = 0;
+                        item.State = 1;
+                        item.CreateTime = DateTime.Now;
+                        item.CreateUserCode = getCurrent().UserCode;
+                        item.UpdateTime = DateTime.Now;
+                        item.UpdateUserCode = getCurrent().UserCode;
+                    }
+                }
+                if (tmp.rulelist != null && tmp.rulelist.Count > 0)
+                {
+                    foreach (WF_Rule item in tmp.rulelist)
+                    {
+                        item.IsDelete = 0;
+                        item.State = 1;
+                        item.CreateTime = DateTime.Now;
+                        item.CreateUserCode = getCurrent().UserCode;
+                        item.UpdateTime = DateTime.Now;
+                        item.UpdateUserCode = getCurrent().UserCode;
+                    }
+                }
+                if(tmpbll.save(tmp))
+                {
+                    res.code = ResultCode.OK;
+                }
+                else
+                {
+                    res.code = ResultCode.ERROR;
+                }
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "保存失败";
             }
             return Content(res.ToJson());
         }

@@ -15,6 +15,10 @@ namespace WF.BLL
         {
             return dao.save(entity);
         }
+        public bool save(WFTmp entity)
+        {
+            return dao.save(entity);
+        }
         public bool update(WF_Template entity)
         {
             return dao.update(entity);

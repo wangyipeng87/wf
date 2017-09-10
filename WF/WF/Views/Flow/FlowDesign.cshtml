@@ -11,6 +11,28 @@
 <script type="text/javascript">
     curmenuurl = applicationPath + "/flow/TmpList";
     menuname = "流程设计";
+    //SaveWFDesign
+    function save() {
+        $.ajax({
+            url: "../flow/SaveWFDesign",
+            type: 'POST',
+            async: false,
+            data: {
+                jsonString: JSON.stringify(getjson())
+            },
+            success: function (result) {
+                if (result.code == "200") {
+                    layer.alert("保存成功", function (index) {
+                       layer.closeAll();
+                    });
+                }
+                else {
+                    layer.alert(result.message);
+                }
+            },
+            dataType: "json"
+        });
+    }
 </script>
 <input type="hidden" id="hidkey" value="@ViewBag.key" />
 <div class="page-header"  >
@@ -24,7 +46,7 @@
     <div class="col-xs-12">
         <button class="btn btn-sm btn-primary" onclick="addNode();">添加节点</button>
         <button class="btn btn-sm btn-primary" onclick="addRule();">添加规则</button>
-        <button class="btn btn-sm btn-primary">保存</button>
+        <button class="btn btn-sm btn-primary" onclick="save();">保存</button>
     </div>
 </div>
 <div class="row">

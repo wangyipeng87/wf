@@ -31,6 +31,10 @@ namespace WF.BLL
         {
             return dao.getAll( key,  state,  begin,  end,  order, out  count);
         }
+        public List<WF_Role> getAll()
+        {
+            return dao.getAll();
+        }
     }
 }
 

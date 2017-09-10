@@ -14,6 +14,27 @@ namespace WF.DAO
 {
     public class WF_RoleDao
     {
+        public List<WF_Role> getAll()
+        {
+            string sql = @"     SELECT
+                          	wr.ID,
+                          	wr.RoleCode,
+                          	wr.RoleName,
+                          	wr.CreateUserCode,
+                          	wr.CreateTime,
+                          	wr.UpdateUserCode,
+                          	wr.UpdateTime,
+                          	wr.[State],
+                          	wr.IsDelete
+                          FROM
+                          	WF_Role AS wr
+                          WHERE wr.[State]=1 AND wr.IsDelete=0";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_Role>(sql).ToList();
+            }
+        }
         public bool save(WF_Role entity)
         {
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
@@ -49,7 +70,7 @@ namespace WF.DAO
                 return conn.Get<WF_Role>(id);
             }
         }
-        public List<WF_Role> getAll(string key,  int state, int begin, int end, string order, out int count)
+        public List<WF_Role> getAll(string key, int state, int begin, int end, string order, out int count)
         {
             string sql = @"   ;WITH tmp 
                                      AS (
@@ -63,7 +84,7 @@ namespace WF.DAO
                                      	wr.UpdateTime,
                                      	wr.[State],
                                      	wr.IsDelete,
-                                     	ROW_NUMBER() OVER ( ORDER BY "+order+ @" ) AS [index]
+                                     	ROW_NUMBER() OVER ( ORDER BY " + order + @" ) AS [index]
                                      FROM
                                      	WF_Role AS wr
                                      WHERE wr.IsDelete=0

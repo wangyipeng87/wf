@@ -9,12 +9,14 @@ using DapperExtensions;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Transactions;
 
 namespace WF.DAO
 {
     public class WF_TemplateDao
     {
-
+        WF_TemplateNodeDao nodedao = new WF_TemplateNodeDao();
+        WF_RuleDao ruledao = new WF_RuleDao();
         public bool save(WF_Template entity)
         {
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
@@ -23,6 +25,37 @@ namespace WF.DAO
                 conn.Insert<WF_Template>(entity);
                 return true;
             }
+        }
+        public bool save(WFTmp entity)
+        {
+            using (TransactionScope scope = new TransactionScope())
+            {
+                try
+                {
+                    nodedao.DelByTmpKey(entity.tmpkey);
+                    ruledao.DelByTmpKey(entity.tmpkey);
+                    if(entity.nodelist!=null&& entity.nodelist.Count>0)
+                    {
+                        foreach (WF_TemplateNode item in entity.nodelist)
+                        {
+                            nodedao.save(item);
+                        }
+                    }
+                    if (entity.rulelist != null && entity.rulelist.Count > 0)
+                    {
+                        foreach (WF_Rule item in entity.rulelist)
+                        {
+                            ruledao.save(item);
+                        }
+                    }
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
         public bool update(WF_Template entity)
         {

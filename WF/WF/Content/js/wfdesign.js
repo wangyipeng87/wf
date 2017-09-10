@@ -7,10 +7,19 @@ function wfnode(options) {
     this.node = undefined;
     this.nodeType = 3; //1表示开始节点 2表示的结束节点 3表示普通节点
     this.nodeText = undefined;
+    this.nodeDescription = "";
     this.x = 0;
     this.y = 0;
     this.ox = 0;
     this.oy = 0;
+    this.ProcessType = -1;
+    this.ProcessTypeValue = "";
+    this.ExecType = 1;
+    this.TimeLimit = 0;
+    this.URL = "";
+    this.IsGoBack = 0;
+    this.GoBackType = "";
+    this.userlist = new Array();
     this.move = function (dx, dy) {
         var x = this.ox + dx;
         var y = this.oy + dy;
@@ -83,7 +92,7 @@ function wfnode(options) {
     this.settings = {
         key: "",
         text: "",
-        nodeType: 2,
+        nodeType: 3,
         x: 0,
         y: 0,
         nodeWidth: 108,
@@ -94,7 +103,16 @@ function wfnode(options) {
         opacity: 1,
         strokeWidth: 1,
         cursor: "pointer",
-        fontSize: "12px"
+        fontSize: "12px",
+        nodeDescription: "",
+        ProcessType: -1,
+        ProcessTypeValue: "",
+        ExecType: 1,
+        TimeLimit: 0,
+        URL: "",
+        IsGoBack: 0,
+        GoBackType: "",
+        userlist: undefined
     };
 
     //改变节点样式
@@ -111,8 +129,17 @@ function wfnode(options) {
     this.key = this.settings.key;
     this.text = this.settings.text;
     this.nodeType = this.settings.nodeType;
+    this.ProcessType = this.settings.ProcessType;
+    this.ProcessTypeValue = this.settings.ProcessTypeValue;
     this.x = this.settings.x;
     this.y = this.settings.y;
+    this.ExecType = this.settings.ExecType;
+    this.TimeLimit = this.settings.TimeLimit;
+    this.nodeDescription = this.settings.nodeDescription;
+    this.URL = this.settings.URL;
+    this.IsGoBack = this.settings.IsGoBack;
+    this.GoBackType = this.settings.GoBackType;
+    this.userlist = this.settings.userlist;
     if (wf_view == null || wf_view == undefined) {
         wf_view = Raphael("divdesign", $(window).width(), $(window).height() - 28);
     }
@@ -136,6 +163,9 @@ function wfnode(options) {
                         layer.closeAll();
                     });
                 }
+                if ($(e.target).text() == "属性") {
+                    NodeSet($(context).attr("key"));
+                }
             }
         });
     }
@@ -145,6 +175,58 @@ function wfnode(options) {
     this.nodeText = wf_view.text(this.settings.x + 52, this.settings.y + 25, this.settings.text);
     this.nodeText.attr({ "font-size": this.settings.fontSize });
     this.nodeText.attr({ "title": this.settings.text });
+    this.updateState = function (nodeoperation) {
+        var nodesetting = {
+            key: "",
+            text: "",
+            nodeType: 3,
+            x: 0,
+            y: 0,
+            nodeWidth: 108,
+            nodeHeight: 50,
+            nodeRect: 7,
+            noteColor: "#efeff0",
+            noteBorderColor: "#5DA95E",
+            opacity: 1,
+            strokeWidth: 1,
+            cursor: "pointer",
+            fontSize: "12px",
+            nodeDescription: "",
+            ProcessType: -1,
+            ProcessTypeValue: "",
+            ExecType: 1,
+            TimeLimit: 0,
+            URL: "",
+            IsGoBack: 0,
+            GoBackType: "",
+            userlist: undefined
+        };
+        nodesetting = $.extend(nodesetting, nodeoperation);
+        if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+            for (var i = 0; i < rulelist.length; i++) {
+                if (rulelist[i].beginNodeKey == this.key) {
+                    rulelist[i].beginNodeKey = nodesetting.key;
+                }
+                if (rulelist[i].endNodeKey == this.key) {
+                    rulelist[i].endNodeKey = nodesetting.key;
+                }
+            }
+        }
+        this.key = nodesetting.key;
+        this.text = nodesetting.text;
+        this.nodeType = nodesetting.nodeType;
+        this.ProcessType = nodesetting.ProcessType;
+        this.ProcessTypeValue = nodesetting.ProcessTypeValue;
+        this.ExecType = nodesetting.ExecType;
+        this.TimeLimit = nodesetting.TimeLimit;
+        this.nodeDescription = nodesetting.nodeDescription;
+        this.URL = nodesetting.URL;
+        this.IsGoBack = nodesetting.IsGoBack;
+        this.GoBackType = nodesetting.GoBackType;
+        this.userlist = nodesetting.userlist;
+        $(this.node.node).attr("key", nodesetting.key);
+        this.nodeText.attr({ "text": nodesetting.text });
+    }
 };
 
 function wfrule(options) {
@@ -402,7 +484,7 @@ function wfrule(options) {
                 }
             }
         }
-    
+
         if (!isend) {
             this.rule.endNodeKey = "";
             this.rule.endNode = undefined;
@@ -449,6 +531,11 @@ function wfrule(options) {
                     layer.closeAll();
                 });
             }
+
+            if ($(e.target).text() == "属性") {
+                RuleSet($(context).attr("key"));
+            }
+
         }
     });
     this.rulePath.drag(this.pathmove, this.pathdragger, this.pathup);
@@ -470,6 +557,9 @@ function wfrule(options) {
                 }, function () {
                     layer.closeAll();
                 });
+            }
+            if ($(e.target).text() == "属性") {
+                RuleSet($(context).attr("key"));
             }
         }
     });
@@ -493,15 +583,46 @@ function wfrule(options) {
                     layer.closeAll();
                 });
             }
+            if ($(e.target).text() == "属性") {
+                RuleSet($(context).attr("key"));
+            }
         }
     });
     this.endCircle.drag(this.endmove, this.enddragger, this.endup);
     this.endCircle.rule = this;
     this.ruleText = wf_view.text((this.settings.beginx + this.settings.endx) / 2, (this.settings.beginy + this.settings.endy) / 2, this.settings.text);
     this.ruleText.attr({ "font-size": this.settings.fontSize, "flood-color": this.settings.backgroundcolor, "cursor": this.settings.cursor });
-    this.ruleText.attr({ "title": this.settings.text });
+    this.ruleText.attr({ "text": this.settings.text });
 
-
+    this.updatestate = function (ruleoperation) {
+        var rulesettings = {
+            key: "",
+            text: "",
+            beginNodeKey: "",
+            endNodeKey: "",
+            expression: "",
+            beginx: 0,
+            beginy: 0,
+            endx: 0,
+            endy: 0,
+            arrWidth: 15,
+            pathWidth: 2,
+            circleWidth: 7,
+            ruleColor: "#5DA95E",
+            opacity: 1,
+            cursor: "pointer",
+            fontSize: "12px",
+            backgroundcolor: "#efeff0"
+        };
+        rulesettings = $.extend(rulesettings, ruleoperation);
+        this.key = rulesettings.key;
+        this.text = rulesettings.text;
+        this.expression = rulesettings.expression;
+        this.ruleText.attr({ "text": rulesettings.text });
+        $(this.endCircle.node).attr("key", rulesettings.key);
+        $(this.beginCircle.node).attr("key", rulesettings.key);
+        $(this.rulePath.node).attr("key", rulesettings.key);
+    };
 }
 function getArr(x1, y1, x2, y2, size) {
     var angle = Raphael.angle(x1, y1, x2, y2);
@@ -669,7 +790,26 @@ function removeRule(key) {
         rulelist.splice(j, 1);
     }
 }
-
+function getNodeByKey(key) {
+    if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+        var j = -1;
+        for (var i = 0; i < nodelist.length; i++) {
+            if (nodelist[i].key == key) {
+                return nodelist[i];
+            }
+        }
+    }
+}
+function getRuleByKey(key) {
+    if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+        var j = -1;
+        for (var i = 0; i < rulelist.length; i++) {
+            if (rulelist[i].key == key) {
+                return rulelist[i];
+            }
+        }
+    }
+}
 function addNode() {
     nodelist.push(new wfnode({
         key: Raphael.createUUID(),
@@ -741,3 +881,71 @@ $(document).ready(function () {
         cursor: "pointer"
     }));
 });
+
+function NodeSet(key) {
+    layer.open({
+        type: 2,
+        title: '流程节点设置 ',
+        shadeClose: true,
+        shade: 0.8,
+        area: ['95%', '90%'],
+        content: '../Flow/NodeDetail?key=' + key //iframe的url
+    });
+}
+function RuleSet(key) {
+    layer.open({
+        type: 2,
+        title: '流程规则设置 ',
+        shadeClose: true,
+        shade: 0.8,
+        area: ['95%', '90%'],
+        content: '../Flow/RuleDetail?key=' + key //iframe的url
+    });
+}
+
+
+function getjson() {
+    var tmpjson = {
+        tmpkey: $("#hidkey").val(),
+        rulelist: new Array(),
+        nodelist: new Array()
+    };
+    if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
+        for (var i = 0; i < nodelist.length; i++) {
+            tmpjson.nodelist.push({
+                Tmpkey: tmpjson.tmpkey,
+                Nodekey: nodelist[i].key,
+                NodeName: nodelist[i].text,
+                Description: nodelist[i].nodeDescription,
+                ProcessType: nodelist[i].ProcessType,
+                ProcessTypeValue: nodelist[i].ProcessTypeValue,
+                ExecType: nodelist[i].ExecType,
+                TimeLimit: nodelist[i].TimeLimit,
+                NodeType: nodelist[i].nodeType,
+                URL: nodelist[i].URL,
+                IsGoBack: nodelist[i].IsGoBack,
+                GoBackType: nodelist[i].GoBackType,
+                x: nodelist[i].x,
+                y: nodelist[i].y,
+                userlist: nodelist[i].userlist
+            });
+        }
+    }
+    if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+        for (var i = 0; i < rulelist.length; i++) {
+            tmpjson.rulelist.push({
+                Tmpkey: tmpjson.tmpkey,
+                Rulekey: rulelist[i].key,
+                BeginNodeKey: rulelist[i].beginNodeKey,
+                EndNodekey: rulelist[i].endNodeKey,
+                Expression: rulelist[i].expression,
+                Description: rulelist[i].text,
+                BeginX: rulelist[i].beginx,
+                BeginY: rulelist[i].beginy,
+                EndX: rulelist[i].endx,
+                EndY: rulelist[i].endy
+            });
+        }
+    }
+    return tmpjson;
+}
