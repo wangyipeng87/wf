@@ -810,6 +810,8 @@
     <Content Include="Views\Flow\RuleDetail.cshtml" />
     <Content Include="Views\Flow\FlowTypeList.cshtml" />
     <Content Include="Views\Flow\AddFlowType.cshtml" />
+    <Content Include="Views\Flow\VarList.cshtml" />
+    <Content Include="Views\Flow\AddVar.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

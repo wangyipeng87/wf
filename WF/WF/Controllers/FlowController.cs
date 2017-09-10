@@ -16,6 +16,7 @@ namespace WF.Controllers
         WF_TemplateBll tmpbll = new WF_TemplateBll();
         EmployeeBll empbll = new EmployeeBll();
         WF_ApplyTypeBll applytypebll = new WF_ApplyTypeBll();
+        WF_TemplateVariableBll varbll = new WF_TemplateVariableBll();
 
         // GET: Flow
         public ActionResult TmpList()
@@ -116,7 +117,25 @@ namespace WF.Controllers
             ViewBag.rolename = rolename;
             return View();
         }
-        
+        // GET: Flow
+        public ActionResult VarList(string tmpkey, string tmpname)
+        {
+            ViewBag.tmpkey = tmpkey;
+            ViewBag.tmpname = tmpname;
+            return View();
+        }
+        // GET: Flow
+        public ActionResult AddVar(int? id, string tmpkey, string tmpname)
+        {
+            if (id == null)
+            {
+                id = -1;
+            }
+            ViewBag.id = id;
+            ViewBag.tmpkey = tmpkey;
+            ViewBag.tmpname = tmpname;
+            return View();
+        }
 
         // GET: Flow
         public ActionResult Applyauthority()
@@ -616,6 +635,123 @@ namespace WF.Controllers
             try
             {
                 applytypebll.del(id);
+                res.code = ResultCode.OK;
+                res.message = "删除成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "删除失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult GetVarList(string key, string tmpkey, int state, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                key = Server.UrlDecode(key);
+                int count = 0;
+                List<WF_TemplateVariable> emplist = varbll.getAll(key, tmpkey, state, start + 1, start + length, out count);
+                res.code = ResultCode.OK;
+                res.data = emplist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        public ContentResult getVarByID(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_TemplateVariable role = varbll.getByID(id);
+                if (role == null)
+                {
+                    role = new WF_TemplateVariable();
+                    role.ID = id;
+                    role.State = 1;
+                }
+                res.code = ResultCode.OK;
+                res.data = role;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "获取流程角色信息失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult SaveVar(string jsonString)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_TemplateVariable role = jsonString.ToObject<WF_TemplateVariable>();
+                WF_TemplateVariable entity = varbll.getByID(role.ID);
+                if (entity != null)
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = entity.CreateTime;
+                    role.CreateUserCode = entity.CreateUserCode;
+                    role.IsDelete = entity.IsDelete;
+                    varbll.update(role);
+                }
+                else
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = DateTime.Now;
+                    role.CreateUserCode = getCurrent().UserCode;
+                    role.IsDelete = 0;
+                    varbll.save(role);
+                }
+                res.code = ResultCode.OK;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "保存失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult UpdateVarState(int id, int state)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_TemplateVariable entity = varbll.getByID(id);
+                if (entity != null)
+                {
+                    entity.State = state;
+                    varbll.update(entity);
+                }
+                res.code = ResultCode.OK;
+                res.message = "更新状态成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "更新状态失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult VarDel(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                varbll.del(id);
                 res.code = ResultCode.OK;
                 res.message = "删除成功";
             }

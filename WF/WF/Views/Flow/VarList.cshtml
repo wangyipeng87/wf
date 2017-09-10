@@ -1,15 +1,18 @@
 ﻿
 @{
-    ViewBag.Title = "流程模板";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "VarList";
+    Layout = "~/Views/Shared/PopLayout.cshtml";
 }
+
 
 <script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.min.js"></script>
 <script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+<input type="hidden" id="hidrolecode" value="@ViewBag.tmpkey" />
+<input type="hidden" id="hidrolename" value="@ViewBag.tmpname" />    
 <div class="row">
     <div class="col-sm-12">
         <h3 class="header blue lighter smaller">
-            流程模板列表
+            流程变量列表
         </h3>
         <div class="row">
             <div class="col-xs-12">
@@ -17,11 +20,11 @@
                     <div class="col-sm-3 form-horizontal" role="form">
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right" for="txtkey">
-                                关键词
+                                变量名称
                             </label>
                             <div class="col-sm-9">
                                 <input onkeyup="refreshDataTable();" type="text" id="txtkey"
-                                       placeholder="key/模板名称 "
+                                       placeholder="变量名称 "
                                        class="col-xs-10 col-sm-10">
                             </div>
                         </div>
@@ -57,7 +60,7 @@
                 <div class="dt-buttons btn-overlap btn-group">
                     <button type="button" class="btn btn-inverse btn-white"
                             onclick="edit('')">
-                        添加模板
+                        添加变量
                     </button>
                 </div>
             </div>
@@ -69,12 +72,11 @@
                     <th class="center" style="max-width: 50px; min-width:50px; width: 50px;">
                         序号
                     </th>
-                    <th class="center col-sm-2">key</th>
-                    <th class="center col-sm-2">模板名称 </th>
-                    <th class="center col-sm-2">创建时间 </th>
-                    <th class="center col-sm-2">创建人 </th>
-                    <th class="center col-sm-1">状态</th>
-                    <th class="center col-sm-3">操作</th>
+                    <th class="center col-sm-4">变量名称</th>
+                    <th class="center col-sm-2">变量类型</th>
+                    <th class="center col-sm-2">变量默认值</th>
+                    <th class="center col-sm-2">状态</th>
+                    <th class="center col-sm-2">操作</th>
                 </tr>
             </thead>
         </table>
@@ -95,25 +97,24 @@
             renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
             pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
             "ordering": true,
-            "order": [[3, "desc"]],
+            "order": [[4, "desc"]],
             columnDefs: [{
                 orderable: false,//禁用排序
-                targets: [0, 6]   //指定的列
+                targets: [0, 5]   //指定的列
             }],
             "fnInitComplete": function (oSettings, json) {
             },
             ajax: function (data, callback, settings) {
                 //ajax请求数据
                 $.ajax({
-                    url: "../Flow/GetTmpList",
+                    url: "../Flow/GetVarList",
                     type: 'POST',
                     cache: false,  //禁用缓存
                     data: {
                         key: escape($.trim($("#txtkey").val())),
+                        tmpkey: $.trim($("#hidrolecode").val()),
                         state: $.trim($("#selstate").val()),
                         start: data.start,
-                        orderfiled: data.columns[data.order[0].column].data,
-                        dir: data.order[0].dir,
                         length: data.length
                     },  //传入组装的参数
                     dataType: "json",
@@ -140,21 +141,21 @@
                     "data": "index", 'sClass': "text-center"
                 },
                 {
-                    "data": "key", 'sClass': "text-center"
+                    "data": "VarName", 'sClass': "text-center"
                 },
                 {
-                    "data": "TmpName", 'sClass': "text-center"
-                },
-                {
-                    "data": "CreateTime", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
-                        if (!$.isempty(oData.CreateTime)) {
-                            return ChangeDateFormat(oData.CreateTime);
+                    "data": "VarType", 'sClass': "text-center",
+                    render: function (innerData, sSpecific, oData) {
+                        if (oData.VarType == 1) {
+                            return 'String';
                         }
-                        return "";
+                        if (oData.VarType == 2) {
+                            return 'Int';
+                        }
                     }
                 },
                 {
-                    "data": "createuser", 'sClass': "text-center"
+                    "data": "DefaultValue", 'sClass': "text-center"
                 },
                 {
                     "data": "State",
@@ -170,10 +171,7 @@
                 },
                 {
                     "data": "State", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
-                        var html = '<div class="hidden-sm hidden-xs action-buttons">';
-                        html += '<a class="blue" href="#" onclick="edit(\'' + oData.ID + '\')">';
-                        html += '编辑';
-                        html += '  </a> ';
+                        var html = '<div class="hidden-sm hidden-xs action-buttons">';;
 
                         html += ' <a class="blue" href="#"  onclick="update(\'' + oData.ID + '\',' + oData.State + ',0)">';
                         if (oData.State == 1) {
@@ -183,12 +181,6 @@
                         }
                         html += ' </a> ';
 
-                        html += '    <a class="blue" href="#" onclick="openDesign(\'' + oData.key + '\',\'' + oData.TmpName + '\')">';
-                        html += '流程设计';
-                        html += '  </a> ';
-                        html += '    <a class="blue" href="#" onclick="openVarlist(\'' + oData.key + '\',\'' + oData.TmpName + '\')">';
-                        html += '变量设置';
-                        html += '  </a> ';
                         html += '    <a class="blue" href="#" onclick="del(\'' + oData.ID + '\')">';
                         html += '删除';
                         html += '  </a> ';
@@ -204,30 +196,21 @@
         loadPageInit();
     });
     function edit(id) {
-        window.location.href = "../Flow/AddTmp?id=" + id;
-    }
-    //FlowRoleUserList
-    function openDesign(key, tmpname) {
-            window.location.href = "../Flow/FlowDesign?key=" + key;
-    }
-
-    //FlowRoleUserList
-    function openVarlist(key, tmpname) {
         layer.open({
             type: 2,
-            title: tmpname + '变量列表 ',
+            title: '添加变量 ',
             shadeClose: true,
             shade: 0.8,
             area: ['95%', '90%'],
-            content: '../Flow/VarList?tmpkey=' + key + "&tmpname=" + tmpname//iframe的url
+            content: "../Flow/AddVar?tmpkey=" + $("#hidrolecode").val() + "&tmpname=" + $("#hidrolename").val() + "&id=" + id //iframe的url
         });
     }
 
     function update(id, state, field) {
-        var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该流程吗？";
+        var message = "你确认要" + (field == 0 ? (state == 1 ? "禁用" : "启用") : (state == 1 ? "隐藏" : "显示")) + "该变量吗？";
         layer.confirm(message, function () {
             $.ajax({
-                url: "../flow/UpdateTmpState",
+                url: "../flow/UpdateVarState",
                 type: 'POST',
                 data: {
                     id: id,
@@ -253,10 +236,10 @@
     }
 
     function del(id) {
-        var message = "你确认要删除该模板吗？";
+        var message = "你确认要删除该变量吗？";
         layer.confirm(message, function () {
             $.ajax({
-                url: "../flow/TmpDel",
+                url: "../flow/VarDel",
                 type: 'POST',
                 data: {
                     id: id,
@@ -283,3 +266,4 @@
         $("#dynamic-table").DataTable().ajax.reload();
     }
 </script>
+
