@@ -14,6 +14,39 @@ namespace WF.DAO
 {
     public class EmployeeDao
     {
+
+        public List<Employee> getAll()
+        {
+            string sql = @"   SELECT top 10
+	e.ID,
+	e.UserCode,
+	e.UserName,
+	e.Sex,
+	e.Email,
+	e.PostCode,
+	e.PostName,
+	e.DepCode,
+	e.DeptName,
+	e.Phone,
+	e.LineManageCode,
+	e.CreateUserCode,
+	e.CreateTime,
+	e.UpdateUserCode,
+	e.UpdateTime,
+	e.[State],
+	e.IsDelete,
+	e.[PassWord],
+	e.Account
+FROM
+	Employee AS e
+WHERE e.[State]=1";
+
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<Employee>(sql).ToList();
+            }
+        }
         public Employee getbyAccount(string account)
         {
             string sql = @"  SELECT

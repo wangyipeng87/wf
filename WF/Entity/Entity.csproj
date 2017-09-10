@@ -49,6 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeView.cs" />
     <Compile Include="WF_Agent.cs" />
+    <Compile Include="WF_ApplyType.cs" />
     <Compile Include="WF_DataDictionary.cs" />
     <Compile Include="WF_Instance.cs" />
     <Compile Include="WF_InstanceVariable.cs" />

@@ -50,6 +50,7 @@
     <Compile Include="EmployeeDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WF_AgentDao.cs" />
+    <Compile Include="WF_ApplyTypeDao.cs" />
     <Compile Include="WF_DataDictionaryDao.cs" />
     <Compile Include="WF_InstanceDao.cs" />
     <Compile Include="WF_InstanceVariableDao.cs" />

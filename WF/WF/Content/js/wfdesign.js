@@ -5,7 +5,7 @@ function wfnode(options) {
     this.key = "";
     this.text = "";
     this.node = undefined;
-    this.nodeType = 2; //1表示开始节点 2表示普通节点 3表示的结束节点
+    this.nodeType = 3; //1表示开始节点 2表示的结束节点 3表示普通节点
     this.nodeText = undefined;
     this.x = 0;
     this.y = 0;
@@ -122,21 +122,23 @@ function wfnode(options) {
     $(this.node.node).attr("nodeType", this.settings.nodeType);
     //$(this.node.node).attr("data-target","#context-menu");
     //$(this.node.node).data("nodeType", this.settings.nodeType);
-    $(this.node.node).contextmenu({
-        target: '#context-menu',
-        onItem: function (context, e) {
-            if ($(e.target).text() == "删除") {
-                layer.confirm('您确定要删除该节点吗？', {
-                    btn: ['确定', '取消'] //按钮
-                }, function () {
-                    removeNode($(context).attr("key"));
-                    layer.closeAll();
-                }, function () {
-                    layer.closeAll();
-                });
+    if (this.settings.nodeType == 3) {
+        $(this.node.node).contextmenu({
+            target: '#context-menu',
+            onItem: function (context, e) {
+                if ($(e.target).text() == "删除") {
+                    layer.confirm('您确定要删除该节点吗？', {
+                        btn: ['确定', '取消'] //按钮
+                    }, function () {
+                        removeNode($(context).attr("key"));
+                        layer.closeAll();
+                    }, function () {
+                        layer.closeAll();
+                    });
+                }
             }
-        }
-    });
+        });
+    }
     this.node.wfnode = this;
     //this.node.node.oncontextmenu = this.rightclick;
     this.node.drag(this.move, this.dragger, this.up);
@@ -672,7 +674,7 @@ function addNode() {
     nodelist.push(new wfnode({
         key: Raphael.createUUID(),
         text: "流程" + nodelist.length,
-        nodeType: 2,
+        nodeType: 3,
         x: 200,
         y: 20,
         nodeWidth: 108,
@@ -707,4 +709,35 @@ function addRule() {
 }
 $(document).ready(function () {
     wf_view = Raphael("divdesign", $(window).width(), $(window).height() - 28);
+
+    nodelist.push(new wfnode({
+        key: Raphael.createUUID(),
+        text: "申请",
+        nodeType: 1,
+        x: 200,
+        y: 20,
+        nodeWidth: 108,
+        nodeHeight: 50,
+        nodeRect: 7,
+        noteColor: "#5DA95E",
+        noteBorderColor: "#5DA95E",
+        opacity: 0.8,
+        strokeWidth: 1.5,
+        cursor: "pointer"
+    }));
+    nodelist.push(new wfnode({
+        key: Raphael.createUUID(),
+        text: "结束",
+        nodeType: 2,
+        x: 200,
+        y: 200,
+        nodeWidth: 108,
+        nodeHeight: 50,
+        nodeRect: 7,
+        noteColor: "#FF0000",
+        noteBorderColor: "#5DA95E",
+        opacity: 0.8,
+        strokeWidth: 1.5,
+        cursor: "pointer"
+    }));
 });

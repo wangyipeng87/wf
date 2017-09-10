@@ -10,6 +10,10 @@ namespace WF.BLL
     public class EmployeeBll
     {
         EmployeeDao dao = new EmployeeDao();
+        public List<Employee> getAll()
+        {
+            return dao.getAll();
+        }
         public Employee getbyAccount(string account)
         {
             return dao.getbyAccount(account);

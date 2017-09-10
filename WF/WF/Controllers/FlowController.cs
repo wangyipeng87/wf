@@ -14,6 +14,8 @@ namespace WF.Controllers
         WF_RoleBll rolebll = new WF_RoleBll();
         WF_Role_UserBll roleuserbll = new WF_Role_UserBll();
         WF_TemplateBll tmpbll = new WF_TemplateBll();
+        EmployeeBll empbll = new EmployeeBll();
+        WF_ApplyTypeBll applytypebll = new WF_ApplyTypeBll();
 
         // GET: Flow
         public ActionResult TmpList()
@@ -60,10 +62,41 @@ namespace WF.Controllers
         }
 
         // GET: Flow
-        public ActionResult FlowRole()
+        public ActionResult FlowRole(string key)
+        {
+            ViewBag.key = key;
+            return View();
+        }
+        // GET: Flow
+        public ActionResult FlowTypeList()
         {
             return View();
         }
+        // GET: Flow
+        public ActionResult AddFlowType(int? id)
+        {
+            if (id == null)
+            {
+                id = -1;
+            }
+            ViewBag.ID = id;
+            return View();
+        }
+        
+        // GET: Flow
+        public ActionResult RuleDetail(string key)
+        {
+            ViewBag.key = key;
+            return View();
+        }
+        // GET: Flow
+        public ActionResult NodeDetail(string key)
+        {
+            ViewBag.emplist = empbll.getAll();
+            ViewBag.key = key;
+            return View();
+        }
+
         // GET: Flow
         public ActionResult FlowRoleUserList(string rolecode, string rolename)
         {
@@ -453,6 +486,136 @@ namespace WF.Controllers
             try
             {
                 tmpbll.del(id);
+                res.code = ResultCode.OK;
+                res.message = "删除成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "删除失败";
+            }
+            return Content(res.ToJson());
+        }
+
+
+        [HttpPost]
+        public ContentResult GetApplyTypeList(string key, int state, string orderfiled, string dir, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                key = Server.UrlDecode(key);
+                #region 获取排序字段
+                string orderstr = "wt.CreateTime desc";
+                Dictionary<string, string> ordermap = new Dictionary<string, string>();
+                ordermap.Add("Code", "wt.Code ");
+                ordermap.Add("ApplyName", "wt.ApplyName ");
+                ordermap.Add("State", "wt.State");
+                ordermap.Add("CreateTime", "wt.CreateTime");
+                ordermap.Add("createuser", "wt.CreateUserCode");
+                if (!string.IsNullOrWhiteSpace(orderfiled))
+                {
+                    orderstr = ordermap[orderfiled] + " " + dir;
+                }
+                #endregion
+                int count = 0;
+                List<WF_ApplyType> emplist = applytypebll.getAll(key, state, start + 1, start + length, orderstr, out count);
+                res.code = ResultCode.OK;
+                res.data = emplist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        [HttpPost]
+        public ContentResult SaveApplyType(string jsonString)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_ApplyType role = jsonString.ToObject<WF_ApplyType>();
+                WF_ApplyType entity = applytypebll.getByID(role.ID);
+                if (entity != null)
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = entity.CreateTime;
+                    role.CreateUserCode = entity.CreateUserCode;
+                    applytypebll.update(role);
+                }
+                else
+                {
+                    role.UpdateTime = DateTime.Now;
+                    role.UpdateUserCode = getCurrent().UserCode;
+                    role.CreateTime = DateTime.Now;
+                    role.CreateUserCode = getCurrent().UserCode;
+                    applytypebll.save(role);
+                }
+                res.code = ResultCode.OK;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "保存失败";
+            }
+            return Content(res.ToJson());
+        }
+        public ContentResult getApplyTypeByID(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_ApplyType role = applytypebll.getByID(id);
+                if (role == null)
+                {
+                    role = new WF_ApplyType();
+                    role.ID = id;
+                    role.State = 1;
+                }
+                res.code = ResultCode.OK;
+                res.data = role;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "获取流程模板信息失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult UpdateApplyTypeState(int id, int state)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WF_ApplyType entity = applytypebll.getByID(id);
+                if (entity != null)
+                {
+                    entity.State = state;
+                    applytypebll.update(entity);
+                }
+                res.code = ResultCode.OK;
+                res.message = "更新状态成功";
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "更新状态失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult ApplyTypeDel(int id)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                applytypebll.del(id);
                 res.code = ResultCode.OK;
                 res.message = "删除成功";
             }

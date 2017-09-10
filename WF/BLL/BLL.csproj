@@ -43,6 +43,7 @@
     <Compile Include="EmployeeBll.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WF_AgentBll.cs" />
+    <Compile Include="WF_ApplyTypeBll.cs" />
     <Compile Include="WF_DataDictionaryBll.cs" />
     <Compile Include="WF_InstanceBll.cs" />
     <Compile Include="WF_InstanceVariableBll.cs" />
