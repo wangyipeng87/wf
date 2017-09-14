@@ -912,7 +912,7 @@ function getjson() {
     };
     if (nodelist != null && nodelist != undefined && nodelist.length > 0) {
         for (var i = 0; i < nodelist.length; i++) {
-            tmpjson.nodelist.push({
+            var nod = {
                 Tmpkey: tmpjson.tmpkey,
                 Nodekey: nodelist[i].key,
                 NodeName: nodelist[i].text,
@@ -927,8 +927,17 @@ function getjson() {
                 GoBackType: nodelist[i].GoBackType,
                 x: nodelist[i].x,
                 y: nodelist[i].y,
-                userlist: nodelist[i].userlist
-            });
+                userlist: new Array()
+            }
+            if (nodelist[i].userlist != null && nodelist[i].userlist != undefined && nodelist[i].userlist.length > 0) {
+                for (var j = 0; j < nodelist[i].userlist.length; j++) {
+                    nod.userlist.push({
+                        UserName: nodelist[i].userlist[j].username,
+                        UserCode: nodelist[i].userlist[j].usercode
+                    });
+                }
+            }
+            tmpjson.nodelist.push(nod);
         }
     }
     if (rulelist != null && rulelist != undefined && rulelist.length > 0) {

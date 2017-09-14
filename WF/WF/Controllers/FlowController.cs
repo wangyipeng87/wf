@@ -781,6 +781,21 @@ namespace WF.Controllers
                         item.CreateUserCode = getCurrent().UserCode;
                         item.UpdateTime = DateTime.Now;
                         item.UpdateUserCode = getCurrent().UserCode;
+
+                        if (item.userlist != null && item.userlist.Count > 0)
+                        {
+                            foreach (WF_Node_People people in item.userlist)
+                            {
+                                people.IsDelete = 0;
+                                people.State = 1;
+                                people.CreateTime = DateTime.Now;
+                                people.CreateUserCode = getCurrent().UserCode;
+                                people.UpdateTime = DateTime.Now;
+                                people.UpdateUserCode = getCurrent().UserCode;
+                                people.NodeKey = item.Nodekey;
+                                people.Tmpkey = item.Tmpkey;
+                            }
+                        }
                     }
                 }
                 if (tmp.rulelist != null && tmp.rulelist.Count > 0)
@@ -795,7 +810,8 @@ namespace WF.Controllers
                         item.UpdateUserCode = getCurrent().UserCode;
                     }
                 }
-                if(tmpbll.save(tmp))
+
+                if (tmpbll.save(tmp))
                 {
                     res.code = ResultCode.OK;
                 }

@@ -48,6 +48,7 @@
     <Compile Include="WF_InstanceBll.cs" />
     <Compile Include="WF_InstanceVariableBll.cs" />
     <Compile Include="WF_MenuBll.cs" />
+    <Compile Include="WF_Node_PeopleBll.cs" />
     <Compile Include="WF_OperationHistoryBll.cs" />
     <Compile Include="WF_RoleBll.cs" />
     <Compile Include="WF_Role_UserBll.cs" />

@@ -11,5 +11,6 @@ namespace WF.Entity
         public string tmpkey { get; set; }
         public List<WF_Rule> rulelist { get; set; }
         public List<WF_TemplateNode> nodelist { get; set; }
+
     }
 }

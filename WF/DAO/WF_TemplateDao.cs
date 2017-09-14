@@ -17,6 +17,7 @@ namespace WF.DAO
     {
         WF_TemplateNodeDao nodedao = new WF_TemplateNodeDao();
         WF_RuleDao ruledao = new WF_RuleDao();
+        WF_Node_PeopleDao peopledao = new WF_Node_PeopleDao();
         public bool save(WF_Template entity)
         {
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
@@ -34,11 +35,19 @@ namespace WF.DAO
                 {
                     nodedao.DelByTmpKey(entity.tmpkey);
                     ruledao.DelByTmpKey(entity.tmpkey);
-                    if(entity.nodelist!=null&& entity.nodelist.Count>0)
+                    if (entity.nodelist != null && entity.nodelist.Count > 0)
                     {
                         foreach (WF_TemplateNode item in entity.nodelist)
                         {
                             nodedao.save(item);
+                            peopledao.del(item.Tmpkey, item.Nodekey);
+                            if (item.userlist != null && item.userlist.Count > 0)
+                            {
+                                foreach (WF_Node_People people in item.userlist)
+                                {
+                                    peopledao.save(people);
+                                }
+                            }
                         }
                     }
                     if (entity.rulelist != null && entity.rulelist.Count > 0)
@@ -122,7 +131,7 @@ namespace WF.DAO
                                            	wt.IsDelete,
                                            	e.UserName+'('+e.UserCode+')' AS createuser,
                                            	e2.UserName+'('+e2.UserCode+')' AS updateuser,
-                                           	ROW_NUMBER() OVER ( ORDER BY "+order+@"  ) AS [index]
+                                           	ROW_NUMBER() OVER ( ORDER BY " + order + @"  ) AS [index]
                                            FROM
                                            	WF_Template AS wt
                                            	INNER JOIN Employee AS e ON e.UserCode=wt.CreateUserCode

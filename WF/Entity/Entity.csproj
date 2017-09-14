@@ -55,6 +55,7 @@
     <Compile Include="WF_Instance.cs" />
     <Compile Include="WF_InstanceVariable.cs" />
     <Compile Include="WF_Menu.cs" />
+    <Compile Include="WF_Node_People.cs" />
     <Compile Include="WF_OperationHistory.cs" />
     <Compile Include="WF_Role.cs" />
     <Compile Include="WF_Role_User.cs" />

@@ -29,6 +29,8 @@ namespace WF.Entity
         public int IsDelete {get; set;}
         public double x {get; set;}
         public double y {get; set;}
+
+        public List<WF_Node_People> userlist { get; set; }
     }
 
     [Serializable]
@@ -38,7 +40,7 @@ namespace WF.Entity
         {
             base.Table("WF_TemplateNode");
             this.Map(f => f.ID).Key(KeyType.Identity);//设置主键  (如果主键名称不包含字母“ID”，请设置)    
-
+            this.Map(f => f.userlist).Ignore();
             AutoMap();
         }
     }
