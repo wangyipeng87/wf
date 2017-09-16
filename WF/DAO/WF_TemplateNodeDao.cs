@@ -50,6 +50,39 @@ namespace WF.DAO
                 return conn.Execute(sql, new { tmpkey = tmpKey });
             }
         }
+        public List<WF_TemplateNode> getAllByTmpKey(string tmpkey)
+        {
+            string sql = @"  SELECT
+	wtn.ID,
+	wtn.Tmpkey,
+	wtn.Nodekey,
+	wtn.NodeName,
+	wtn.[Description],
+	wtn.ProcessType,
+	wtn.ProcessTypeValue,
+	wtn.ExecType,
+	wtn.TimeLimit,
+	wtn.NodeType,
+	wtn.[URL],
+	wtn.IsGoBack,
+	wtn.GoBackType,
+	wtn.CreateUserCode,
+	wtn.CreateTime,
+	wtn.UpdateUserCode,
+	wtn.UpdateTime,
+	wtn.[State],
+	wtn.IsDelete,
+	wtn.x,
+	wtn.y
+FROM
+	WF_TemplateNode AS wtn
+WHERE wtn.Tmpkey=@tmpkey";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_TemplateNode>(sql, new { tmpkey = tmpkey }).ToList();
+            }
+        }
     }
 }
 

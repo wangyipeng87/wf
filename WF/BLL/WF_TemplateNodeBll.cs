@@ -27,6 +27,10 @@ namespace WF.BLL
         {
             return dao.DelByTmpKey(tmpKey);
         }
+        public List<WF_TemplateNode> getAllByTmpKey(string tmpkey)
+        {
+            return dao.getAllByTmpKey(tmpkey);
+        }
     }
 }
 

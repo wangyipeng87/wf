@@ -16,7 +16,6 @@
         $.ajax({
             url: "../flow/SaveWFDesign",
             type: 'POST',
-            async: false,
             data: {
                 jsonString: JSON.stringify(getjson())
             },
@@ -33,6 +32,27 @@
             dataType: "json"
         });
     }
+    function initTmp() {
+        $.ajax({
+            url: "../flow/GetWFDesign",
+            type: 'POST',
+            data: {
+                tmpkey: $("#hidkey").val()
+            },
+            success: function (result) {
+                if (result.code == "200") {
+                    initDesign(result.data);
+                }
+                else {
+                    layer.alert(result.message);
+                }
+            },
+            dataType: "json"
+        });
+    }
+    $(document).ready(function () {
+        initTmp();
+    });
 </script>
 <input type="hidden" id="hidkey" value="@ViewBag.key" />
 <div class="page-header"  >

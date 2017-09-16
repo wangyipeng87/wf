@@ -51,6 +51,34 @@ namespace WF.DAO
                 return conn.Execute(sql, new { tmpkey = tmpKey });
             }
         }
+        public List<WF_Rule> getAllByTmpKey(string tmpkey)
+        {
+            string sql = @"    SELECT
+                             	wr.ID,
+                             	wr.Tmpkey,
+                             	wr.Rulekey,
+                             	wr.BeginNodeKey,
+                             	wr.EndNodekey,
+                             	wr.Expression,
+                             	wr.[Description],
+                             	wr.CreateUserCode,
+                             	wr.CreateTime,
+                             	wr.UpdateUserCode,
+                             	wr.UpdateTime,
+                             	wr.[State],
+                             	wr.IsDelete,
+                             	wr.BeginX,
+                             	wr.BeginY,
+                             	wr.EndX,
+                             	wr.EndY
+                             FROM
+                             	WF_Rule AS wr WHERE wr.Tmpkey=@tmpkey";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_Rule>(sql, new { tmpkey = tmpkey }).ToList();
+            }
+        }
     }
 }
 

@@ -17,6 +17,9 @@ namespace WF.Controllers
         EmployeeBll empbll = new EmployeeBll();
         WF_ApplyTypeBll applytypebll = new WF_ApplyTypeBll();
         WF_TemplateVariableBll varbll = new WF_TemplateVariableBll();
+        WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
+        WF_RuleBll rulebll = new WF_RuleBll();
+        WF_Node_PeopleBll peoplebll = new WF_Node_PeopleBll();
 
         // GET: Flow
         public ActionResult TmpList()
@@ -824,6 +827,31 @@ namespace WF.Controllers
             {
                 res.code = ResultCode.ERROR;
                 res.message = "保存失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult GetWFDesign(string tmpkey)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                WFTmp tmp = new WFTmp();
+                tmp.nodelist = nodebll.getAllByTmpKey(tmpkey);
+                if (tmp.nodelist != null && tmp.nodelist.Count > 0)
+                {
+                    foreach (WF_TemplateNode item in tmp.nodelist)
+                    {
+                        item.userlist = peoplebll.getAllByNode(tmpkey, item.Nodekey);                    }
+                }
+                tmp.rulelist = rulebll.getAllByTmpKey(tmpkey);
+                res.code = ResultCode.OK;
+                res.data = tmp;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "获取失败";
             }
             return Content(res.ToJson());
         }

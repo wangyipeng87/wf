@@ -511,6 +511,13 @@ function wfrule(options) {
     this.beginy = this.settings.beginy;
     this.endx = this.settings.endx;
     this.endy = this.settings.endy;
+    if (this.settings.beginNodeKey != null && this.settings.beginNodeKey != undefined && $.trim(this.settings.beginNodeKey) != "") {
+        this.beginNode = getNodeByKey(this.settings.beginNodeKey);
+    }
+    if (this.settings.endNodeKey != null && this.settings.endNodeKey != undefined && $.trim(this.settings.endNodeKey) != "") {
+        this.endNode = getNodeByKey(this.settings.endNodeKey);
+    }
+
     if (wf_view == null || wf_view == undefined) {
         wf_view = Raphael("divdesign", $(window).width(), $(window).height() - 28);
     }
@@ -850,6 +857,9 @@ function addRule() {
 $(document).ready(function () {
     wf_view = Raphael("divdesign", $(window).width(), $(window).height() - 28);
 
+
+});
+function initNewDesign() {
     nodelist.push(new wfnode({
         key: Raphael.createUUID(),
         text: "申请",
@@ -880,8 +890,7 @@ $(document).ready(function () {
         strokeWidth: 1.5,
         cursor: "pointer"
     }));
-});
-
+}
 function NodeSet(key) {
     layer.open({
         type: 2,
@@ -957,4 +966,107 @@ function getjson() {
         }
     }
     return tmpjson;
+}
+
+
+function initDesign(obj) {
+    if (obj == null && obj == undefine || obj == "") {
+        initNewDesign();
+        return;
+    }
+    if (obj.nodelist != null && obj.nodelist != undefined && obj.nodelist.length > 0) {
+        for (var i = 0; i < obj.nodelist.length; i++) {
+            if (obj.nodelist[i].NodeType == 1) {
+                nodelist.push(new wfnode({
+                    key: obj.nodelist[i].Nodekey,
+                    text: obj.nodelist[i].NodeName,
+                    nodeType: obj.nodelist[i].NodeType,
+                    x: obj.nodelist[i].x,
+                    y: obj.nodelist[i].y,
+                    nodeWidth: 108,
+                    nodeHeight: 50,
+                    nodeRect: 7,
+                    noteColor: "#5DA95E",
+                    noteBorderColor: "#5DA95E",
+                    opacity: 0.8,
+                    strokeWidth: 1.5,
+                    cursor: "pointer"
+                }));
+            }
+            if (obj.nodelist[i].NodeType == 2) {
+                nodelist.push(new wfnode({
+                    key: obj.nodelist[i].Nodekey,
+                    text: obj.nodelist[i].NodeName,
+                    nodeType: obj.nodelist[i].NodeType,
+                    x: obj.nodelist[i].x,
+                    y: obj.nodelist[i].y,
+                    nodeWidth: 108,
+                    nodeHeight: 50,
+                    nodeRect: 7,
+                    noteColor: "#FF0000",
+                    noteBorderColor: "#5DA95E",
+                    opacity: 0.8,
+                    strokeWidth: 1.5,
+                    cursor: "pointer"
+                }));
+            }
+            if (obj.nodelist[i].NodeType == 3) {
+                var nod = {
+                    key: obj.nodelist[i].Nodekey,
+                    text: obj.nodelist[i].NodeName,
+                    nodeType: obj.nodelist[i].NodeType,
+                    x: obj.nodelist[i].x,
+                    y: obj.nodelist[i].y,
+                    nodeWidth: 108,
+                    nodeHeight: 50,
+                    nodeRect: 7,
+                    noteColor: "#efeff0",
+                    noteBorderColor: "#5DA95E",
+                    opacity: 0.8,
+                    strokeWidth: 1.5,
+                    cursor: "pointer",
+                    nodeDescription: obj.nodelist[i].Description,
+                    ProcessType: obj.nodelist[i].ProcessType,
+                    ProcessTypeValue: obj.nodelist[i].ProcessTypeValue,
+                    ExecType: obj.nodelist[i].ExecType,
+                    TimeLimit: obj.nodelist[i].TimeLimit,
+                    URL: obj.nodelist[i].URL,
+                    IsGoBack: obj.nodelist[i].IsGoBack,
+                    GoBackType: obj.nodelist[i].GoBackType,
+                    userlist: new Array()
+                }
+                if (obj.nodelist[i].userlist != null && obj.nodelist[i].userlist != undefined && obj.nodelist[i].userlist.length > 0) {
+                    for (var j = 0; j < obj.nodelist[i].userlist.length; j++) {
+                        nod.userlist.push({
+                            username: obj.nodelist[i].userlist[j].UserName,
+                            usercode: obj.nodelist[i].userlist[j].UserCode
+                        });
+                    }
+                }
+                nodelist.push(new wfnode(nod));
+            }
+        }
+    }
+    if (obj.rulelist != null && obj.rulelist != undefined && obj.rulelist.length > 0) {
+        for (var i = 0; i < obj.rulelist.length; i++) {
+            rulelist.push(new wfrule({
+                key: obj.rulelist[i].Rulekey,
+                text: obj.rulelist[i].Description,
+                beginNodeKey: obj.rulelist[i].BeginNodeKey,
+                endNodeKey: obj.rulelist[i].EndNodekey,
+                expression: obj.rulelist[i].Expression,
+                beginx: obj.rulelist[i].BeginX,
+                beginy: obj.rulelist[i].BeginY,
+                endx: obj.rulelist[i].EndX,
+                endy: obj.rulelist[i].EndY,
+                arrWidth: 15,
+                pathWidth: 3,
+                circleWidth: 4,
+                ruleColor: "#5DA95E",
+                opacity: 0.8,
+                cursor: "pointer",
+                fontSize: "12px"
+            }));
+        }
+    }
 }
