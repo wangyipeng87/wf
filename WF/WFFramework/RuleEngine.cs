@@ -72,11 +72,11 @@ namespace WF.WFFramework
                 {
                     if (item.type == (int)ValType.STRING)
                     {
-                        varDefinition.Append(item.type + "  " + item.name + "=\"" + item.value + "\";");
+                        varDefinition.Append( " string " + item.name + "=\"" + item.value + "\";");
                     }
                     else
                     {
-                        varDefinition.Append(item.type + "  " + item.name + "=" + item.value + ";");
+                        varDefinition.Append(" int " + item.name + "=" + item.value + ";");
                     }
                     varDefinition.Append(Environment.NewLine);
                 }
