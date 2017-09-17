@@ -7,6 +7,7 @@ namespace WF.Entity
 {
     public class WF_Instance
     {
+        public int ID { get; set; }
         public string TmpKey {get; set;}
         public string FormID {get; set;}
         public string ApplyUserCode {get; set;}

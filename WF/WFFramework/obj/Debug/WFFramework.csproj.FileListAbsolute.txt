@@ -1,0 +1,17 @@
+D:\WF\MYWF\WF\WFFramework\bin\Debug\WFFramework.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\WFFramework.pdb
+D:\WF\MYWF\WF\WFFramework\bin\Debug\BLL.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\Common.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\DAO.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\Entity.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\Newtonsoft.Json.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\log4net.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\Dapper.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\DapperExtensions.dll
+D:\WF\MYWF\WF\WFFramework\bin\Debug\BLL.pdb
+D:\WF\MYWF\WF\WFFramework\bin\Debug\Common.pdb
+D:\WF\MYWF\WF\WFFramework\bin\Debug\DAO.pdb
+D:\WF\MYWF\WF\WFFramework\bin\Debug\Entity.pdb
+D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.csprojResolveAssemblyReference.cache
+D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.dll
+D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.pdb
