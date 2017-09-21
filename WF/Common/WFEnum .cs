@@ -17,5 +17,16 @@ namespace WF.Common
         INT = 1,
         STRING = 0,
     }
-    
+    public enum Operation
+    {
+        Start = 1,
+        Apply = 2,
+        Reject = 3,
+        GoTo = 4,
+        Transfer = 5,
+        Add = 6,
+        Read = 7,
+        CallBack = 8,
+    }
+
 }

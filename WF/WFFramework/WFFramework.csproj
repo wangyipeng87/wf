@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Flow.cs" />
+    <Compile Include="FlowContent.cs" />
+    <Compile Include="FlowEvent.cs" />
     <Compile Include="FlowFactory.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="NodeFactory.cs" />
