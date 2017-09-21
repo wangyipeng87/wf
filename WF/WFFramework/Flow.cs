@@ -14,8 +14,10 @@ namespace WF.WFFramework
         public string ApplyUserCode { get; set; }
         public string WriterUserCode { get; set; }
         public int InstanceState { get; set; }
+        public int TodoID { get; set; }
+        public int NodeKey { get; set; }
 
-        public void StartFlow(string tmpkey,string ApplyUserCode,string WriterUserCode,string FormID) {
+        public void StartFlow(List<Dictionary<string,string>> vallist, string tmpkey,string ApplyUserCode,string WriterUserCode,string FormID) {
 
 
         }
