@@ -11,12 +11,13 @@ namespace WF.WFFramework
     public  class FlowFactory
     {
         static WF_TemplateBll  tmpbll = new WF_TemplateBll();
-        public static Flow getFlow(string tmpkey) {
+        public static Flow getFlow(string tmpkey, string currenUserCode) {
             Flow flo = new Flow();
             flo.tmpkey = tmpkey;
+            flo.CurrenUserCode = currenUserCode;
             return flo;
         }
-        public static Flow getFlowByTodo(int todoid)
+        public static Flow getFlowByTodo(int todoid, string currenUserCode)
         {
             return new Flow();
         }

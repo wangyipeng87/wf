@@ -28,5 +28,15 @@ namespace WF.Common
         Read = 7,
         CallBack = 8,
     }
+    public enum State
+    {
+        Disable = 0,
+        Enable = 1
+    }
+    public enum IsDelete
+    {
+        UnDelete = 0,
+        Deleteed = 1
+    }
 
 }

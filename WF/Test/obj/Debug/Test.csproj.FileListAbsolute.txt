@@ -1,0 +1,6 @@
+D:\WF\MYWF\WF\Test\bin\Debug\Test.exe.config
+D:\WF\MYWF\WF\Test\bin\Debug\Test.exe
+D:\WF\MYWF\WF\Test\bin\Debug\Test.pdb
+D:\WF\MYWF\WF\Test\obj\Debug\Test.csprojResolveAssemblyReference.cache
+D:\WF\MYWF\WF\Test\obj\Debug\Test.exe
+D:\WF\MYWF\WF\Test\obj\Debug\Test.pdb
