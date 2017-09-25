@@ -31,6 +31,10 @@ namespace WF.BLL
         {
             return dao.getAllByTmpKey(tmpkey);
         }
+        public WF_TemplateNode getByNodeKey(string tmpkey, string nodeKey)
+        {
+            return dao.getByNodeKey( tmpkey,  nodeKey);
+        }
     }
 }
 

@@ -34,6 +34,10 @@ namespace WF.BLL
         {
             return dao.getAll(key, rolecode, state, begin, end, out count);
         }
+        public List<WF_Role_User> getRoleUserByRoleCode(string code)
+        {
+            return dao.getRoleUserByRoleCode( code);
+        }
     }
 }
 

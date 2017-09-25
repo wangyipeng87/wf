@@ -13,6 +13,7 @@ namespace WF.WFFramework
         public int operationType { get; set; }
         public string tmpKey { get; set; }
         public int currentInstanceID { get; set; }
+        public string currentNodeKey { get; set; }
         public int currentTodoID { get; set; }
         public string currenUserCode { get; set; }
 

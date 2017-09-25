@@ -97,6 +97,30 @@ namespace WF.DAO
                 return conn.Execute(sql, new { instanceID = instanceid, tmpkey = tmpkey, usercode = usercode, });
             }
         }
+        public List<WF_InstanceVariable>  getbyInstanceID(int instanceid)
+        {
+            string sql = @"   SELECT
+                                  	wiv.ID,
+                                  	wiv.InstanceID,
+                                  	wiv.VarName,
+                                  	wiv.DefaultValue,
+                                  	wiv.VarType,
+                                  	wiv.CreateUserCode,
+                                  	wiv.CreateTime,
+                                  	wiv.UpdateUserCode,
+                                  	wiv.UpdateTime,
+                                  	wiv.[State],
+                                  	wiv.IsDelete
+                                  FROM
+                                  	WF_InstanceVariable AS wiv WHERE wiv.InstanceID=@instanceid 
+                                  	AND wiv.[State]=1 AND wiv.IsDelete=0";
+
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_InstanceVariable>(sql, new { instanceid = instanceid }).ToList();
+            }
+        }
     }
 }
 

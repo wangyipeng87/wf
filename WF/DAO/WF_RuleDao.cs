@@ -79,6 +79,37 @@ namespace WF.DAO
                 return conn.Query<WF_Rule>(sql, new { tmpkey = tmpkey }).ToList();
             }
         }
+        public List<WF_Rule> getRuleByTmpKeyAndBeginNodeKey(string tmpkey,string beginNodeKey)
+        {
+            string sql = @"      
+                        SELECT wr.ID,
+                               wr.Tmpkey,
+                               wr.Rulekey,
+                               wr.BeginNodeKey,
+                               wr.EndNodekey,
+                               wr.Expression,
+                               wr.[Description],
+                               wr.CreateUserCode,
+                               wr.CreateTime,
+                               wr.UpdateUserCode,
+                               wr.UpdateTime,
+                               wr.[State],
+                               wr.IsDelete,
+                               wr.BeginX,
+                               wr.BeginY,
+                               wr.EndX,
+                               wr.EndY
+                        FROM   WF_Rule AS wr
+                        WHERE  wr.BeginNodeKey = @beginNodeKey
+                               AND wr.Tmpkey = @tmpkey
+                               AND wr.[State] = 1
+                               AND wr.IsDelete = 0";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_Rule>(sql, new { tmpkey = tmpkey, beginNodeKey= beginNodeKey }).ToList();
+            }
+        }
     }
 }
 

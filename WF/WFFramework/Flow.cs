@@ -12,14 +12,15 @@ namespace WF.WFFramework
     public class Flow
     {
         WF_InstanceBll instancebll = new WF_InstanceBll();
+        WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
+        WF_RuleBll rulebll = new WF_RuleBll();
         public string tmpkey { get; set; }
         public int InstanceID { get; set; }
         public string ApplyUserCode { get; set; }
         public string WriterUserCode { get; set; }
+        public string FormID { get; set; }
         public int InstanceState { get; set; }
         public int TodoID { get; set; }
-        public int NodeKey { get; set; }
-
         public string CurrenUserCode { get; set; }
 
         public event FlowEvent beforStartFlow;
@@ -30,6 +31,10 @@ namespace WF.WFFramework
         {
             //插入流程实例
             int instanceID = this.InsertInstance(tmpkey, formID, this.CurrenUserCode, writerUserCode, applyUserCode);
+            this.InstanceID = instanceID;
+            this.ApplyUserCode = applyUserCode;
+            this.WriterUserCode = writerUserCode;
+            this.FormID = FormID;
 
             //触发启动前事件
             FlowContent flowcontent = new FlowContent();
@@ -54,6 +59,7 @@ namespace WF.WFFramework
             {
                 foreach (FlowNode node in firstNode)
                 {
+                    flowcontent.currentNodeKey = node.NodeKey;
                     List<string> userCodeList = node.GetTodoUser(flowcontent);
                     //循环遍历插入待办
                     if (userCodeList != null && userCodeList.Count > 0)
@@ -62,12 +68,13 @@ namespace WF.WFFramework
                         FlowOperation operation = new FlowOperation();
                         foreach (string item in userCodeList)
                         {
-                            int todoid = todo.InsertTodo(item.Trim(), instanceID, node, node.nodeKey);
+                            int todoid = todo.InsertTodo(item.Trim(), instanceID, node, node.NodeKey);
                             operation.Insert(todoid, CurrenUserCode, (int)Operation.Start, "启动流程");
                         }
                     }
                 }
             }
+            flowcontent.currentNodeKey ="";
             //触发启动后事件
             this.afterStartFlow(flowcontent);
         }
@@ -95,12 +102,31 @@ namespace WF.WFFramework
         /// <returns></returns>
         public List<FlowNode> GetFirstNode()
         {
-            throw new NotImplementedException();
+            List<FlowNode> firstNodeList = new List<FlowNode>();
+            List<WF_TemplateNode> nodelist= nodebll.getAllByTmpKey(this.tmpkey);
+            List<WF_Rule> rulelist= rulebll.getAllByTmpKey(this.tmpkey);
+            WF_TemplateNode beginNode = null;
+            if (nodelist!=null&&nodelist.Count>0)
+            {
+                foreach (WF_TemplateNode item in nodelist)
+                {
+                    if(item.NodeType==(int)WFNodeType.BeginNode)
+                    {
+                        beginNode = item;
+                        break;
+                    }
+                }
+            }
+           
+            if(beginNode!=null)
+            {
+                FlowNode firstnode = NodeFactory.getFlowNode(beginNode.Tmpkey,beginNode.Nodekey);
+                FlowContent flowcontent = new FlowContent();
+                flowcontent.currentInstanceID =this.InstanceID;
+                firstNodeList = firstnode.GetNextNode(flowcontent);
+            }
+            return firstNodeList;
         }
 
-        public int InsertHistory()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

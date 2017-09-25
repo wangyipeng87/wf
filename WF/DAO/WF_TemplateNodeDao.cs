@@ -53,34 +53,67 @@ namespace WF.DAO
         public List<WF_TemplateNode> getAllByTmpKey(string tmpkey)
         {
             string sql = @"  SELECT
-	wtn.ID,
-	wtn.Tmpkey,
-	wtn.Nodekey,
-	wtn.NodeName,
-	wtn.[Description],
-	wtn.ProcessType,
-	wtn.ProcessTypeValue,
-	wtn.ExecType,
-	wtn.TimeLimit,
-	wtn.NodeType,
-	wtn.[URL],
-	wtn.IsGoBack,
-	wtn.GoBackType,
-	wtn.CreateUserCode,
-	wtn.CreateTime,
-	wtn.UpdateUserCode,
-	wtn.UpdateTime,
-	wtn.[State],
-	wtn.IsDelete,
-	wtn.x,
-	wtn.y
-FROM
-	WF_TemplateNode AS wtn
-WHERE wtn.Tmpkey=@tmpkey";
+                                	wtn.ID,
+                                	wtn.Tmpkey,
+                                	wtn.Nodekey,
+                                	wtn.NodeName,
+                                	wtn.[Description],
+                                	wtn.ProcessType,
+                                	wtn.ProcessTypeValue,
+                                	wtn.ExecType,
+                                	wtn.TimeLimit,
+                                	wtn.NodeType,
+                                	wtn.[URL],
+                                	wtn.IsGoBack,
+                                	wtn.GoBackType,
+                                	wtn.CreateUserCode,
+                                	wtn.CreateTime,
+                                	wtn.UpdateUserCode,
+                                	wtn.UpdateTime,
+                                	wtn.[State],
+                                	wtn.IsDelete,
+                                	wtn.x,
+                                	wtn.y
+                                FROM
+                                	WF_TemplateNode AS wtn
+                                WHERE wtn.Tmpkey=@tmpkey and wtn.[State]=1 and wtn.IsDelete=0";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
             {
                 conn.Open();
                 return conn.Query<WF_TemplateNode>(sql, new { tmpkey = tmpkey }).ToList();
+            }
+        }
+        public WF_TemplateNode getByNodeKey(string tmpkey,string nodeKey)
+        {
+            string sql = @"  SELECT
+                                	wtn.ID,
+                                	wtn.Tmpkey,
+                                	wtn.Nodekey,
+                                	wtn.NodeName,
+                                	wtn.[Description],
+                                	wtn.ProcessType,
+                                	wtn.ProcessTypeValue,
+                                	wtn.ExecType,
+                                	wtn.TimeLimit,
+                                	wtn.NodeType,
+                                	wtn.[URL],
+                                	wtn.IsGoBack,
+                                	wtn.GoBackType,
+                                	wtn.CreateUserCode,
+                                	wtn.CreateTime,
+                                	wtn.UpdateUserCode,
+                                	wtn.UpdateTime,
+                                	wtn.[State],
+                                	wtn.IsDelete,
+                                	wtn.x,
+                                	wtn.y
+                                FROM
+                                	WF_TemplateNode AS wtn
+                                WHERE wtn.Tmpkey=@tmpkey and wtn.Nodekey=@nodekey and wtn.[State]=1 and wtn.IsDelete=0";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_TemplateNode>(sql, new { tmpkey = tmpkey, nodekey= nodeKey }).FirstOrDefault();
             }
         }
     }

@@ -124,6 +124,25 @@ namespace WF.DAO
                 return conn.Query<WF_Role_User>(sql, new {  key = key, rolecode = rolecode, state= state, begin = begin, end = end }).ToList();
             }
         }
+
+        public List<WF_Role_User>  getRoleUserByRoleCode(string code)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                string sql = @"   
+                                SELECT wru.ID,
+                                       wr.RoleName,
+                                       wru.RoleCode,
+                                       e.UserName,
+                                       e.UserCode,
+                                       wru.[State]
+                                FROM   WF_Role_User AS wru
+                                WHERE  wru.[State] = 1
+                                       AND wru.RoleCode = @code";
+                return conn.Query<WF_Role_User>(sql, new { code = code }).ToList(); ;
+            }
+        }
     }
 }
 

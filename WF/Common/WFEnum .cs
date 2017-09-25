@@ -39,4 +39,17 @@ namespace WF.Common
         Deleteed = 1
     }
 
+    public enum WFNodeType
+    {
+        BeginNode = 1,
+        EndNode = 2,
+        Normal=3,
+    }
+    public enum WFProcessType
+    {
+        User = 1,
+        Role = 2,
+        Custom = 3,
+    }
+    
 }

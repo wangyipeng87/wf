@@ -29,6 +29,10 @@ namespace WF.BLL
         {
             return dao.copyVarByTmpKey(instanceid, tmpkey, usercode);
         }
+        public List<WF_InstanceVariable> getbyInstanceID(int instanceid)
+        {
+            return dao.getbyInstanceID( instanceid);
+        }
     }
 }
 
