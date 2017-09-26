@@ -21,7 +21,7 @@ namespace WF.WFFramework
         public List<FlowNode> GetNextNode(FlowContent flowContent)
         {
             List<WF_Rule> ruleList = rulebll.getRuleByTmpKeyAndBeginNodeKey(this.TmpKey, this.NodeKey);
-            List<WF_InstanceVariable> varlist = varbll.getbyInstanceID(flowContent.currentInstanceID);
+            List<WF_InstanceVariable> varlist = varbll.getbyInstanceID(flowContent.CurrentInstanceID);
             List<WF_Rule> enableRule = new List<WF_Rule>();
             List<Val> val = new List<Val>();
             List<WF_TemplateNode> tmpNodeList = new List<WF_TemplateNode>();

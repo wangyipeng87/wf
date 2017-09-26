@@ -14,7 +14,7 @@ namespace WF.WFFramework.WFNode
         WF_Role_UserBll roleuserbll = new WF_Role_UserBll();
         public override List<string> GetTodoUser(FlowContent flowContent)
         {
-            WF_TemplateNode node= nodebll.getByNodeKey(flowContent.tmpKey, flowContent.currentNodeKey);
+            WF_TemplateNode node= nodebll.getByNodeKey(flowContent.TmpKey, flowContent.CurrentNodeKey);
             string rolecode = node.ProcessTypeValue;
             List<WF_Role_User> userlist= roleuserbll.getRoleUserByRoleCode(rolecode);
             List<string> user = new List<string>();

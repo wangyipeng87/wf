@@ -25,7 +25,7 @@ namespace WF.WFFramework
         public static bool IsConformExpress(List<Val> map, string express)
         {
             bool res = true;
-            if (string.IsNullOrEmpty(express) || express.Trim() != "" || express.Trim().Length != 0)
+            if (string.IsNullOrEmpty(express) || express.Trim() == "" || express.Trim().Length == 0)
             {
                 return true;
             }

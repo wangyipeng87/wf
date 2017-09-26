@@ -23,17 +23,26 @@ namespace WF.WFFramework
             flo.TmpKey = tmpkey;
             return flo;
         }
-        public static FlowNode getFlowNode(string tmpkey, string nodeKey,int instanceID)
+        public static FlowNode getFlowNode(string tmpkey, string nodeKey, int instanceID)
         {
             FlowNode flo = GetNodeByNodeType(tmpkey, nodeKey);
             flo.NodeKey = nodeKey;
             flo.TmpKey = tmpkey;
             return flo;
         }
-        private static FlowNode GetNodeByNodeType(string tmpkey, string nodeKey) {
+        private static FlowNode GetNodeByNodeType(string tmpkey, string nodeKey)
+        {
             WF_TemplateNode node = nodebll.getByNodeKey(tmpkey, nodeKey);
             FlowNode flo = null;
-            if (node.ProcessType==(int)WFProcessType.User)
+            if (node.NodeType == (int)WFNodeType.BeginNode)
+            {
+                flo = new UserNode();
+            }
+            if (node.NodeType == (int)WFNodeType.EndNode)
+            {
+                flo = new UserNode();
+            }
+            if (node.ProcessType == (int)WFProcessType.User)
             {
                 flo = new UserNode();
             }
@@ -43,9 +52,9 @@ namespace WF.WFFramework
             }
             if (node.ProcessType == (int)WFProcessType.Custom)
             {
-                WF_ApplyType apply= applytypebll.getByCode(node.ProcessTypeValue);
-                Assembly assembly = Assembly.GetExecutingAssembly(); 
-                dynamic obj = assembly.CreateInstance(apply.ClassName); 
+                WF_ApplyType apply = applytypebll.getByCode(node.ProcessTypeValue);
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                dynamic obj = assembly.CreateInstance(apply.ClassName);
                 flo = (FlowNode)obj;
             }
             return flo;

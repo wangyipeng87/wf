@@ -12,8 +12,10 @@ namespace WF.WFFramework
     {
         static WF_TemplateBll  tmpbll = new WF_TemplateBll();
         public static Flow getFlow(string tmpkey, string currenUserCode) {
+            WF_Template tmp = tmpbll.getByKey(tmpkey);
             Flow flo = new Flow();
-            flo.tmpkey = tmpkey;
+            flo.Tmpkey = tmpkey;
+            flo.FormName = tmp.TmpName;
             flo.CurrenUserCode = currenUserCode;
             return flo;
         }

@@ -51,5 +51,22 @@ namespace WF.Common
         Role = 2,
         Custom = 3,
     }
-    
+    public enum TodoState
+    {
+        UnDo = 1,
+        Done = 2
+    }
+    public enum TodoType
+    {
+        Normal = 1,
+        Read = 2,
+        Add = 3,
+        Redirect = 4,
+    }
+
+    public enum TodoIsShow
+    {
+        Show = 1,
+        Hide = 2,
+    }
 }

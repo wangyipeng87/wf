@@ -45,7 +45,7 @@
     <Compile Include="FlowContent.cs" />
     <Compile Include="FlowEvent.cs" />
     <Compile Include="FlowFactory.cs" />
-    <Compile Include="FlowOperation.cs" />
+    <Compile Include="FlowOperationHistory.cs" />
     <Compile Include="FlowVar.cs" />
     <Compile Include="FlowNode.cs" />
     <Compile Include="NodeFactory.cs" />

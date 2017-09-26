@@ -10,12 +10,15 @@ namespace WF.WFFramework
   public  class FlowContent
     {
 
-        public int operationType { get; set; }
-        public string tmpKey { get; set; }
-        public int currentInstanceID { get; set; }
-        public string currentNodeKey { get; set; }
-        public int currentTodoID { get; set; }
-        public string currenUserCode { get; set; }
+        public int OperationType { get; set; }
+        public string TmpKey { get; set; }
+        public string TaskName { get; set; }
+        public int InstanceState { get; set; }
+        
+        public int CurrentInstanceID { get; set; }
+        public string CurrentNodeKey { get; set; }
+        public string CurrentTodoID { get; set; }
+        public string CurrenUserCode { get; set; }
 
     }
 }

@@ -13,7 +13,7 @@ namespace WF.WFFramework.WFNode
         WF_Node_PeopleBll people = new WF_Node_PeopleBll();
         public override List<string> GetTodoUser(FlowContent flowContent)
         {
-            List<WF_Node_People> user= people.getAllByNode(flowContent.tmpKey, flowContent.currentNodeKey);
+            List<WF_Node_People> user= people.getAllByNode(flowContent.TmpKey, flowContent.CurrentNodeKey);
             List<string> userlist = new List<string>();
             if (user!=null&& user.Count>0)
             {

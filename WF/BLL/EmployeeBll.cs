@@ -18,6 +18,10 @@ namespace WF.BLL
         {
             return dao.getbyAccount(account);
         }
+        public Employee getbyUserCode(string usercode)
+        {
+            return dao.getbyUserCode(usercode);
+        }
         public Employee getbyAccountAndPwd(string account, string pwd)
         {
             return dao.getbyAccountAndPwd(account, pwd);

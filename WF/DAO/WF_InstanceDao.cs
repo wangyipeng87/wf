@@ -21,6 +21,14 @@ namespace WF.DAO
                 return id;
             }
         }
+        public WF_Instance getByID(int id)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Get<WF_Instance>(id);
+            }
+        }
     }
 }
 

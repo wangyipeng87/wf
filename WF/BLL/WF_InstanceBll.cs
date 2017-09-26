@@ -14,6 +14,10 @@ namespace WF.BLL
         {
             return dao.save(entity);
         }
+        public WF_Instance getByID(int id)
+        {
+            return dao.getByID(id);
+        }
     }
 }
 
