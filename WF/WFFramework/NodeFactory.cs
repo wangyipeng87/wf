@@ -42,20 +42,23 @@ namespace WF.WFFramework
             {
                 flo = new UserNode();
             }
-            if (node.ProcessType == (int)WFProcessType.User)
+            if (node.NodeType == (int)WFNodeType.Normal)
             {
-                flo = new UserNode();
-            }
-            if (node.ProcessType == (int)WFProcessType.Role)
-            {
-                flo = new RoleNode();
-            }
-            if (node.ProcessType == (int)WFProcessType.Custom)
-            {
-                WF_ApplyType apply = applytypebll.getByCode(node.ProcessTypeValue);
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                dynamic obj = assembly.CreateInstance(apply.ClassName);
-                flo = (FlowNode)obj;
+                if (node.ProcessType == (int)WFProcessType.User)
+                {
+                    flo = new UserNode();
+                }
+                if (node.ProcessType == (int)WFProcessType.Role)
+                {
+                    flo = new RoleNode();
+                }
+                if (node.ProcessType == (int)WFProcessType.Custom)
+                {
+                    WF_ApplyType apply = applytypebll.getByCode(node.ProcessTypeValue);
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    dynamic obj = assembly.CreateInstance(apply.ClassName);
+                    flo = (FlowNode)obj;
+                }
             }
             return flo;
         }
