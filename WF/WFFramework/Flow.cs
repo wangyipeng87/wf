@@ -133,6 +133,7 @@ namespace WF.WFFramework
                 flowcontent.InstanceState = instance.State;
                 flowcontent.CurrentNodeKey=todo.Nodekey;
                 flowcontent.OperationType = (int)operationType;
+                flowcontent.CurrentTodoID = todo.ID.ToString(); ;
                 this.beforOperation(flowcontent);
             }
 

@@ -1,3 +1,4 @@
+D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.csprojResolveAssemblyReference.cache
 D:\WF\MYWF\WF\WFFramework\bin\Debug\WFFramework.dll
 D:\WF\MYWF\WF\WFFramework\bin\Debug\WFFramework.pdb
 D:\WF\MYWF\WF\WFFramework\bin\Debug\BLL.dll
@@ -12,6 +13,5 @@ D:\WF\MYWF\WF\WFFramework\bin\Debug\BLL.pdb
 D:\WF\MYWF\WF\WFFramework\bin\Debug\Common.pdb
 D:\WF\MYWF\WF\WFFramework\bin\Debug\DAO.pdb
 D:\WF\MYWF\WF\WFFramework\bin\Debug\Entity.pdb
-D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.csprojResolveAssemblyReference.cache
 D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.dll
 D:\WF\MYWF\WF\WFFramework\obj\Debug\WFFramework.pdb

@@ -16,7 +16,13 @@ namespace WF.WFFramework
         public int InstanceState { get; set; }
         
         public int CurrentInstanceID { get; set; }
+        /// <summary>
+        /// 当前流程节点key，用逗号分隔
+        /// </summary>
         public string CurrentNodeKey { get; set; }
+        /// <summary>
+        /// 当前todoid，用逗号分隔
+        /// </summary>
         public string CurrentTodoID { get; set; }
         public string CurrenUserCode { get; set; }
 
