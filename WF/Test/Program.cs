@@ -17,8 +17,6 @@ namespace Test
                 try
                 {
                     Flow flo = FlowFactory.getFlow("key1", "8454");
-                    flo.beforStartFlow += Flo_beforStartFlow;
-                    flo.afterStartFlow += Flo_afterStartFlow;
                     flo.StartFlow(null, "8445", "8445", "AP200709262223001");
                     scope.Complete();
                 }

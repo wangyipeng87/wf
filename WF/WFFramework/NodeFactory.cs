@@ -16,18 +16,20 @@ namespace WF.WFFramework
         static WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
         static WF_ApplyTypeBll applytypebll = new WF_ApplyTypeBll();
 
-        public static FlowNode getFlowNode(string tmpkey, string nodeKey)
+        public static FlowNode getFlowNode(string tmpkey, string nodeKey, FlowEvent endFlow)
         {
             FlowNode flo = GetNodeByNodeType(tmpkey, nodeKey);
             flo.NodeKey = nodeKey;
             flo.TmpKey = tmpkey;
+            flo.endFlow += endFlow;
             return flo;
         }
-        public static FlowNode getFlowNode(string tmpkey, string nodeKey, int instanceID)
+        public static FlowNode getFlowNode(string tmpkey, string nodeKey, int instanceID, FlowEvent endFlow)
         {
             FlowNode flo = GetNodeByNodeType(tmpkey, nodeKey);
             flo.NodeKey = nodeKey;
             flo.TmpKey = tmpkey;
+            flo.endFlow += endFlow;
             return flo;
         }
         private static FlowNode GetNodeByNodeType(string tmpkey, string nodeKey)
@@ -36,11 +38,11 @@ namespace WF.WFFramework
             FlowNode flo = null;
             if (node.NodeType == (int)WFNodeType.BeginNode)
             {
-                flo = new UserNode();
+                flo = new BeginNode();
             }
             if (node.NodeType == (int)WFNodeType.EndNode)
             {
-                flo = new UserNode();
+                flo = new EndNode();
             }
             if (node.NodeType == (int)WFNodeType.Normal)
             {

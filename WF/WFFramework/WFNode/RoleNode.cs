@@ -12,7 +12,7 @@ namespace WF.WFFramework.WFNode
     {
         WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
         WF_Role_UserBll roleuserbll = new WF_Role_UserBll();
-        public override List<string> GetTodoUser(FlowContent flowContent)
+        public override List<string> Run(FlowContent flowContent)
         {
             WF_TemplateNode node= nodebll.getByNodeKey(flowContent.TmpKey, flowContent.CurrentNodeKey);
             string rolecode = node.ProcessTypeValue;

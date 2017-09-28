@@ -16,8 +16,15 @@ namespace WF.WFFramework
         WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
         public string TmpKey { get; set; }
         public string NodeKey { get; set; }
-        public abstract List<string> GetTodoUser(FlowContent flowContent);
-       
+        public event FlowEvent endFlow;
+        public abstract List<string> Run(FlowContent flowContent);
+
+        protected void RunEndFlowEvent(FlowContent flowContent) {
+            if (this.endFlow != null)
+            {
+                this.endFlow(flowContent);
+            }
+        }
         public List<FlowNode> GetNextNode(FlowContent flowContent)
         {
             List<WF_Rule> ruleList = rulebll.getRuleByTmpKeyAndBeginNodeKey(this.TmpKey, this.NodeKey);
@@ -59,7 +66,7 @@ namespace WF.WFFramework
             {
                 foreach (WF_TemplateNode item in tmpNodeList)
                 {
-                    FlowNode fn= NodeFactory.getFlowNode(item.Tmpkey, item.Nodekey);
+                    FlowNode fn= NodeFactory.getFlowNode(item.Tmpkey, item.Nodekey,this.endFlow);
                     flowNodeList.Add(fn);
                 }
             }

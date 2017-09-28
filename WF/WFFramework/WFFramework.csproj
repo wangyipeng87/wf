@@ -52,6 +52,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleEngine.cs" />
     <Compile Include="ToDoHandle.cs" />
+    <Compile Include="WFFlow\NormalFlow.cs" />
+    <Compile Include="WFNode\BeginNode.cs" />
+    <Compile Include="WFNode\EndNode.cs" />
     <Compile Include="WFNode\RoleNode.cs" />
     <Compile Include="WFNode\UserNode.cs" />
   </ItemGroup>

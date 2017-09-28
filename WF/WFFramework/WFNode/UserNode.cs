@@ -11,7 +11,7 @@ namespace WF.WFFramework.WFNode
     public class UserNode : FlowNode
     {
         WF_Node_PeopleBll people = new WF_Node_PeopleBll();
-        public override List<string> GetTodoUser(FlowContent flowContent)
+        public override List<string> Run(FlowContent flowContent)
         {
             List<WF_Node_People> user= people.getAllByNode(flowContent.TmpKey, flowContent.CurrentNodeKey);
             List<string> userlist = new List<string>();
