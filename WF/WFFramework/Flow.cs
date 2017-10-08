@@ -44,7 +44,7 @@ namespace WF.WFFramework
         {
             //插入流程实例
             int instanceID = this.InsertInstance((int)WF.Common.InstanceState.Enable, formID, this.CurrenUserCode, writerUserCode, applyUserCode);
-            WF_Template tmp= tmpbll.getByKey(this.Tmpkey);
+            WF_Template tmp = tmpbll.getByKey(this.Tmpkey);
             this.InstanceID = instanceID;
             this.ApplyUserCode = applyUserCode;
             this.WriterUserCode = writerUserCode;
@@ -59,7 +59,8 @@ namespace WF.WFFramework
             flowcontent.OperationType = (int)Common.Operation.Start;
             flowcontent.TaskName = tmp.TmpName;
             flowcontent.InstanceState = (int)WF.Common.InstanceState.Enable;
-            if(this.beforStartFlow!=null)
+            flowcontent.CurrentNodeKey = "";
+            if (this.beforStartFlow != null)
             {
                 this.beforStartFlow(flowcontent);
             }
@@ -71,7 +72,7 @@ namespace WF.WFFramework
             //先将流程模板变量copy到流程实例
             var.copyVarByTmpKey(this.CurrenUserCode);
             //更新流程实例的变量
-            var.UpdateVal(vallist,this.CurrenUserCode);
+            var.UpdateVal(vallist, this.CurrenUserCode);
             //获取第一个节点
             List<FlowNode> firstNode = this.GetFirstNode();
             //获取当前待办人的编号
@@ -81,17 +82,19 @@ namespace WF.WFFramework
             {
                 foreach (FlowNode node in firstNode)
                 {
-                    newnodekey.Add(node.NodeKey);
-                    flowcontent.CurrentNodeKey = node.NodeKey;
-                    List<string> userCodeList = node.Run(flowcontent);
-                    //循环遍历插入待办
-                    if (userCodeList != null && userCodeList.Count > 0)
+                    NodeReturn noderet = node.Run(flowcontent);
+                    if (!noderet.isOver)
                     {
-                        ToDoHandle todo = new ToDoHandle();
-                        foreach (string item in userCodeList)
+                        newnodekey.Add(node.NodeKey);
+                        List<string> userCodeList = noderet.ToDoUserList;
+                        //循环遍历插入待办
+                        if (userCodeList != null && userCodeList.Count > 0)
                         {
-                            int todoid = todo.InsertTodo(item.Trim(), instanceID,(int)TodoIsShow.Show,-1, flowcontent.TaskName, (int)TodoType.Normal, node, node.NodeKey,CurrenUserCode);
-                            newtodis.Add(todoid.ToString());
+                            foreach (string item in userCodeList)
+                            {
+                                int todoid = ToDoHandle.InsertTodo(item.Trim(), instanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, node, node.NodeKey, CurrenUserCode);
+                                newtodis.Add(todoid.ToString());
+                            }
                         }
                     }
                 }
@@ -113,33 +116,93 @@ namespace WF.WFFramework
         /// <param name="todoID">待办id</param>
         /// <param name="operationUserCode">操作人工号 </param>
         /// <param name="operationType">操作类型</param>
-        public void Operation(Dictionary<string, string> vallist,int todoID ,string operationUserCode, Operation operationType)
+        public void Operation(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common)
         {
             //禁止流程启动
-            if(operationType==Common.Operation.Start)
+            if (operationType == Common.Operation.Start)
             {
                 throw new Exception("不能执行流程启动操作");
             }
-            if(this.beforOperation!=null)
+            //todo 判断流程实例是否是正常状态流程
+            //todo 判断当前处理人是否是当前责任人或者代理人
+            //todo 判断当前待办是否已经处理过了
+            WF_ToDo todo = todobll.getByID(todoID);
+            WF_Instance instance = instancebll.getByID(todo.InstanceID);
+            FlowContent flowcontent = new FlowContent();
+            flowcontent.CurrenUserCode = operationUserCode;
+            flowcontent.TmpKey = this.Tmpkey;
+            flowcontent.CurrentInstanceID = todo.InstanceID;
+            flowcontent.OperationType = (int)Common.Operation.Start;
+            flowcontent.TaskName = todo.ToDoName;
+            flowcontent.InstanceState = instance.State;
+            flowcontent.CurrentNodeKey = todo.Nodekey;
+            flowcontent.OperationType = (int)operationType;
+            flowcontent.CurrentTodoID = todo.ID.ToString();
+            //获取当前待办人的编号
+            List<string> newtodis = new List<string>();
+            List<string> newnodekey = new List<string>();
+            if (this.beforOperation != null)
             {
-                WF_ToDo todo= todobll.getByID(todoID);
-                WF_Instance instance= instancebll.getByID(todo.InstanceID);
-                FlowContent flowcontent = new FlowContent();
-                flowcontent.CurrenUserCode = this.CurrenUserCode;
-                flowcontent.TmpKey = this.Tmpkey;
-                flowcontent.CurrentInstanceID = todo.InstanceID;
-                flowcontent.OperationType = (int)Common.Operation.Start;
-                flowcontent.TaskName = todo.ToDoName;
-                flowcontent.InstanceState = instance.State;
-                flowcontent.CurrentNodeKey=todo.Nodekey;
-                flowcontent.OperationType = (int)operationType;
-                flowcontent.CurrentTodoID = todo.ID.ToString(); ;
                 this.beforOperation(flowcontent);
             }
+            FlowNode node = NodeFactory.getFlowNode(instance.TmpKey, todo.Nodekey, this.endFlow);
+            //todo 处理 同意
+            if (operationType == Common.Operation.Apply)
+            {
+                ToDoHandle.DealTodo((int)operationType, operationUserCode, todoID);
+                FlowVar var = new FlowVar();
+                var.UpdateVal(vallist, this.CurrenUserCode);
+                //todo 加签
+                //todo 转签
+                //todo 一般同意
+                NodeReturn ret = node.Run(flowcontent);
+                if (ret.isOver)
+                {
+                    List<FlowNode> nextNode = node.GetNextNode(flowcontent);
+                    if (nextNode != null && nextNode.Count > 0)
+                    {
+                        foreach (FlowNode nxitem in nextNode)
+                        {
+                            NodeReturn noderet = nxitem.Run(flowcontent);
+                            if (!noderet.isOver)
+                            {
+                                newnodekey.Add(nxitem.NodeKey);
+                                List<string> userCodeList = noderet.ToDoUserList;
+                                //循环遍历插入待办
+                                if (userCodeList != null && userCodeList.Count > 0)
+                                {
+                                    foreach (string user in userCodeList)
+                                    {
+                                        int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, nxitem, nxitem.NodeKey, CurrenUserCode);
+                                        newtodis.Add(todoid.ToString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    flowcontent.CurrentNodeKey = string.Join(", ", newnodekey);
+                    flowcontent.CurrentTodoID = string.Join(", ", newtodis);
+                }
+                else
+                {
+                    List<string> userCodeList = ret.ToDoUserList;
+                    //循环遍历插入待办
+                    if (userCodeList != null && userCodeList.Count > 0)
+                    {
+                        foreach (string user in userCodeList)
+                        {
+                            int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, node, node.NodeKey, CurrenUserCode);
+                            newtodis.Add(todoid.ToString());
+                        }
+                    }
 
+                    flowcontent.CurrentTodoID = string.Join(", ", newtodis);
+                }
+                operationbll.Insert(flowcontent.CurrentInstanceID, todoID, CurrenUserCode, (int)operationType, common);
+            }
             if (this.afterOperation != null)
             {
-
+                this.afterOperation(flowcontent);
             }
         }
         private int InsertInstance(int instanceState, string formID, string createUserCode, string writerUserCode, string applyUserCode)
@@ -165,26 +228,26 @@ namespace WF.WFFramework
         private List<FlowNode> GetFirstNode()
         {
             List<FlowNode> firstNodeList = new List<FlowNode>();
-            List<WF_TemplateNode> nodelist= nodebll.getAllByTmpKey(this.Tmpkey);
-            List<WF_Rule> rulelist= rulebll.getAllByTmpKey(this.Tmpkey);
+            List<WF_TemplateNode> nodelist = nodebll.getAllByTmpKey(this.Tmpkey);
+            List<WF_Rule> rulelist = rulebll.getAllByTmpKey(this.Tmpkey);
             WF_TemplateNode beginNode = null;
-            if (nodelist!=null&&nodelist.Count>0)
+            if (nodelist != null && nodelist.Count > 0)
             {
                 foreach (WF_TemplateNode item in nodelist)
                 {
-                    if(item.NodeType==(int)WFNodeType.BeginNode)
+                    if (item.NodeType == (int)WFNodeType.BeginNode)
                     {
                         beginNode = item;
                         break;
                     }
                 }
             }
-           
-            if(beginNode!=null)
+
+            if (beginNode != null)
             {
-                FlowNode firstnode = NodeFactory.getFlowNode(beginNode.Tmpkey,beginNode.Nodekey,this.endFlow);
+                FlowNode firstnode = NodeFactory.getFlowNode(beginNode.Tmpkey, beginNode.Nodekey, this.endFlow);
                 FlowContent flowcontent = new FlowContent();
-                flowcontent.CurrentInstanceID =this.InstanceID;
+                flowcontent.CurrentInstanceID = this.InstanceID;
                 firstNodeList = firstnode.GetNextNode(flowcontent);
             }
             return firstNodeList;

@@ -49,6 +49,7 @@
     <Compile Include="FlowVar.cs" />
     <Compile Include="FlowNode.cs" />
     <Compile Include="NodeFactory.cs" />
+    <Compile Include="NodeReturn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleEngine.cs" />
     <Compile Include="ToDoHandle.cs" />

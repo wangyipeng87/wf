@@ -1,4 +1,3 @@
-D:\WF\MYWF\WF\Test\obj\Debug\Test.csprojResolveAssemblyReference.cache
 D:\WF\MYWF\WF\Test\bin\Debug\Test.exe.config
 D:\WF\MYWF\WF\Test\bin\Debug\Test.exe
 D:\WF\MYWF\WF\Test\bin\Debug\Test.pdb
@@ -16,5 +15,6 @@ D:\WF\MYWF\WF\Test\bin\Debug\Common.pdb
 D:\WF\MYWF\WF\Test\bin\Debug\DAO.pdb
 D:\WF\MYWF\WF\Test\bin\Debug\Entity.pdb
 D:\WF\MYWF\WF\Test\bin\Debug\WFFramework.pdb
+D:\WF\MYWF\WF\Test\obj\Debug\Test.csprojResolveAssemblyReference.cache
 D:\WF\MYWF\WF\Test\obj\Debug\Test.exe
 D:\WF\MYWF\WF\Test\obj\Debug\Test.pdb

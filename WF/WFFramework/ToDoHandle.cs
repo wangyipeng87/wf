@@ -9,12 +9,12 @@ using WF.Entity;
 
 namespace WF.WFFramework
 {
-    public class ToDoHandle
+    public static class ToDoHandle
     {
-        WF_ToDoBll todobll = new WF_ToDoBll();
-        WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
-        WF_InstanceBll instanceBll = new WF_InstanceBll();
-        public int InsertTodo(string todoUserCode, int instanceID, int isShow, int prevID, string taskName, int todotype, FlowNode node, string nodeKey, string currenUserCode)
+         static WF_ToDoBll todobll = new WF_ToDoBll();
+        static WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
+        static WF_InstanceBll instanceBll = new WF_InstanceBll();
+        public static int InsertTodo(string todoUserCode, int instanceID, int isShow, int prevID, string taskName, int todotype, FlowNode node, string nodeKey, string currenUserCode)
         {
             WF_ToDo todo = new WF_ToDo();
             WF_Instance instance = instanceBll.getByID(instanceID);
@@ -39,7 +39,7 @@ namespace WF.WFFramework
             return todoid;
         }
 
-        public void DealTodo(int operationType, string operationUserCode, int todoID)
+        public static void DealTodo(int operationType, string operationUserCode, int todoID)
         {
             WF_ToDo todo = todobll.getByID(todoID);
             todo.DealTime = DateTime.Now;

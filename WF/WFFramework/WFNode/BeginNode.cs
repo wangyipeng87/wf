@@ -8,7 +8,7 @@ namespace WF.WFFramework.WFNode
 {
    public class BeginNode : FlowNode
     {
-        public override List<string> Run(FlowContent flowContent)
+        public override NodeReturn Run(FlowContent flowContent)
         {
             return null;
         }

@@ -18,6 +18,10 @@ namespace WF.BLL
         {
             return dao.getByID(id);
         }
+        public bool update(WF_Instance entity)
+        {
+            return dao.update(entity);
+        }
     }
 }
 

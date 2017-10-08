@@ -138,7 +138,10 @@ namespace WF.DAO
                                        e.UserCode,
                                        wru.[State]
                                 FROM   WF_Role_User AS wru
+                                INNER JOIN WF_Role AS wr ON wr.RoleCode=wru.RoleCode
+                                INNER JOIN Employee AS e ON e.UserCode=wru.UserCode
                                 WHERE  wru.[State] = 1
+                                AND wr.[State]=1 AND e.[State]=1
                                        AND wru.RoleCode = @code";
                 return conn.Query<WF_Role_User>(sql, new { code = code }).ToList(); ;
             }

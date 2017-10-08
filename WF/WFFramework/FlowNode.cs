@@ -17,7 +17,7 @@ namespace WF.WFFramework
         public string TmpKey { get; set; }
         public string NodeKey { get; set; }
         public event FlowEvent endFlow;
-        public abstract List<string> Run(FlowContent flowContent);
+        public abstract NodeReturn Run(FlowContent flowContent);
 
         protected void RunEndFlowEvent(FlowContent flowContent) {
             if (this.endFlow != null)

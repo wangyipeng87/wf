@@ -11,15 +11,25 @@ namespace WF.WFFramework.WFNode
     public class UserNode : FlowNode
     {
         WF_Node_PeopleBll people = new WF_Node_PeopleBll();
-        public override List<string> Run(FlowContent flowContent)
+        public override NodeReturn Run(FlowContent flowContent)
         {
-            List<WF_Node_People> user= people.getAllByNode(flowContent.TmpKey, flowContent.CurrentNodeKey);
-            List<string> userlist = new List<string>();
-            if (user!=null&& user.Count>0)
+            NodeReturn ret = new NodeReturn();
+            if (flowContent.CurrentNodeKey.Split(',').Contains(this.NodeKey))
             {
-               userlist = user.Select(p => p.UserCode).ToList();
+                ret.isOver = true;
             }
-            return userlist;
+            else
+            {
+                ret.isOver = false;
+                List<WF_Node_People> user = people.getAllByNode(flowContent.TmpKey, this.NodeKey);
+                List<string> userlist = new List<string>();
+                if (user != null && user.Count > 0)
+                {
+                    userlist = user.Select(p => p.UserCode).ToList();
+                }
+                ret.ToDoUserList = userlist;
+            }
+            return ret;
         }
     }
 }

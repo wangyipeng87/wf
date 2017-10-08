@@ -11,6 +11,7 @@ namespace WF.Common
         Enable = 1,
         Disable=0,
         Hang=2,
+        End = 3,
     }
     public enum ValType
     {

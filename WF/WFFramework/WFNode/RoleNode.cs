@@ -12,14 +12,24 @@ namespace WF.WFFramework.WFNode
     {
         WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
         WF_Role_UserBll roleuserbll = new WF_Role_UserBll();
-        public override List<string> Run(FlowContent flowContent)
+        public override NodeReturn Run(FlowContent flowContent)
         {
-            WF_TemplateNode node= nodebll.getByNodeKey(flowContent.TmpKey, flowContent.CurrentNodeKey);
-            string rolecode = node.ProcessTypeValue;
-            List<WF_Role_User> userlist= roleuserbll.getRoleUserByRoleCode(rolecode);
-            List<string> user = new List<string>();
-            user = userlist.Select(p => p.UserCode).ToList();
-            return user;
+            NodeReturn ret = new NodeReturn();
+            if (flowContent.CurrentNodeKey.Split(',').Contains(this.NodeKey))
+            {
+                ret.isOver = true;
+            }
+            else
+            {
+                ret.isOver = false;
+                WF_TemplateNode node = nodebll.getByNodeKey(flowContent.TmpKey, this.NodeKey);
+                string rolecode = node.ProcessTypeValue;
+                List<WF_Role_User> userlist = roleuserbll.getRoleUserByRoleCode(rolecode);
+                List<string> user = new List<string>();
+                user = userlist.Select(p => p.UserCode).ToList();
+                ret.ToDoUserList = user;
+            }
+            return ret;
         }
     }
 }

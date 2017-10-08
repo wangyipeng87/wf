@@ -29,6 +29,14 @@ namespace WF.DAO
                 return conn.Get<WF_Instance>(id);
             }
         }
+        public bool update(WF_Instance entity)
+        {
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Update<WF_Instance>(entity);
+            }
+        }
     }
 }
 
