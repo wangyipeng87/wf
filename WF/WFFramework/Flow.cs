@@ -159,7 +159,7 @@ namespace WF.WFFramework
                 this.beforOperation(flowcontent);
             }
             FlowNode node = NodeFactory.getFlowNode(instance.TmpKey, todo.Nodekey, this.endFlow);
-            //todo 处理 同意
+            // 处理 同意
             if (operationType == Common.Operation.Apply)
             {
                 this.Apply(vallist, todoID, operationUserCode, operationType, common, flowcontent, node);
@@ -169,7 +169,7 @@ namespace WF.WFFramework
             //{
                 //this.Apply(vallist, todoID, operationUserCode, operationType, common, flowcontent, node);
             //}
-            //todo 处理 流程跳转
+            // 处理 流程跳转
             if (operationType == Common.Operation.GoTo)
             {
                 this.GoTo(vallist, todoID, operationUserCode, operationType, common, flowcontent, node, toNodeKey);
@@ -179,17 +179,17 @@ namespace WF.WFFramework
             //{
             //    this.Apply(vallist, todoID, operationUserCode, operationType, common, flowcontent, node);
             //}
-            //todo 处理 驳回
+            // 处理 驳回
             if (operationType == Common.Operation.Reject)
             {
                 this.Reject(vallist, todoID, operationUserCode, operationType, common, flowcontent, node,toNodeKey);
             }
-            //todo 处理 转签
+            // 处理 转签
             if (operationType == Common.Operation.Redirect)
             {
                 this.Redirect(vallist, todoID, operationUserCode, operationType, common, flowcontent, node, todoUserCode);
             }
-            //todo 处理 加签
+            // 处理 加签
             if (operationType == Common.Operation.Add)
             {
                 this.Add(vallist, todoID, operationUserCode, operationType, common, flowcontent, node, todoUserCode);
@@ -230,14 +230,14 @@ namespace WF.WFFramework
             FlowVar var = new FlowVar();
             var.UpdateVal(vallist, this.CurrenUserCode);
             WF_ToDo todo = todobll.getByID(todoID);
-            //todo 加签类型
+            // 加签类型
             if(todo.TodoType==(int)TodoType.Add)
             {
                 WF_ToDo nextodo = todobll.getByID(todo.PrevID);
                 int newtodiid= ToDoHandle.Reopen(nextodo.ResponseUserCode, nextodo.InstanceID, nextodo.IsShow, todoID, nextodo.ToDoName, nextodo.TodoType,node, nextodo.Nodekey,operationUserCode);
                 flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
             }
-            //todo 一般同意 转签类型
+            // 一般同意 转签类型
             if (todo.TodoType == (int)TodoType.Normal|| todo.TodoType == (int)TodoType.Redirect)
             {
                 NodeReturn ret = node.Run(flowcontent);
