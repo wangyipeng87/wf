@@ -32,6 +32,10 @@ namespace WF.BLL
         {
             return dao.getAll(origina, user, state, begin, end,  out count);
         }
+        public List<WF_Agent> getAgentByOrg(string orgusercode)
+        {
+            return dao.getAgentByOrg( orgusercode);
+        }
     }
 }
 

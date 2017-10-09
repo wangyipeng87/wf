@@ -50,5 +50,29 @@ namespace WF.WFFramework
             todo.State= (int)TodoState.Done;
             todobll.update(todo);
         }
+        public static int Reopen(string todoUserCode, int instanceID, int isShow, int prevID, string taskName, int todotype, FlowNode node, string nodeKey, string currenUserCode)
+        {
+            WF_ToDo todo = new WF_ToDo();
+            WF_Instance instance = instanceBll.getByID(instanceID);
+            WF_TemplateNode tmpNode = nodebll.getByNodeKey(instance.TmpKey, nodeKey);
+            //todo  插入批号
+            todo.Batch = -1;
+            todo.CreateTime = DateTime.Now;
+            todo.CreateUserCode = currenUserCode;
+            todo.InstanceID = instanceID;
+            todo.IsDelete = 0;
+            todo.IsShow = isShow;
+            todo.Nodekey = nodeKey;
+            todo.PrevID = prevID;
+            todo.ResponseUserCode = todoUserCode;
+            todo.State = (int)TodoState.UnDo;
+            todo.ToDoName = taskName;
+            todo.TodoType = todotype;
+            todo.UpdateTime = DateTime.Now;
+            todo.UpdateUserCode = currenUserCode;
+            todo.URL = tmpNode.URL;
+            int todoid = todobll.save(todo);
+            return todoid;
+        }
     }
 }

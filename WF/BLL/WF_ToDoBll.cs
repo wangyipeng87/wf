@@ -26,6 +26,10 @@ namespace WF.BLL
         {
             return dao.getByID(id);
         }
+        public List<WF_ToDo> getList(int instanceid, string nodekey, int state)
+        {
+            return dao.getList( instanceid,  nodekey,  state);
+        }
     }
 }
 

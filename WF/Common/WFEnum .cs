@@ -24,10 +24,11 @@ namespace WF.Common
         Apply = 2,
         Reject = 3,
         GoTo = 4,
-        Transfer = 5,
+        Redirect = 5,
         Add = 6,
         Read = 7,
         CallBack = 8,
+        Cancel = 9,
     }
     public enum State
     {
@@ -55,7 +56,7 @@ namespace WF.Common
     public enum TodoState
     {
         UnDo = 1,
-        Done = 2
+        Done = 2,
     }
     public enum TodoType
     {

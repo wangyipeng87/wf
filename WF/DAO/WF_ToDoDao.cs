@@ -1,4 +1,5 @@
-﻿using DapperExtensions;
+﻿using Dapper;
+using DapperExtensions;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -45,6 +46,38 @@ namespace WF.DAO
             {
                 conn.Open();
                 return conn.Get<WF_ToDo>(id);
+            }
+        }
+
+        public List<WF_ToDo> getList(int instanceid,string nodekey,int state)
+        {
+            string sql = @"   SELECT
+                                	wtd.ID,
+                                	wtd.Nodekey,
+                                	wtd.InstanceID,
+                                	wtd.ToDoName,
+                                	wtd.[URL],
+                                	wtd.ResponseUserCode,
+                                	wtd.DealUserCode,
+                                	wtd.DealTime,
+                                	wtd.OperationType,
+                                	wtd.TodoType,
+                                	wtd.IsShow,
+                                	wtd.PrevID,
+                                	wtd.Batch,
+                                	wtd.CreateUserCode,
+                                	wtd.CreateTime,
+                                	wtd.UpdateUserCode,
+                                	wtd.UpdateTime,
+                                	wtd.[State],
+                                	wtd.IsDelete
+                                FROM
+                                	WF_ToDo AS wtd WHERE wtd.InstanceID=@instanceid AND wtd.Nodekey=@nodekey AND wtd.[State]=@state
+                                	AND wtd.IsDelete=0";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_ToDo>(sql, new { instanceid = instanceid, nodekey= nodekey, state= state }).ToList();
             }
         }
     }

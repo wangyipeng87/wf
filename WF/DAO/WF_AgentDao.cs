@@ -93,6 +93,33 @@ namespace WF.DAO
                 return conn.Query<WF_Agent>(sql, new { origina = origina, user = user, state = state, begin = begin, end = end }).ToList();
             }
         }
+        public List<WF_Agent> getAgentByOrg(string orgusercode)
+        {
+            string sql = @"    SELECT
+                             	wa.ID,
+                             	wa.AgentUserCode,
+                             	wa.AgentName,
+                             	wa.OriginalUserCode,
+                             	wa.OriginalUserName,
+                             	wa.BeginTime,
+                             	wa.EndTime,
+                             	wa.[State],
+                             	wa.CreateUserCode,
+                             	wa.CreateTime,
+                             	wa.UpdateUserCode,
+                             	wa.UpdateTime,
+                             	wa.IsDelete
+                             FROM
+                             	WF_Agent AS wa
+                             WHERE wa.OriginalUserCode=@orgusercode AND wa.IsDelete=0
+                             AND wa.BeginTime<=GETDATE() AND wa.EndTime>=GETDATE()";
+            
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open(); 
+                return conn.Query<WF_Agent>(sql, new { orgusercode = orgusercode }).ToList();
+            }
+        }
     }
 }
 
