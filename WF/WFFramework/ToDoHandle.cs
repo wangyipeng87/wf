@@ -38,7 +38,12 @@ namespace WF.WFFramework
             int todoid = todobll.save(todo);
             return todoid;
         }
-
+        /// <summary>
+        /// 处理待办
+        /// </summary>
+        /// <param name="operationType"></param>
+        /// <param name="operationUserCode"></param>
+        /// <param name="todoID"></param>
         public static void DealTodo(int operationType, string operationUserCode, int todoID)
         {
             WF_ToDo todo = todobll.getByID(todoID);
@@ -48,6 +53,24 @@ namespace WF.WFFramework
             todo.UpdateTime = DateTime.Now;
             todo.UpdateUserCode = operationUserCode;
             todo.State= (int)TodoState.Done;
+            todobll.update(todo);
+        }
+        /// <summary>
+        /// 删除待办
+        /// </summary>
+        /// <param name="operationType"></param>
+        /// <param name="operationUserCode"></param>
+        /// <param name="todoID"></param>
+        public static void DeleteTodo(int operationType, string operationUserCode, int todoID)
+        {
+            WF_ToDo todo = todobll.getByID(todoID);
+            todo.DealTime = DateTime.Now;
+            todo.DealUserCode = operationUserCode;
+            todo.OperationType = operationType;
+            todo.UpdateTime = DateTime.Now;
+            todo.UpdateUserCode = operationUserCode;
+            todo.State = (int)TodoState.Done;
+            todo.IsDelete = (int)IsDelete.Deleteed;
             todobll.update(todo);
         }
         public static int Reopen(string todoUserCode, int instanceID, int isShow, int prevID, string taskName, int todotype, FlowNode node, string nodeKey, string currenUserCode)

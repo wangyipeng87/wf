@@ -313,7 +313,7 @@ namespace WF.WFFramework
             {
                 foreach (WF_ToDo item in undolist)
                 {
-                    ToDoHandle.DealTodo((int)Common.Operation.Cancel, operationUserCode, item.ID);
+                    ToDoHandle.DeleteTodo((int)operationType, operationUserCode, item.ID);
                 }
             }
             FlowNode toNode = NodeFactory.getFlowNode(flowcontent.TmpKey, toNodeKey, this.endFlow);
@@ -364,7 +364,7 @@ namespace WF.WFFramework
             {
                 foreach (WF_ToDo item in undolist)
                 {
-                    ToDoHandle.DealTodo((int)Common.Operation.Cancel, operationUserCode, item.ID);
+                    ToDoHandle.DeleteTodo((int)operationType, operationUserCode, item.ID);
                 }
             }
             WF_TemplateNode tmpnode = nodebll.getByNodeKey(flowcontent.TmpKey, node.NodeKey);
