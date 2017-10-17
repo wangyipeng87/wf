@@ -351,7 +351,7 @@
                                     {
                                         EmployeeBll bll = new EmployeeBll();
                                         emp = bll.getbyAccount(System.Web.HttpContext.Current.User.Identity.Name);
-                                        <span>@emp.UserName</span>
+                                        <span>@emp.UserName-@emp.UserCode</span>
                                     }
                                 }
                                 
@@ -362,7 +362,7 @@
 
                         <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                             <li>
-                                <a href="/Account/Logout">
+                                <a href="~/Account/Logout">
                                     <i class="ace-icon fa fa-power-off"></i>
                                     退出
                                 </a>

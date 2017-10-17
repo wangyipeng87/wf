@@ -12,6 +12,7 @@ namespace WF.Controllers
     public class PersonalController : BaseController
     {
         WF_AgentBll agentbll = new WF_AgentBll();
+        WF_ToDoBll todobll = new WF_ToDoBll();
         // GET: Personal
         public ActionResult MyApply()
         {
@@ -158,6 +159,65 @@ namespace WF.Controllers
             {
                 res.code = ResultCode.ERROR;
                 res.message = "保存失败";
+            }
+            return Content(res.ToJson());
+        }
+
+        [HttpPost]
+        public ContentResult GetMyTodoList(int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                int count = 0;
+                List<WF_ToDo> todolist = todobll.getMyTodoList(getCurrent().UserCode, start + 1, start + length, out count);
+                res.code = ResultCode.OK;
+                res.data = todolist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult getMyDoneList(int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                int count = 0;
+                List<WF_ToDo> todolist = todobll.getMyDoneList(getCurrent().UserCode, start + 1, start + length, out count);
+                res.code = ResultCode.OK;
+                res.data = todolist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult getMyApplyList(string keyword, int state, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                keyword = Server.UrlDecode(keyword);
+                int count = 0;
+                List<WF_Instance> todolist = todobll.getMyApplyList(getCurrent().UserCode, state, keyword, start + 1, start + length, out count);
+                res.code = ResultCode.OK;
+                res.data = todolist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
             }
             return Content(res.ToJson());
         }
