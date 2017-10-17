@@ -20,6 +20,10 @@ namespace WF.Entity
         public int State {get; set;}
         public int IsDelete {get; set; }
         public int index { get; set; }
+        public string TmpName { get; set; }
+        public string ApplyUserName { get; set; }
+        public string WriterUserName { get; set; }
+        public string StateName { get; set; }
     }
     public class WF_InstanceMap : ClassMapper<WF_Instance>
     {
@@ -28,6 +32,10 @@ namespace WF.Entity
             base.Table("WF_Instance");
             this.Map(f => f.ID).Key(KeyType.Identity);//设置主键  (如果主键名称不包含字母“ID”，请设置)    
             this.Map(f => f.index).Ignore();
+            this.Map(f => f.TmpName).Ignore();
+            this.Map(f => f.ApplyUserName).Ignore();
+            this.Map(f => f.WriterUserName).Ignore();
+            this.Map(f => f.StateName).Ignore();
             AutoMap();
         }
     }

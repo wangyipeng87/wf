@@ -30,6 +30,18 @@ namespace WF.BLL
         {
             return dao.getList( instanceid,  nodekey,  state);
         }
+        public List<WF_ToDo> getMyTodoList(string usercode, int begin, int end, out int count)
+        {
+            return dao.getMyTodoList( usercode,  begin,  end, out  count);
+        }
+        public List<WF_ToDo> getMyDoneList(string usercode, int begin, int end, out int count)
+        {
+            return dao.getMyDoneList( usercode,  begin,  end, out  count);
+        }
+        public List<WF_Instance> getMyApplyList(string usercode, int state, string keyword, int begin, int end, out int count)
+        {
+            return dao.getMyApplyList( usercode,  state,  keyword,  begin,  end, out  count);
+        }
     }
 }
 

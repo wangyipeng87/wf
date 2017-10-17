@@ -21,7 +21,7 @@ namespace Test
                     //flo.StartFlow(null, "8445", "8445", "AP200709262223001");
                     //同意
                     Flow flo = FlowFactory.getFlowByTodo(34, "4045");
-                    flo.Operation(null, 34, "4045", WF.Common.Operation.Apply,"同意测试");
+                    flo.Operation(null, 34, "4045", WF.Common.Operation.Agree,"同意测试");
                     scope.Complete();
                 }
                 catch (Exception ex)

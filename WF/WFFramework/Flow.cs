@@ -160,7 +160,7 @@ namespace WF.WFFramework
             }
             FlowNode node = NodeFactory.getFlowNode(instance.TmpKey, todo.Nodekey, this.endFlow);
             // 处理 同意
-            if (operationType == Common.Operation.Apply)
+            if (operationType == Common.Operation.Agree)
             {
                 this.Apply(vallist, todoID, operationUserCode, operationType, common, flowcontent, node);
             }

@@ -6,10 +6,55 @@ using System.Threading.Tasks;
 
 namespace WF.Common
 {
+
+    public enum DataDictionary
+    {
+        /// <summary>
+        /// 流程实例状态
+        /// </summary>
+        InstanceState = 1,
+        /// <summary>
+        /// 流程变量类型
+        /// </summary>
+        ValType = 2,
+        /// <summary>
+        /// 操作类型
+        /// </summary>
+        Operation = 3,
+        /// <summary>
+        /// 是否启用状态
+        /// </summary>
+        State = 4,
+        /// <summary>
+        /// 是否删除状态
+        /// </summary>
+        IsDelete = 5,
+        /// <summary>
+        /// 流程节点类型
+        /// </summary>
+        WFNodeType = 6,
+        /// <summary>
+        /// 节点操作人获取方式
+        /// </summary>
+        WFProcessType = 7,
+        /// <summary>
+        /// 流程待办的状态
+        /// </summary>
+        TodoState = 8,
+        /// <summary>
+        /// 流程待办类型
+        /// </summary>
+        TodoType = 9,
+        /// <summary>
+        /// 流程待办是否显示
+        /// </summary>
+        TodoIsShow = 10
+
+    }
     /// <summary>
     /// 流程实例状态
     /// </summary>
-   public enum InstanceState
+    public enum InstanceState
     {
         /// <summary>
         /// 正常
@@ -18,11 +63,11 @@ namespace WF.Common
         /// <summary>
         /// 禁用
         /// </summary>
-        Disable=0,
+        Disable = 0,
         /// <summary>
         /// 挂起
         /// </summary>
-        Hang=2,
+        Hang = 2,
         /// <summary>
         /// 结束
         /// </summary>
@@ -54,7 +99,7 @@ namespace WF.Common
         /// <summary>
         /// 同意
         /// </summary>
-        Apply = 2,
+        Agree = 2,
         /// <summary>
         /// 驳回
         /// </summary>
@@ -86,7 +131,7 @@ namespace WF.Common
         /// <summary>
         /// 传阅
         /// </summary>
-        Transmit=10,
+        Transmit = 10,
         /// <summary>
         /// 挂起
         /// </summary>
@@ -136,7 +181,7 @@ namespace WF.Common
         /// <summary>
         /// 一般类型节点
         /// </summary>
-        Normal=3,
+        Normal = 3,
     }
     /// <summary>
     /// 节点操作人获取方式

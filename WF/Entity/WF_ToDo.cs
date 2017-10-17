@@ -26,7 +26,32 @@ namespace WF.Entity
         public string UpdateUserCode {get; set;}
         public DateTime UpdateTime {get; set;}
         public int State {get; set;}
-        public int IsDelete {get; set;}
+        public int IsDelete {get; set; }
+        public int index { get; set; }
+        /// <summary>
+        /// 单据编号
+        /// </summary>
+        public string FormID { get; set; }
+        /// <summary>
+        /// 申请时间
+        /// </summary>
+        public DateTime? ApplyTime { get; set; }
+        /// <summary>
+        /// 申请人工号
+        /// </summary>
+        public string ApplyUserCode { get; set; }
+        /// <summary>
+        /// 申请人姓名
+        /// </summary>
+        public string ApplyUserName { get; set; }
+        /// <summary>
+        /// 填表人工号
+        /// </summary>
+        public string WriterUserCode { get; set; }
+        /// <summary>
+        /// 填表人姓名
+        /// </summary>
+        public string WriterUserName { get; set; }
     }
     public class WF_ToDoMap : ClassMapper<WF_ToDo>
     {
@@ -34,6 +59,13 @@ namespace WF.Entity
         {
             base.Table("WF_ToDo");
             this.Map(f => f.ID).Key(KeyType.Identity);//设置主键  (如果主键名称不包含字母“ID”，请设置)   
+            this.Map(f => f.index).Ignore();
+            this.Map(f => f.FormID).Ignore();
+            this.Map(f => f.ApplyTime).Ignore();
+            this.Map(f => f.ApplyUserCode).Ignore();
+            this.Map(f => f.ApplyUserName).Ignore();
+            this.Map(f => f.WriterUserCode).Ignore();
+            this.Map(f => f.WriterUserName).Ignore();
             AutoMap();
         }
     }
