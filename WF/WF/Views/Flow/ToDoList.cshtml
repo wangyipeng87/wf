@@ -4,5 +4,201 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ToDoList</h2>
 
+<script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.min.js"></script>
+<script src="~/Content/Plugins/ace/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="header blue lighter smaller">
+            待办中心列表
+        </h3>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-sm-3 form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="txtUser">
+                                责任人
+                            </label>
+                            <div class="col-sm-9">
+                                <input onkeyup="refreshDataTable();" type="text" id="txtUser"
+                                       placeholder="关键字"
+                                       class="col-xs-10 col-sm-10">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 form-horizontal" role="form">
+                        <span class="input-group-btn" onclick="refreshDataTable();">
+                            <button type="button"
+                                    class="btn btn-inverse btn-white">
+                                <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
+                                查询
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="center" style="max-width: 50px; min-width:50px; width: 50px;">
+                        序号
+                    </th>
+                    <th class="center col-sm-2">单据编号</th>
+                    <th class="center col-sm-2"> 待办名称</th>
+                    <th class="center col-sm-2">创建时间 </th>
+                    <th class="center col-sm-2">申请时间 </th>
+                    <th class="center col-sm-2">申请人 </th>
+                    <th class="center col-sm-2">填表人 </th>
+                    <th class="center " style="max-width: 100px; min-width:100px; width: 100px;">待办类型 </th>
+                    <th class="center " style="max-width: 50px; min-width:50px; width: 50px;">责任人</th>
+                    <th class="center " style="max-width: 50px; min-width:50px; width: 50px;">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var dynamictable;
+    function loadPageInit() {
+        dynamictable = $("#dynamic-table").dataTable({
+            language: lang,  //提示信息
+            autoWidth: false,  //禁用自动调整列宽
+            stripeClasses: ["odd", "even"],  //为奇偶行加上样式，兼容不支持CSS伪类的场合
+            processing: true,  //隐藏加载提示,自行处理
+            serverSide: true,  //启用服务器端分页
+            searching: false,  //禁用原生搜索
+            orderMulti: false,  //启用多列排序
+            renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
+            pagingType: "simple_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
+            "ordering": true,
+            "order": [[3, "desc"]],
+            columnDefs: [{
+                orderable: false,//禁用排序
+                targets: [0, 6]   //指定的列
+            }],
+            "fnInitComplete": function (oSettings, json) {
+            },
+            ajax: function (data, callback, settings) {
+                //ajax请求数据
+                $.ajax({
+                    url: "../Flow/GetTodoList",
+                    type: 'POST',
+                    cache: false,  //禁用缓存
+                    data: {
+                        user: escape($.trim($("#txtUser").val())),
+                        start: data.start,
+                        length: data.length
+                    },  //传入组装的参数
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == "200") {
+                            setTimeout(function () {
+                                //封装返回数据
+                                var returnData = {};
+                                returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                                returnData.recordsTotal = result.totle;//返回数据全部记录
+                                returnData.recordsFiltered = result.totle;//后台不实现过滤功能，每次查询均视作全部结果
+                                returnData.data = result.data;//返回的数据列表
+                                callback(returnData);
+                            }, 200);
+                        }
+                        else {
+                            layer.alert(result.message);
+                        }
+                    }
+                });
+            },
+            "ordering": false,
+            columns: [
+                {
+                    "data": "index", 'sClass': "text-center"
+                },
+                {
+                    "data": "FormID", 'sClass': "text-center"
+                },
+                {
+                    "data": "ToDoName", 'sClass': "text-center"
+                },
+                {
+                    "data": "CreateTime", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        if (!$.isempty(oData.CreateTime)) {
+                            return ChangeDateFormat(oData.CreateTime);
+                        }
+                        return "";
+                    }
+                },
+                {
+                    "data": "ApplyTime", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        if (!$.isempty(oData.ApplyTime)) {
+                            return ChangeDateFormat(oData.ApplyTime);
+                        }
+                        return "";
+                    }
+                },
+                {
+                    "data": "ApplyUserName", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        if (!$.isempty(oData.ApplyUserName)) {
+                            return oData.ApplyUserName + "（" + oData.ApplyUserCode+"）";
+                        }
+                        return "";
+                    }
+                },
+                {
+                    "data": "WriterUserName", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        if (!$.isempty(oData.WriterUserName)) {
+                            return oData.WriterUserName + "（" + oData.WriterUserCode + "）";
+                        }
+                        return "";
+                    }
+                },
+                {
+                    "data": "TodoType", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        if (oData.TodoType=="1") {
+                            return "一般类型";
+                        }
+                        if (oData.TodoType == "2") {
+                            return "传阅类型待办";
+                        }
+                        if (oData.TodoType == "3") {
+                            return "加签类型待办";
+                        }
+                        if (oData.TodoType == "4") {
+                            return "转签类型待办";
+                        }
+                        return "";
+                    }
+                },
+                {
+                    "data": "ResponseUserName", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        if (!$.isempty(oData.ResponseUserName)) {
+                            return oData.ResponseUserName + '（' + oData.ResponseUserCode+'）';
+                        }
+                        return "";
+                    }
+                },
+                {
+                    "data": "State", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {
+                        var html = '<div class="hidden-sm hidden-xs action-buttons">';
+                        html += '<a class="blue" href="' + oData.URL + '?todoid=' + oData.ID + '" >';
+                        html += '处理';
+                        html += '  </a> ';
+
+
+                        html += '    </div> ';
+                        return html;
+                    }
+                }
+            ]
+        });
+    }
+    $(document).ready(function () {
+        loadPageInit();
+    });
+    function refreshDataTable() {
+        $("#dynamic-table").DataTable().ajax.reload();
+    }
+</script>

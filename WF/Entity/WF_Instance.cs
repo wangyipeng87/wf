@@ -23,6 +23,14 @@ namespace WF.Entity
         public string TmpName { get; set; }
         public string ApplyUserName { get; set; }
         public string WriterUserName { get; set; }
+        /// <summary>
+        /// 当前审批人
+        /// </summary>
+        public string UserList { get; set; }
+        /// <summary>
+        /// 当前审批节点
+        /// </summary>
+        public string NodeList { get; set; }
         public string StateName { get; set; }
     }
     public class WF_InstanceMap : ClassMapper<WF_Instance>
@@ -35,6 +43,8 @@ namespace WF.Entity
             this.Map(f => f.TmpName).Ignore();
             this.Map(f => f.ApplyUserName).Ignore();
             this.Map(f => f.WriterUserName).Ignore();
+            this.Map(f => f.UserList).Ignore();
+            this.Map(f => f.NodeList).Ignore();
             this.Map(f => f.StateName).Ignore();
             AutoMap();
         }

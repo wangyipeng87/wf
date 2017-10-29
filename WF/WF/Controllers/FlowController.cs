@@ -20,6 +20,7 @@ namespace WF.Controllers
         WF_TemplateNodeBll nodebll = new WF_TemplateNodeBll();
         WF_RuleBll rulebll = new WF_RuleBll();
         WF_Node_PeopleBll peoplebll = new WF_Node_PeopleBll();
+        WF_ToDoBll todobll = new WF_ToDoBll();
 
         // GET: Flow
         public ActionResult TmpList()
@@ -852,6 +853,47 @@ namespace WF.Controllers
             {
                 res.code = ResultCode.ERROR;
                 res.message = "获取失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult getInstanceList(string user, string keyword, int state, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                keyword = Server.UrlDecode(keyword);
+                user = Server.UrlDecode(user);
+                int count = 0;
+                List<WF_Instance> todolist = todobll.getCurrentInstanceList(user, state, keyword, start + 1, start + length, out count);
+                res.code = ResultCode.OK;
+                res.data = todolist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
+            }
+            return Content(res.ToJson());
+        }
+        [HttpPost]
+        public ContentResult GetTodoList(string user, int start, int length)
+        {
+            AjaxResult res = new AjaxResult();
+            try
+            {
+                user = Server.UrlDecode(user);
+                int count = 0;
+                List<WF_ToDo> todolist = todobll.getTodoList(user, start + 1, start + length, out count);
+                res.code = ResultCode.OK;
+                res.data = todolist;
+                res.totle = count;
+            }
+            catch (Exception ex)
+            {
+                res.code = ResultCode.ERROR;
+                res.message = "查询失败";
             }
             return Content(res.ToJson());
         }
