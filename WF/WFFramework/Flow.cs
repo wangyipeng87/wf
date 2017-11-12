@@ -61,6 +61,7 @@ namespace WF.WFFramework
             flowcontent.TaskName = tmp.TmpName;
             flowcontent.InstanceState = (int)WF.Common.InstanceState.Enable;
             flowcontent.CurrentNodeKey = "";
+            flowcontent.FormID = formID;
             if (this.beforStartFlow != null)
             {
                 this.beforStartFlow(flowcontent);
@@ -117,7 +118,7 @@ namespace WF.WFFramework
         /// <param name="todoID">待办id</param>
         /// <param name="operationUserCode">操作人工号 </param>
         /// <param name="operationType">操作类型</param>
-        public void Operation(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common = null, string toNodeKey = null,string todoUserCode=null)
+        public void Operation(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common = null, string toNodeKey = null, string todoUserCode = null)
         {
             //禁止流程启动
             if (operationType == Common.Operation.Start)
@@ -127,7 +128,7 @@ namespace WF.WFFramework
             WF_ToDo todo = todobll.getByID(todoID);
             WF_Instance instance = instancebll.getByID(todo.InstanceID);
 
-            if(instance.State==(int)Common.InstanceState.Enable)
+            if (instance.State != (int)Common.InstanceState.Enable)
             {
                 throw new Exception("当前流程实例状态不是启用状态");
             }
@@ -139,7 +140,7 @@ namespace WF.WFFramework
                     throw new Exception("当前操作人不是待办责任人，也不是待办责任人的代理人");
                 }
             }
-            if (todo.State == (int)Common.TodoState.UnDo)
+            if (todo.State != (int)Common.TodoState.UnDo)
             {
                 throw new Exception("当前待办已经被处理了");
             }
@@ -153,6 +154,7 @@ namespace WF.WFFramework
             flowcontent.CurrentNodeKey = todo.Nodekey;
             flowcontent.OperationType = (int)operationType;
             flowcontent.CurrentTodoID = todo.ID.ToString();
+            flowcontent.FormID = instance.FormID;
 
             if (this.beforOperation != null)
             {
@@ -167,7 +169,7 @@ namespace WF.WFFramework
             //todo 处理 撤回
             //if (operationType == Common.Operation.CallBack)
             //{
-                //this.Apply(vallist, todoID, operationUserCode, operationType, common, flowcontent, node);
+            //this.Apply(vallist, todoID, operationUserCode, operationType, common, flowcontent, node);
             //}
             // 处理 流程跳转
             if (operationType == Common.Operation.GoTo)
@@ -182,7 +184,7 @@ namespace WF.WFFramework
             // 处理 驳回
             if (operationType == Common.Operation.Reject)
             {
-                this.Reject(vallist, todoID, operationUserCode, operationType, common, flowcontent, node,toNodeKey);
+                this.Reject(vallist, todoID, operationUserCode, operationType, common, flowcontent, node, toNodeKey);
             }
             // 处理 转签
             if (operationType == Common.Operation.Redirect)
@@ -231,14 +233,19 @@ namespace WF.WFFramework
             var.UpdateVal(vallist, this.CurrenUserCode);
             WF_ToDo todo = todobll.getByID(todoID);
             // 加签类型
-            if(todo.TodoType==(int)TodoType.Add)
+            if (todo.TodoType == (int)TodoType.Add)
             {
                 WF_ToDo nextodo = todobll.getByID(todo.PrevID);
-                int newtodiid= ToDoHandle.Reopen(nextodo.ResponseUserCode, nextodo.InstanceID, nextodo.IsShow, todoID, nextodo.ToDoName, nextodo.TodoType,node, nextodo.Nodekey,operationUserCode);
+                int newtodiid = ToDoHandle.Reopen(nextodo.ResponseUserCode, nextodo.InstanceID, nextodo.IsShow, nextodo.PrevID, nextodo.ToDoName, nextodo.TodoType, node, nextodo.Nodekey, operationUserCode);
                 flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
             }
+            //todo 转签处理，如果找到最近一个加签类型，然后生成加签待办，如果不是从加签转过来的，就直接到下一个节点
+            if (todo.TodoType == (int)TodoType.Redirect)
+            {
+
+            }
             // 一般同意 转签类型
-            if (todo.TodoType == (int)TodoType.Normal|| todo.TodoType == (int)TodoType.Redirect)
+            if (todo.TodoType == (int)TodoType.Normal)
             {
                 NodeReturn ret = node.Run(flowcontent);
 

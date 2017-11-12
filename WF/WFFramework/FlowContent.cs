@@ -25,6 +25,7 @@ namespace WF.WFFramework
         /// </summary>
         public string CurrentTodoID { get; set; }
         public string CurrenUserCode { get; set; }
+        public string FormID { get; set; }
 
     }
 }

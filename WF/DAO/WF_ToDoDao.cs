@@ -308,6 +308,7 @@ namespace WF.DAO
                                                        LEFT JOIN V_InstanceToDo AS itd                  
                                                             ON  itd.InstanceID = wi.ID
                                                 WHERE  wi.IsDelete = 0
+                                                        AND wt.IsDelete = 0
                                                        AND (
                                                                wi.FormID LIKE '%' + @keyword + '%'
                                                                OR wt.TmpName LIKE '%' + @keyword + '%'

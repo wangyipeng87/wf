@@ -110,7 +110,8 @@ namespace WF.DAO
                                 	wt.IsDelete
                                 FROM
                                 	WF_Template AS wt
-                                WHERE wt.[key]=@key";
+                                WHERE wt.[key]=@key
+                                    and  wt.[IsDelete]=0";
                 return conn.Query<WF_Template>(sql, new { key = key }).FirstOrDefault();
             }
         }
