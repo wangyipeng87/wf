@@ -352,6 +352,69 @@ namespace WF.DAO
                 return conn.Query<WF_Instance>(sql, new { user = user, state = state, keyword = keyword, begin = begin, end = end }).ToList();
             }
         }
+        public WF_ToDo getPreAddTodo(int todoid)
+        {
+            string sql = @"  ;WITH tmp 
+                                        AS (
+                                        	
+                                        SELECT 
+                                        	wtd.ID,
+                                        	wtd.Nodekey,
+                                        	wtd.InstanceID,
+                                        	wtd.ToDoName,
+                                        	wtd.[URL],
+                                        	wtd.ResponseUserCode,
+                                        	wtd.DealUserCode,
+                                        	wtd.DealTime,
+                                        	wtd.OperationType,
+                                        	wtd.TodoType,
+                                        	wtd.IsShow,
+                                        	wtd.PrevID,
+                                        	wtd.Batch,
+                                        	wtd.CreateUserCode,
+                                        	wtd.CreateTime,
+                                        	wtd.UpdateUserCode,
+                                        	wtd.UpdateTime,
+                                        	wtd.[State],
+                                        	wtd.IsDelete, 
+                                        	 1 AS [index]
+                                        	 FROM WF_ToDo AS wtd WHERE wtd.ID=@id and wtd.IsDelete=0
+                                        	UNION ALL 
+                                        	
+                                        	SELECT 
+                                        	wtd.ID,
+                                        	wtd.Nodekey,
+                                        	wtd.InstanceID,
+                                        	wtd.ToDoName,
+                                        	wtd.[URL],
+                                        	wtd.ResponseUserCode,
+                                        	wtd.DealUserCode,
+                                        	wtd.DealTime,
+                                        	wtd.OperationType,
+                                        	wtd.TodoType,
+                                        	wtd.IsShow,
+                                        	wtd.PrevID,
+                                        	wtd.Batch,
+                                        	wtd.CreateUserCode,
+                                        	wtd.CreateTime,
+                                        	wtd.UpdateUserCode,
+                                        	wtd.UpdateTime,
+                                        	wtd.[State],
+                                        	wtd.IsDelete,
+                                        		t.[index]+1  AS [index]
+                                        	 FROM WF_ToDo AS wtd 
+                                        	INNER JOIN tmp AS t ON t.PrevID=wtd.ID
+                                            where   wtd.IsDelete=0
+                                        )
+                                        
+                                        SELECT TOP 1 * FROM tmp AS t
+                                        WHERE t.TodoType=3 ORDER BY t.[index] ASC ";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_ToDo>(sql, new { id = todoid }).FirstOrDefault();
+            }
+        }
         public List<WF_ToDo> getTodoList(string user, int begin, int end, out int count)
         {
             string sql = @"   ;WITH tmp AS (

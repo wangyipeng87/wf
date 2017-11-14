@@ -46,6 +46,10 @@ namespace WF.BLL
         {
             return dao.getCurrentInstanceList(user, state, keyword, begin, end, out count);
         }
+        public WF_ToDo getPreAddTodo(int todoid)
+        {
+            return dao.getPreAddTodo(todoid);
+        }
         public List<WF_ToDo> getTodoList(string user, int begin, int end, out int count)
         {
             return dao.getTodoList( user,  begin,  end, out  count);

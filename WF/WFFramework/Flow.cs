@@ -242,6 +242,61 @@ namespace WF.WFFramework
             //todo 转签处理，如果找到最近一个加签类型，然后生成加签待办，如果不是从加签转过来的，就直接到下一个节点
             if (todo.TodoType == (int)TodoType.Redirect)
             {
+                NodeReturn ret = node.Run(flowcontent);
+                WF_ToDo preTodo= todobll.getPreAddTodo(todoID);
+                if(preTodo!=null)
+                {
+                    int newtodiid = ToDoHandle.Reopen(preTodo.ResponseUserCode, preTodo.InstanceID, preTodo.IsShow, preTodo.PrevID, preTodo.ToDoName, preTodo.TodoType, node, preTodo.Nodekey, operationUserCode);
+                    flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
+                }
+                else
+                {
+                    //获取当前待办人的编号
+                    List<string> newtodis = new List<string>();
+                    List<string> newnodekey = new List<string>();
+                    if (ret.isOver)
+                    {
+                        List<FlowNode> nextNode = node.GetNextNode(flowcontent);
+                        if (nextNode != null && nextNode.Count > 0)
+                        {
+                            foreach (FlowNode nxitem in nextNode)
+                            {
+                                NodeReturn noderet = nxitem.Run(flowcontent);
+                                if (!noderet.isOver)
+                                {
+                                    newnodekey.Add(nxitem.NodeKey);
+                                    List<string> userCodeList = noderet.ToDoUserList;
+                                    //循环遍历插入待办
+                                    if (userCodeList != null && userCodeList.Count > 0)
+                                    {
+                                        foreach (string user in userCodeList)
+                                        {
+                                            int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, nxitem, nxitem.NodeKey, CurrenUserCode);
+                                            newtodis.Add(todoid.ToString());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        flowcontent.CurrentNodeKey = string.Join(", ", newnodekey);
+                        flowcontent.CurrentTodoID = string.Join(", ", newtodis);
+                    }
+                    else
+                    {
+                        List<string> userCodeList = ret.ToDoUserList;
+                        //循环遍历插入待办
+                        if (userCodeList != null && userCodeList.Count > 0)
+                        {
+                            foreach (string user in userCodeList)
+                            {
+                                int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, node, node.NodeKey, CurrenUserCode);
+                                newtodis.Add(todoid.ToString());
+                            }
+                        }
+
+                        flowcontent.CurrentTodoID = string.Join(", ", newtodis);
+                    }
+                }
 
             }
             // 一般同意 转签类型
