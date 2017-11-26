@@ -16,12 +16,14 @@ namespace Test
             {
                 try
                 {
-                    //启动 
-                    //Flow flo = FlowFactory.getFlow("key1", "8454");
-                    //flo.StartFlow(null, "8454", "4045", "AP200709262223006");
+                    //启动
+                    Flow flo = FlowFactory.getFlow("key1", "8454");
+                    flo.StartFlow(null, "8454", "4045", "APT0091");
                     //同意
-                    //Flow flo = FlowFactory.getFlowByTodo(54, "7256");
-                    //flo.Operation(null, 54, "7256", WF.Common.Operation.Agree, "同意测试");
+                    //Flow flo = FlowFactory.getFlowByTodo(64, "7352");
+                    //Dictionary<string, string> vallist = new Dictionary<string, string>();
+                    //vallist.Add("a","2");
+                    //flo.Operation(vallist, 64, "7352", WF.Common.Operation.Agree, "驳回测试");
                     scope.Complete();
                 }
                 catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WF.BLL;
@@ -16,7 +17,7 @@ namespace WF.WFFramework
         static WF_ToDoBll todobll = new WF_ToDoBll();
         public static Flow getFlow(string tmpkey, string currenUserCode) {
             WF_Template tmp = tmpbll.getByKey(tmpkey);
-            Flow flo = new NormalFlow();
+            Flow flo = GetFlowByTmpKey(tmpkey);
             flo.Tmpkey = tmpkey;
             flo.FormName = tmp.TmpName;
             flo.CurrenUserCode = currenUserCode;
@@ -29,7 +30,7 @@ namespace WF.WFFramework
             WF_Instance instance = instancebll.getByID(todo.InstanceID);
             WF_Template tmp = tmpbll.getByKey(instance.TmpKey);
           
-            Flow flo = new NormalFlow();
+            Flow flo = GetFlowByTmpKey(tmp.key);
             flo.Tmpkey = instance.TmpKey;
             flo.FormName = tmp.TmpName;
             flo.CurrenUserCode = currenUserCode;
@@ -41,6 +42,14 @@ namespace WF.WFFramework
             flo.WriterUserCode = instance.WriterUserCode;
             
             flo.Init();
+            return flo;
+        }
+        private static Flow GetFlowByTmpKey(string tmpkey)
+        {
+            WF_Template tmp= tmpbll.getByKey(tmpkey);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            dynamic obj = assembly.CreateInstance(tmp.ClassName);
+            Flow flo = (Flow)obj;
             return flo;
         }
     }

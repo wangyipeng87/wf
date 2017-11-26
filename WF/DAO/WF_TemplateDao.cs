@@ -107,7 +107,8 @@ namespace WF.DAO
                                 	wt.UpdateUserCode,
                                 	wt.UpdateTime,
                                 	wt.[State],
-                                	wt.IsDelete
+                                	wt.IsDelete,
+                                    wt.ClassName
                                 FROM
                                 	WF_Template AS wt
                                 WHERE wt.[key]=@key
@@ -129,6 +130,7 @@ namespace WF.DAO
                                            	wt.UpdateUserCode,
                                            	wt.UpdateTime,
                                            	wt.[State],
+                                            wt.ClassName,
                                            	wt.IsDelete,
                                            	e.UserName+'('+e.UserCode+')' AS createuser,
                                            	e2.UserName+'('+e2.UserCode+')' AS updateuser,

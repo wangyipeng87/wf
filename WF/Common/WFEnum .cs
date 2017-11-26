@@ -116,26 +116,26 @@ namespace WF.Common
         /// 加签
         /// </summary>
         Add = 6,
-        /// <summary>
-        /// 已阅
-        /// </summary>
-        Read = 7,
-        /// <summary>
-        /// 回撤
-        /// </summary>
-        CallBack = 8,
-        /// <summary>
-        /// 取消待办
-        /// </summary>
-        Cancel = 9,
-        /// <summary>
-        /// 传阅
-        /// </summary>
-        Transmit = 10,
-        /// <summary>
-        /// 挂起
-        /// </summary>
-        Hang = 11,
+        ///// <summary>
+        ///// 已阅
+        ///// </summary>
+        //Read = 7,
+        ///// <summary>
+        ///// 回撤
+        ///// </summary>
+        //CallBack = 8,
+        ///// <summary>
+        ///// 取消待办
+        ///// </summary>
+        //Cancel = 9,
+        ///// <summary>
+        ///// 传阅
+        ///// </summary>
+        //Transmit = 10,
+        ///// <summary>
+        ///// 挂起
+        ///// </summary>
+        //Hang = 11,
     }
     /// <summary>
     /// 是否启用状态

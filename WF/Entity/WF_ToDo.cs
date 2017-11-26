@@ -25,7 +25,9 @@ namespace WF.Entity
         public int Batch {get; set;}
         public string CreateUserCode {get; set;}
         public DateTime CreateTime {get; set;}
-        public string UpdateUserCode {get; set;}
+        public string UpdateUserCode {get; set; }
+        public string NodeName { get; set; }
+        
         public DateTime UpdateTime {get; set;}
         public int State {get; set;}
         public int IsDelete {get; set; }
@@ -65,7 +67,8 @@ namespace WF.Entity
             this.Map(f => f.FormID).Ignore();
             this.Map(f => f.ApplyTime).Ignore();
             this.Map(f => f.ApplyUserCode).Ignore();
-            this.Map(f => f.ApplyUserName).Ignore(); 
+            this.Map(f => f.ApplyUserName).Ignore();
+            this.Map(f => f.NodeName).Ignore();
             this.Map(f => f.WriterUserCode).Ignore();
             this.Map(f => f.ResponseUserName).Ignore();
             this.Map(f => f.WriterUserName).Ignore();

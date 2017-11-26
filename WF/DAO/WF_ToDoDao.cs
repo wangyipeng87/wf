@@ -352,67 +352,82 @@ namespace WF.DAO
                 return conn.Query<WF_Instance>(sql, new { user = user, state = state, keyword = keyword, begin = begin, end = end }).ToList();
             }
         }
+        /// <summary>
+        /// 获取加签之前的待办
+        /// </summary>
+        /// <param name="todoid"></param>
+        /// <returns></returns>
         public WF_ToDo getPreAddTodo(int todoid)
         {
-            string sql = @"  ;WITH tmp 
-                                        AS (
-                                        	
-                                        SELECT 
-                                        	wtd.ID,
-                                        	wtd.Nodekey,
-                                        	wtd.InstanceID,
-                                        	wtd.ToDoName,
-                                        	wtd.[URL],
-                                        	wtd.ResponseUserCode,
-                                        	wtd.DealUserCode,
-                                        	wtd.DealTime,
-                                        	wtd.OperationType,
-                                        	wtd.TodoType,
-                                        	wtd.IsShow,
-                                        	wtd.PrevID,
-                                        	wtd.Batch,
-                                        	wtd.CreateUserCode,
-                                        	wtd.CreateTime,
-                                        	wtd.UpdateUserCode,
-                                        	wtd.UpdateTime,
-                                        	wtd.[State],
-                                        	wtd.IsDelete, 
-                                        	 1 AS [index]
-                                        	 FROM WF_ToDo AS wtd WHERE wtd.ID=@id and wtd.IsDelete=0
-                                        	UNION ALL 
-                                        	
-                                        	SELECT 
-                                        	wtd.ID,
-                                        	wtd.Nodekey,
-                                        	wtd.InstanceID,
-                                        	wtd.ToDoName,
-                                        	wtd.[URL],
-                                        	wtd.ResponseUserCode,
-                                        	wtd.DealUserCode,
-                                        	wtd.DealTime,
-                                        	wtd.OperationType,
-                                        	wtd.TodoType,
-                                        	wtd.IsShow,
-                                        	wtd.PrevID,
-                                        	wtd.Batch,
-                                        	wtd.CreateUserCode,
-                                        	wtd.CreateTime,
-                                        	wtd.UpdateUserCode,
-                                        	wtd.UpdateTime,
-                                        	wtd.[State],
-                                        	wtd.IsDelete,
-                                        		t.[index]+1  AS [index]
-                                        	 FROM WF_ToDo AS wtd 
-                                        	INNER JOIN tmp AS t ON t.PrevID=wtd.ID
-                                            where   wtd.IsDelete=0
-                                        )
-                                        
-                                        SELECT TOP 1 * FROM tmp AS t
-                                        WHERE t.TodoType=3 ORDER BY t.[index] ASC ";
+            string sql = @"  
+                                    SELECT wtd.ID,
+                                           wtd.Nodekey,
+                                           wtd.InstanceID,
+                                           wtd.ToDoName,
+                                           wtd.[URL],
+                                           wtd.ResponseUserCode,
+                                           wtd.DealUserCode,
+                                           wtd.DealTime,
+                                           wtd.OperationType,
+                                           wtd.TodoType,
+                                           wtd.IsShow,
+                                           wtd.PrevID,
+                                           wtd.Batch,
+                                           wtd.CreateUserCode,
+                                           wtd.CreateTime,
+                                           wtd.UpdateUserCode,
+                                           wtd.UpdateTime,
+                                           wtd.[State],
+                                           wtd.IsDelete
+                                    FROM   WF_ToDo             AS wtd
+                                           INNER JOIN WF_Sign  AS ws
+                                                ON  ws.beforeToDoID = wtd.ID
+                                    WHERE  ws.[State] = 1
+                                           AND ws.IsDelete = 0
+                                           AND ws.AfterToDoID = @todoid
+                                     ";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
             {
                 conn.Open();
-                return conn.Query<WF_ToDo>(sql, new { id = todoid }).FirstOrDefault();
+                return conn.Query<WF_ToDo>(sql, new { todoid = todoid }).FirstOrDefault();
+            }
+        }
+        /// <summary>
+        /// 获取转签之前的待办
+        /// </summary>
+        /// <param name="todoid"></param>
+        /// <returns></returns>
+        public WF_ToDo getPreTransferTodo(int todoid)
+        {
+            string sql = @"   SELECT wtd.ID,
+                                       wtd.Nodekey,
+                                       wtd.InstanceID,
+                                       wtd.ToDoName,
+                                       wtd.[URL],
+                                       wtd.ResponseUserCode,
+                                       wtd.DealUserCode,
+                                       wtd.DealTime,
+                                       wtd.OperationType,
+                                       wtd.TodoType,
+                                       wtd.IsShow,
+                                       wtd.PrevID,
+                                       wtd.Batch,
+                                       wtd.CreateUserCode,
+                                       wtd.CreateTime,
+                                       wtd.UpdateUserCode,
+                                       wtd.UpdateTime,
+                                       wtd.[State],
+                                       wtd.IsDelete
+                                FROM   WF_ToDo             AS wtd
+                                       INNER JOIN WF_Transfer   AS ws
+                                            ON  ws.beforeToDoID = wtd.ID
+                                WHERE  ws.[State] = 1
+                                       AND ws.IsDelete = 0
+                                       AND ws.AfterToDoID = @todoid";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["wfdb"].ToString()))
+            {
+                conn.Open();
+                return conn.Query<WF_ToDo>(sql, new { todoid = todoid }).FirstOrDefault();
             }
         }
         public List<WF_ToDo> getTodoList(string user, int begin, int end, out int count)
@@ -444,7 +459,8 @@ namespace WF.DAO
                                                 	wtd.UpdateUserCode,
                                                 	wtd.UpdateTime,
                                                 	wtd.[State],
-                                                	wtd.IsDelete,
+                                                	wtd.IsDelete, 	
+                                                    wtn.NodeName,
                                                 	ROW_NUMBER() OVER ( ORDER BY wtd.CreateTime DESC ) AS [index]
                                                 FROM
                                                 	WF_ToDo AS wtd 
@@ -452,7 +468,7 @@ namespace WF.DAO
                                                 	INNER JOIN Employee AS e ON e.UserCode=wi.ApplyUserCode
                                                 	INNER JOIN Employee AS e2 ON e2.UserCode=wi.WriterUserCode
                                                 	INNER JOIN Employee AS e3 ON e3.UserCode=wtd.ResponseUserCode
-                                                	
+                                                	INNER JOIN WF_TemplateNode AS wtn ON (wtn.Nodekey=wtd.Nodekey AND wtn.Tmpkey=wi.TmpKey)
                                                 
                                                 WHERE wtd.IsDelete=0 AND wtd.IsShow=1  AND wtd.[State]=1
                                                 	AND (wtd.ResponseUserCode like '%'+@user+'%' or e3.UserName like '%'+@user+'%' 

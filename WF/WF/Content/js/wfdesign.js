@@ -149,7 +149,7 @@ function wfnode(options) {
     $(this.node.node).attr("nodeType", this.settings.nodeType);
     //$(this.node.node).attr("data-target","#context-menu");
     //$(this.node.node).data("nodeType", this.settings.nodeType);
-    if (this.settings.nodeType == 3) {
+    if (this.settings.nodeType == 3 ) {
         $(this.node.node).contextmenu({
             target: '#context-menu',
             onItem: function (context, e) {
@@ -163,6 +163,17 @@ function wfnode(options) {
                         layer.closeAll();
                     });
                 }
+                if ($(e.target).text() == "属性") {
+                    NodeSet($(context).attr("key"));
+                }
+            }
+        });
+    }
+    if ( this.settings.nodeType == 1) {
+        $(this.node.node).contextmenu({
+            target: '#context-menuBegin',
+            onItem: function (context, e) {
+                
                 if ($(e.target).text() == "属性") {
                     NodeSet($(context).attr("key"));
                 }
@@ -968,6 +979,18 @@ function getjson() {
     return tmpjson;
 }
 
+function updateNodekey(old, newkey) {
+    if (rulelist != null && rulelist != undefined && rulelist.length > 0) {
+        for (var i = 0; i < rulelist.length; i++) {
+            if (rulelist[i].beginNodeKey == old) {
+                rulelist[i].beginNodeKey == newkey;
+            }
+            if (rulelist[i].endNodeKey == old) {
+                rulelist[i].endNodeKey == newkey;
+            }
+        }
+    }
+}
 
 function initDesign(obj) {
     if (obj == null && obj == undefine || obj == "") {
@@ -986,6 +1009,7 @@ function initDesign(obj) {
                     nodeWidth: 108,
                     nodeHeight: 50,
                     nodeRect: 7,
+                    URL: obj.nodelist[i].URL,
                     noteColor: "#5DA95E",
                     noteBorderColor: "#5DA95E",
                     opacity: 0.8,

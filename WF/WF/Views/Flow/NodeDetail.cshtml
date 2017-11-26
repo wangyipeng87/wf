@@ -94,6 +94,7 @@
     }
     function initNode() {
         if (node != null && node != undefined) {
+           
             $("#txtKey").val(node.key);
             $("#txtName").val(node.text);
             $("#txtDescription").val(node.nodeDescription);
@@ -123,7 +124,35 @@
                 $("#divback").hide();
             }
             $("#ddlBackType").val(node.GoBackType);
+            //如果是申请节点该如何处置
+            if (node.nodeType == 1) {
+                $("#divkey").hide();
+                $("#divName").hide();
+                $("#divDescription").hide();
+                $("#divProcessType").hide();
+                $("#divdealType").hide();
+                $("#divrole").hide();
+                $("#divuser").hide();
+                $("#divExecType").hide();
+                $("#divTimeLimit").hide();
+                $("#divIsBack").hide();
+                $("#divback").hide();
+                //divkey
+                //divName
+                //divDescription
+                //divProcessType
+                //divdealType
+                //divrole
+                //divuser
+                //divExecType
+                //divTimeLimit
+                //divIsBack
+                //divback
+            }
         }
+    }
+    function check() {
+
     }
     function save() {
         if (node != null && node != undefined) { 
@@ -146,6 +175,7 @@
             node.URL = $.trim($("#txtUrl").val());
             node.IsGoBack = $('#chkIsBack').bootstrapSwitch('state') ? 1 : 0
             node.GoBackType = $("#ddlBackType").val();
+            parent.updateNodekey(node.key, $.trim($("#txtKey").val()));
             node.updateState({
                 key: $.trim($("#txtKey").val()),
                 text: $.trim($("#txtName").val()),
@@ -157,7 +187,8 @@
                 URL: node.URL,
                 IsGoBack: node.IsGoBack,
                 GoBackType: node.GoBackType,
-                userlist: node.userlist
+                userlist: node.userlist,
+                nodeType: node.nodeType
             });
             parent.layer.closeAll();
         }
@@ -212,27 +243,27 @@
 <div class="row">
     <div class="col-xs-12">
         <form class="form-horizontal" role="form">
-            <div class="form-group">
+            <div class="form-group" id="divkey">
                 <label class="col-sm-3 control-label no-padding-right" for="txtKey"> <i style="color: red; vertical-align: middle;">*</i> 节点key </label>
                 <div class="col-sm-9">
                     <input type="text" id="txtKey" maxlength="30" placeholder="流程节点key"
                            class="col-xs-10 col-sm-5" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="divName">
                 <label class="col-sm-3 control-label no-padding-right" for="txtName"> <i style="color: red; vertical-align: middle;">*</i> 节点名称 </label>
                 <div class="col-sm-9">
                     <input type="text" id="txtName" maxlength="30" placeholder="节点名称"
                            class="col-xs-10 col-sm-5" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="divDescription">
                 <label class="col-sm-3 control-label no-padding-right" for="txtDescription"> <i style="color: red; vertical-align: middle;">*</i> 节点描述 </label>
                 <div class="col-sm-9">
                     <textarea id="txtDescription" maxlength="300" placeholder="节点描述" class="col-xs-10 col-sm-5"></textarea>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group"  id="divProcessType">
                 <label class="col-sm-3 control-label no-padding-right" for="txtProcessType"> <i style="color: red; vertical-align: middle;">*</i> 处理类型 </label>
                 <div class="col-sm-9">
                     <select class="col-xs-10 col-sm-5" id="txtProcessType" onchange="changeProcessType()">
@@ -277,7 +308,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="divExecType">
                 <label class="col-sm-3 control-label no-padding-right" for="ddlExecType"> <i style="color: red; vertical-align: middle;">*</i> 执行模式 </label>
                 <div class="col-sm-9">
                     <select class="col-xs-10 col-sm-5" id="ddlExecType">
@@ -288,21 +319,21 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group"  id="divTimeLimit">
                 <label class="col-sm-3 control-label no-padding-right" for="txtTimeLimit"> <i style="color: red; vertical-align: middle;">*</i> 超期时限(分钟) </label>
                 <div class="col-sm-9">
                     <input type="number" id="txtTimeLimit" maxlength="30" placeholder="超期时限"
                            class="col-xs-10 col-sm-5" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" >
                 <label class="col-sm-3 control-label no-padding-right" for="txtUrl"> <i style="color: red; vertical-align: middle;">*</i> 执行URL </label>
                 <div class="col-sm-9">
                     <input type="text" id="txtUrl" maxlength="30" placeholder="执行URL"
                            class="col-xs-10 col-sm-5" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="divIsBack">
                 <label class="col-sm-3 control-label no-padding-right" for="chkIsBack"><i style="color: red; vertical-align: middle;">*</i> 是否允许回退   </label>
                 <div class="col-sm-9">
                     <div class="switch">

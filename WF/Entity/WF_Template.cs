@@ -12,7 +12,9 @@ namespace WF.Entity
         public string key {get; set;}
         public string TmpName {get; set;}
         public string Description {get; set;}
-        public string CreateUserCode {get; set;}
+        public string CreateUserCode {get; set; }
+        public string ClassName { get; set; }
+        
         public DateTime CreateTime {get; set;}
         public string UpdateUserCode {get; set;}
         public DateTime UpdateTime {get; set;}

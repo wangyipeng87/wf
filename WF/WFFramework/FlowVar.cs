@@ -13,6 +13,11 @@ namespace WF.WFFramework
         WF_InstanceVariableBll bll = new WF_InstanceVariableBll();
         public string TmpKey { get; set; }
         public int InstanceID { get; set; }
+        public FlowVar(string tmpKey, int instanceID)
+        {
+            TmpKey = tmpKey;
+            InstanceID = instanceID;
+        }
         public void UpdateVal(Dictionary<string, string> valList, string operationUserCode)
         {
             if (valList != null && valList.Count > 0)

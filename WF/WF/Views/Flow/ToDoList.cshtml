@@ -53,6 +53,7 @@
                     <th class="center col-sm-2">申请人 </th>
                     <th class="center col-sm-2">填表人 </th>
                     <th class="center " style="max-width: 100px; min-width:100px; width: 100px;">待办类型 </th>
+                    <th class="center " style="max-width: 100px; min-width:100px; width: 100px;">审批节点 </th>
                     <th class="center " style="max-width: 50px; min-width:50px; width: 50px;">责任人</th>
                     <th class="center " style="max-width: 50px; min-width:50px; width: 50px;">操作</th>
                 </tr>
@@ -171,6 +172,9 @@
                         }
                         return "";
                     }
+                },//
+                {
+                    "data": "NodeName", 'sClass': "text-center"
                 },
                 {
                     "data": "ResponseUserName", 'sClass': "text-center", render: function (innerData, sSpecific, oData) {

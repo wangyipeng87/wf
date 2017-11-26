@@ -18,6 +18,10 @@ namespace WF.WFFramework
         FlowOperationHistory operationbll = new FlowOperationHistory();
         WF_ToDoBll todobll = new WF_ToDoBll();
         WF_RuleBll rulebll = new WF_RuleBll();
+        WF_TransferBll tranbll = new WF_TransferBll();
+        WF_SignBll signbll = new WF_SignBll();
+        EmployeeBll empbll = new EmployeeBll();
+
         public string Tmpkey { get; set; }
         public int InstanceID { get; set; }
         public string ApplyUserCode { get; set; }
@@ -68,9 +72,7 @@ namespace WF.WFFramework
             }
 
             //更新流程变量
-            FlowVar var = new FlowVar();
-            var.InstanceID = instanceID;
-            var.TmpKey = this.Tmpkey;
+            FlowVar var = new FlowVar(this.Tmpkey,instanceID);
             //先将流程模板变量copy到流程实例
             var.copyVarByTmpKey(this.CurrenUserCode);
             //更新流程实例的变量
@@ -229,75 +231,20 @@ namespace WF.WFFramework
         private void Apply(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node)
         {
             ToDoHandle.DealTodo((int)operationType, operationUserCode, todoID);
-            FlowVar var = new FlowVar();
+            FlowVar var = new FlowVar(flowcontent.TmpKey, flowcontent.CurrentInstanceID);
             var.UpdateVal(vallist, this.CurrenUserCode);
             WF_ToDo todo = todobll.getByID(todoID);
             // 加签类型
             if (todo.TodoType == (int)TodoType.Add)
             {
-                WF_ToDo nextodo = todobll.getByID(todo.PrevID);
+                WF_ToDo nextodo = todobll.getPreAddTodo(todoID);
                 int newtodiid = ToDoHandle.Reopen(nextodo.ResponseUserCode, nextodo.InstanceID, nextodo.IsShow, nextodo.PrevID, nextodo.ToDoName, nextodo.TodoType, node, nextodo.Nodekey, operationUserCode);
                 flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
             }
             //todo 转签处理，如果找到最近一个加签类型，然后生成加签待办，如果不是从加签转过来的，就直接到下一个节点
             if (todo.TodoType == (int)TodoType.Redirect)
             {
-                NodeReturn ret = node.Run(flowcontent);
-                WF_ToDo preTodo= todobll.getPreAddTodo(todoID);
-                if(preTodo!=null)
-                {
-                    int newtodiid = ToDoHandle.Reopen(preTodo.ResponseUserCode, preTodo.InstanceID, preTodo.IsShow, preTodo.PrevID, preTodo.ToDoName, preTodo.TodoType, node, preTodo.Nodekey, operationUserCode);
-                    flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
-                }
-                else
-                {
-                    //获取当前待办人的编号
-                    List<string> newtodis = new List<string>();
-                    List<string> newnodekey = new List<string>();
-                    if (ret.isOver)
-                    {
-                        List<FlowNode> nextNode = node.GetNextNode(flowcontent);
-                        if (nextNode != null && nextNode.Count > 0)
-                        {
-                            foreach (FlowNode nxitem in nextNode)
-                            {
-                                NodeReturn noderet = nxitem.Run(flowcontent);
-                                if (!noderet.isOver)
-                                {
-                                    newnodekey.Add(nxitem.NodeKey);
-                                    List<string> userCodeList = noderet.ToDoUserList;
-                                    //循环遍历插入待办
-                                    if (userCodeList != null && userCodeList.Count > 0)
-                                    {
-                                        foreach (string user in userCodeList)
-                                        {
-                                            int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, nxitem, nxitem.NodeKey, CurrenUserCode);
-                                            newtodis.Add(todoid.ToString());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        flowcontent.CurrentNodeKey = string.Join(", ", newnodekey);
-                        flowcontent.CurrentTodoID = string.Join(", ", newtodis);
-                    }
-                    else
-                    {
-                        List<string> userCodeList = ret.ToDoUserList;
-                        //循环遍历插入待办
-                        if (userCodeList != null && userCodeList.Count > 0)
-                        {
-                            foreach (string user in userCodeList)
-                            {
-                                int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, node, node.NodeKey, CurrenUserCode);
-                                newtodis.Add(todoid.ToString());
-                            }
-                        }
-
-                        flowcontent.CurrentTodoID = string.Join(", ", newtodis);
-                    }
-                }
-
+                ApplyTransfer(vallist,  todoID,  operationUserCode,  operationType,  common,  flowcontent, node);
             }
             // 一般同意 转签类型
             if (todo.TodoType == (int)TodoType.Normal)
@@ -346,12 +293,104 @@ namespace WF.WFFramework
                             newtodis.Add(todoid.ToString());
                         }
                     }
-
+                    newnodekey.Add(node.NodeKey);
+                    flowcontent.CurrentNodeKey = string.Join(", ", newnodekey);
                     flowcontent.CurrentTodoID = string.Join(", ", newtodis);
                 }
             }
             operationbll.Insert(flowcontent.CurrentInstanceID, todoID, CurrenUserCode, (int)operationType, common);
         }
+        /// <summary>
+        /// 同意转签类型
+        /// </summary>
+        /// <param name="vallist"></param>
+        /// <param name="todoID"></param>
+        /// <param name="operationUserCode"></param>
+        /// <param name="operationType"></param>
+        /// <param name="common"></param>
+        /// <param name="flowcontent"></param>
+        /// <param name="node"></param>
+        private void ApplyTransfer(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node)
+        {
+
+            //NodeReturn ret = node.Run(flowcontent);
+            WF_ToDo preTodo = todobll.getPreTransferTodo(todoID);
+            if (preTodo != null)
+            {
+                //int newtodiid = ToDoHandle.Reopen(preTodo.ResponseUserCode, preTodo.InstanceID, preTodo.IsShow, preTodo.PrevID, preTodo.ToDoName, preTodo.TodoType, node, preTodo.Nodekey, operationUserCode);
+                //flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
+                if(preTodo.TodoType == (int)TodoType.Normal)
+                {
+                    FlowNode befornode = NodeFactory.getFlowNode(flowcontent.TmpKey, preTodo.Nodekey, this.endFlow);
+                    NodeReturn ret = befornode.Run(flowcontent);
+
+                    //获取当前待办人的编号
+                    List<string> newtodis = new List<string>();
+                    List<string> newnodekey = new List<string>();
+                    if (ret.isOver)
+                    {
+                        List<FlowNode> nextNode = befornode.GetNextNode(flowcontent);
+                        if (nextNode != null && nextNode.Count > 0)
+                        {
+                            foreach (FlowNode nxitem in nextNode)
+                            {
+                                NodeReturn noderet = nxitem.Run(flowcontent);
+                                if (!noderet.isOver)
+                                {
+                                    newnodekey.Add(nxitem.NodeKey);
+                                    List<string> userCodeList = noderet.ToDoUserList;
+                                    //循环遍历插入待办
+                                    if (userCodeList != null && userCodeList.Count > 0)
+                                    {
+                                        foreach (string user in userCodeList)
+                                        {
+                                            int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, nxitem, nxitem.NodeKey, CurrenUserCode);
+                                            newtodis.Add(todoid.ToString());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        flowcontent.CurrentNodeKey = string.Join(", ", newnodekey);
+                        flowcontent.CurrentTodoID = string.Join(", ", newtodis);
+                    }
+                    else
+                    {
+                        List<string> userCodeList = ret.ToDoUserList;
+                        //循环遍历插入待办
+                        if (userCodeList != null && userCodeList.Count > 0)
+                        {
+                            foreach (string user in userCodeList)
+                            {
+                                int todoid = ToDoHandle.InsertTodo(user.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, -1, flowcontent.TaskName, (int)TodoType.Normal, befornode, befornode.NodeKey, CurrenUserCode);
+                                newtodis.Add(todoid.ToString());
+                            }
+                        }
+                        newnodekey.Add(befornode.NodeKey);
+
+                        flowcontent.CurrentNodeKey = string.Join(", ", newnodekey);
+                        flowcontent.CurrentTodoID = string.Join(", ", newtodis);
+                    }
+                }
+                if (preTodo.TodoType == (int)TodoType.Add)
+                {
+                    WF_ToDo beforTodo = todobll.getPreAddTodo(todoID);
+                    while(beforTodo.TodoType==(int)TodoType.Add)
+                    {
+                        beforTodo = todobll.getPreAddTodo(beforTodo.ID);
+                    }
+                    FlowNode befornode = NodeFactory.getFlowNode(flowcontent.TmpKey, beforTodo.Nodekey, this.endFlow);
+                    int newtodiid = ToDoHandle.Reopen(beforTodo.ResponseUserCode, beforTodo.InstanceID, beforTodo.IsShow, beforTodo.PrevID, beforTodo.ToDoName, beforTodo.TodoType, befornode, beforTodo.Nodekey, operationUserCode);
+                    flowcontent.CurrentTodoID = string.Join(", ", newtodiid);
+                }
+                if (preTodo.TodoType == (int)TodoType.Redirect)
+                {
+                    ApplyTransfer(vallist, preTodo.ID, operationUserCode, operationType, common, flowcontent, node);
+                }
+            }
+            
+        }
+
 
         /// <summary>
         /// 跳转
@@ -366,7 +405,7 @@ namespace WF.WFFramework
         private void GoTo(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node, string toNodeKey)
         {
             ToDoHandle.DealTodo((int)operationType, operationUserCode, todoID);
-            FlowVar var = new FlowVar();
+            FlowVar var = new FlowVar(flowcontent.TmpKey, flowcontent.CurrentInstanceID);
             var.UpdateVal(vallist, this.CurrenUserCode);
 
             List<WF_ToDo> undolist = todobll.getList(flowcontent.CurrentInstanceID, node.NodeKey, (int)TodoState.UnDo);
@@ -417,7 +456,7 @@ namespace WF.WFFramework
         private void Reject(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node, string toNodeKey)
         {
             ToDoHandle.DealTodo((int)operationType, operationUserCode, todoID);
-            FlowVar var = new FlowVar();
+            FlowVar var = new FlowVar(flowcontent.TmpKey, flowcontent.CurrentInstanceID);
             var.UpdateVal(vallist, this.CurrenUserCode);
 
             List<WF_ToDo> undolist = todobll.getList(flowcontent.CurrentInstanceID, node.NodeKey, (int)TodoState.UnDo);
@@ -474,51 +513,79 @@ namespace WF.WFFramework
         /// 转签
         /// </summary>
         /// <param name="vallist"></param>
-        /// <param name="todoID"></param>
+        /// <param name="befortodoID"></param>
         /// <param name="operationUserCode"></param>
         /// <param name="operationType"></param>
         /// <param name="common"></param>
         /// <param name="flowcontent"></param>
         /// <param name="node"></param>
         /// <param name="toNodeKey"></param>
-        private void Redirect(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node, string todoUserCode)
+        private void Redirect(Dictionary<string, string> vallist, int befortodoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node, string todoUserCode)
         {
-            ToDoHandle.DealTodo((int)operationType, operationUserCode, todoID);
-            FlowVar var = new FlowVar();
+            ToDoHandle.DealTodo((int)operationType, operationUserCode, befortodoID);
+            FlowVar var = new FlowVar(flowcontent.TmpKey, flowcontent.CurrentInstanceID);
             var.UpdateVal(vallist, this.CurrenUserCode);
             //获取当前待办人的编号
             List<string> newtodis = new List<string>();
             List<string> newnodekey = new List<string>();
-            int todoid = ToDoHandle.InsertTodo(todoUserCode.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, todoID, flowcontent.TaskName, (int)TodoType.Redirect, node, node.NodeKey, CurrenUserCode);
+            int todoid = ToDoHandle.InsertTodo(todoUserCode.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, befortodoID, flowcontent.TaskName, (int)TodoType.Redirect, node, node.NodeKey, CurrenUserCode);
             newtodis.Add(todoid.ToString());
             flowcontent.CurrentTodoID = string.Join(", ", newtodis);
             flowcontent.CurrentNodeKey = node.NodeKey;
-            operationbll.Insert(flowcontent.CurrentInstanceID, todoID, CurrenUserCode, (int)operationType, common);
+            operationbll.Insert(flowcontent.CurrentInstanceID, befortodoID, CurrenUserCode, (int)operationType, common);
+            //插入转签历史记录
+            WF_Transfer trans = new WF_Transfer();
+            trans.AfterToDoID = todoid;
+            trans.beforeToDoID = befortodoID;
+            trans.IsDelete = (int)IsDelete.UnDelete;
+            trans.State = (int)State.Enable;
+            trans.OperationTime = DateTime.Now;
+            trans.OperationUserCode = operationUserCode;
+            Employee emp = empbll.getbyUserCode(operationUserCode);
+            if (emp != null)
+            {
+                trans.OperationUserName = emp.UserName;
+            }
+            tranbll.save(trans);
         }
         /// <summary>
         /// 加签
         /// </summary>
         /// <param name="vallist"></param>
-        /// <param name="todoID"></param>
+        /// <param name="befortodoID"></param>
         /// <param name="operationUserCode"></param>
         /// <param name="operationType"></param>
         /// <param name="common"></param>
         /// <param name="flowcontent"></param>
         /// <param name="node"></param>
         /// <param name="toNodeKey"></param>
-        private void Add(Dictionary<string, string> vallist, int todoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node, string todoUserCode)
+        private void Add(Dictionary<string, string> vallist, int befortodoID, string operationUserCode, Operation operationType, string common, FlowContent flowcontent, FlowNode node, string todoUserCode)
         {
-            ToDoHandle.DealTodo((int)operationType, operationUserCode, todoID);
-            FlowVar var = new FlowVar();
+            ToDoHandle.DealTodo((int)operationType, operationUserCode, befortodoID);
+            FlowVar var = new FlowVar(flowcontent.TmpKey, flowcontent.CurrentInstanceID);
             var.UpdateVal(vallist, this.CurrenUserCode);
             //获取当前待办人的编号
             List<string> newtodis = new List<string>();
             List<string> newnodekey = new List<string>();
-            int todoid = ToDoHandle.InsertTodo(todoUserCode.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, todoID, flowcontent.TaskName, (int)TodoType.Add, node, node.NodeKey, CurrenUserCode);
+            int todoid = ToDoHandle.InsertTodo(todoUserCode.Trim(), flowcontent.CurrentInstanceID, (int)TodoIsShow.Show, befortodoID, flowcontent.TaskName, (int)TodoType.Add, node, node.NodeKey, CurrenUserCode);
             newtodis.Add(todoid.ToString());
             flowcontent.CurrentTodoID = string.Join(", ", newtodis);
             flowcontent.CurrentNodeKey = node.NodeKey;
-            operationbll.Insert(flowcontent.CurrentInstanceID, todoID, CurrenUserCode, (int)operationType, common);
+            operationbll.Insert(flowcontent.CurrentInstanceID, befortodoID, CurrenUserCode, (int)operationType, common);
+            //插入转签历史记录
+            WF_Sign sign = new WF_Sign();
+            sign.AfterToDoID = todoid;
+            sign.beforeToDoID = befortodoID;
+            sign.IsDelete = (int)IsDelete.UnDelete;
+            sign.State = (int)State.Enable;
+            sign.OperationTime = DateTime.Now;
+            sign.OperationUserCode = operationUserCode;
+            Employee emp = empbll.getbyUserCode(operationUserCode);
+            if (emp != null)
+            {
+                sign.OperationUserName = emp.UserName;
+            }
+            signbll.save(sign);
         }
         /// <summary>
         /// 获取申请节点后的节点

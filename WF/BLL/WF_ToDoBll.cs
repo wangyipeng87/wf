@@ -46,9 +46,23 @@ namespace WF.BLL
         {
             return dao.getCurrentInstanceList(user, state, keyword, begin, end, out count);
         }
+        /// <summary>
+        /// 获取前一个加签待办
+        /// </summary>
+        /// <param name="todoid">当前待办</param>
+        /// <returns></returns>
         public WF_ToDo getPreAddTodo(int todoid)
         {
             return dao.getPreAddTodo(todoid);
+        }
+        /// <summary>
+        /// 获取前一个转签待办
+        /// </summary>
+        /// <param name="todoid">当前待办</param>
+        /// <returns></returns>
+        public WF_ToDo getPreTransferTodo(int todoid)
+        {
+            return dao.getPreTransferTodo(todoid);
         }
         public List<WF_ToDo> getTodoList(string user, int begin, int end, out int count)
         {

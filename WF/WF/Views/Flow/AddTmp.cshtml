@@ -17,10 +17,12 @@
         //$('#chkState').bootstrapSwitch('state', false);
         load();
     });
-    function save() {
+   function save() {
+       //
         var menu = {
             ID: $("#hidid").val(),
             TmpName: $("#txtName").val(),
+            ClassName: $("#txtClassName").val(),
             key: $("#txtCode").val(),
             Description: $("#txtDes").val(),
             State: $('#chkState').bootstrapSwitch('state') ? 1 : 0
@@ -69,6 +71,8 @@
         $("#txtName").val(obj.TmpName);
         $("#txtCode").val(obj.key); 
         $("#txtDes").val(obj.Description);
+        $("#txtClassName").val(obj.ClassName);
+        
         if (obj.State == 1) {
             $('#chkState').bootstrapSwitch('state', true);
         } else {
@@ -99,6 +103,13 @@
                 <label class="col-sm-3 control-label no-padding-right" for="txtName"> <i style="color: red; vertical-align: middle;">*</i> 模板名称 </label>
                 <div class="col-sm-9">
                     <input type="text" id="txtName" maxlength="30" placeholder="模板名称"
+                           class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label no-padding-right" for="txtClassName"> <i style="color: red; vertical-align: middle;">*</i> 类名 </label>
+                <div class="col-sm-9">
+                    <input type="text" id="txtClassName" maxlength="4000" placeholder="类名"
                            class="col-xs-10 col-sm-5" />
                 </div>
             </div>

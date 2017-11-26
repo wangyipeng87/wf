@@ -49,7 +49,8 @@ namespace WF.WFFramework
                 Console.WriteLine("编译错误：");
                 foreach (CompilerError err in cr.Errors)
                 {
-                    Console.WriteLine(err.ErrorText);
+                    //Console.WriteLine(err.ErrorText);
+                    throw new Exception(err.ErrorText);
                 }
             }
             else
